@@ -67,7 +67,7 @@ export function WorldsSection() {
       style={{ backgroundColor: '#F5F5F5', paddingTop: 'clamp(48px, 8vw, 80px)', paddingBottom: 'clamp(48px, 8vw, 80px)' }}
       aria-labelledby="worlds-heading"
     >
-      <div className="mx-auto" style={{ maxWidth: '1152px' }}>
+      <div style={{ maxWidth: '1152px', margin: '0 auto', width: '100%' }}>
         <div className="text-center" style={{ marginBottom: 'clamp(32px, 5vw, 56px)' }}>
           <h2
             id="worlds-heading"
@@ -77,8 +77,8 @@ export function WorldsSection() {
             Cele 4 Lumi Playlio
           </h2>
           <p
-            className="font-nunito mx-auto"
-            style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6 }}
+            className="font-nunito"
+            style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6, margin: '0 auto' }}
           >
             Fiecare lume are aventuri unice, recompense și lecții ascunse în joc
           </p>

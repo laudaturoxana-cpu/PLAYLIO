@@ -38,7 +38,7 @@ export function Navbar() {
       >
         <nav
           className="mx-auto flex items-center justify-between"
-          style={{ maxWidth: '1152px', padding: '12px 16px' }}
+          style={{ maxWidth: '1152px', margin: '0 auto', padding: '12px 16px', width: '100%' }}
           aria-label="Navigare principală"
         >
           {/* Logo */}

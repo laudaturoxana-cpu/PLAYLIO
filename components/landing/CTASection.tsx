@@ -25,7 +25,7 @@ export function CTASection() {
       style={{ paddingTop: 'clamp(48px, 8vw, 80px)', paddingBottom: 'clamp(48px, 8vw, 80px)' }}
       aria-labelledby="cta-heading"
     >
-      <div className="mx-auto" style={{ maxWidth: '960px' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', width: '100%' }}>
         <div
           className="text-center"
           style={{
@@ -43,8 +43,8 @@ export function CTASection() {
             Gata să pornești aventura?
           </h2>
           <p
-            className="font-nunito mx-auto"
-            style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '480px', marginBottom: 'clamp(32px, 5vw, 48px)', lineHeight: 1.6 }}
+            className="font-nunito"
+            style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '480px', margin: `0 auto clamp(32px, 5vw, 48px)`, lineHeight: 1.6 }}
           >
             Alătură-te familiilor care au ales un ecran mai bun.
           </p>

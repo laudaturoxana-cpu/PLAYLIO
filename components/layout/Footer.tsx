@@ -51,7 +51,7 @@ export function Footer() {
       style={{ backgroundColor: '#212121', paddingTop: 'clamp(48px, 8vw, 64px)', paddingBottom: 'clamp(24px, 4vw, 32px)' }}
       aria-label="Footer Playlio"
     >
-      <div className="mx-auto" style={{ maxWidth: '1152px' }}>
+      <div style={{ maxWidth: '1152px', margin: '0 auto', width: '100%' }}>
         <div
           className="grid grid-cols-2 md:grid-cols-4"
           style={{ gap: 'clamp(24px, 4vw, 40px)', marginBottom: 'clamp(32px, 5vw, 48px)' }}

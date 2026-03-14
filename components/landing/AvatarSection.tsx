@@ -102,7 +102,7 @@ export function AvatarSection() {
       style={{ paddingTop: 'clamp(48px, 8vw, 80px)', paddingBottom: 'clamp(48px, 8vw, 80px)' }}
       aria-labelledby="avatar-heading"
     >
-      <div className="mx-auto" style={{ maxWidth: '1152px' }}>
+      <div style={{ maxWidth: '1152px', margin: '0 auto', width: '100%' }}>
         <div
           className="flex flex-col items-center"
           style={{ gap: 'clamp(32px, 6vw, 64px)' }}

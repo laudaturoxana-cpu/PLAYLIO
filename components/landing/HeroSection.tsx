@@ -16,7 +16,7 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center text-center gap-6">
+      <div className="relative z-10 flex flex-col items-center text-center" style={{ width: '100%', maxWidth: '896px', margin: '0 auto', gap: 'clamp(20px, 4vw, 24px)' }}>
 
         {/* Pill badge */}
         <span
@@ -104,8 +104,8 @@ export function HeroSection() {
 
         {/* Lio mascot + 4 world badges */}
         <div
-          className="relative w-full mx-auto"
-          style={{ maxWidth: '500px', height: 'clamp(200px, 40vw, 320px)' }}
+          className="relative w-full"
+          style={{ margin: '0 auto', maxWidth: '500px', height: 'clamp(200px, 40vw, 320px)' }}
           aria-hidden="true"
         >
           {/* Glow background */}
