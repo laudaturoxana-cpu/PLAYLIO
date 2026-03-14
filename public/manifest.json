@@ -1,0 +1,47 @@
+{
+  "name": "Playlio — Lumea Jocurilor Educative",
+  "short_name": "Playlio",
+  "description": "O lume colorată și sigură unde copiii 3-10 ani explorează, construiesc, învață și se joacă",
+  "start_url": "/worlds",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4FC3F7",
+  "lang": "ro",
+  "categories": ["education", "kids", "games"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Lumea Literelor",
+      "short_name": "Litere",
+      "url": "/play/learning",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lumea Aventurii",
+      "short_name": "Aventură",
+      "url": "/play/adventure",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

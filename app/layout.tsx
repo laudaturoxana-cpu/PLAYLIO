@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Fredoka, Nunito, Inter } from 'next/font/google'
+import ServiceWorkerRegister from '@/components/shared/ServiceWorkerRegister'
 import './globals.css'
 
 const fredoka = Fredoka({
@@ -69,6 +70,7 @@ export const metadata: Metadata = {
       'O lume colorată și sigură unde copiii explorează, construiesc, învață și se joacă.',
     images: ['/images/og-image.png'],
   },
+  manifest: '/manifest.json',
   robots: {
     index: true,
     follow: true,
@@ -96,7 +98,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ro" className={`${fredoka.variable} ${nunito.variable} ${inter.variable}`}>
-      <body className="font-nunito antialiased">{children}</body>
+      <body className="font-nunito antialiased">
+        <ServiceWorkerRegister />
+        {children}
+      </body>
     </html>
   )
 }
