@@ -4,9 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
   },
-  experimental: {
-    typedRoutes: true,
-  },
+  // typedRoutes se activează în Sprint 8 când toate rutele sunt create
 }
 
 export default nextConfig
