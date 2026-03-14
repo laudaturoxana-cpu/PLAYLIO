@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardClient } from './DashboardClient'
+import { PHONETIC_LETTERS } from '@/lib/learning/phonetics'
 
 export default async function ParentsDashboardPage({
   searchParams,
@@ -16,27 +17,62 @@ export default async function ParentsDashboardPage({
 
   if (!user) redirect('/login')
 
-  // Fetch profil + copii
   const { data: parentProfile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('id, full_name, role, coins, level, xp')
     .eq('id', user.id)
     .single()
 
   if (!parentProfile) redirect('/login?error=no_profile')
+  if (parentProfile.role !== 'parent') redirect('/worlds')
 
   const { data: children } = await supabase
     .from('profiles')
-    .select('*')
+    .select('id, full_name, level, coins, xp')
     .eq('parent_id', user.id)
     .eq('role', 'child')
 
   const showOnboarding = params.onboarding === 'true' || !children || children.length === 0
 
+  // Pentru fiecare copil: litere masterite + timp estimat săptămâna asta
+  const childStats: Record<string, { masteredLetters: number; minutesThisWeek: number }> = {}
+
+  const totalLetters = PHONETIC_LETTERS.length
+  const weekStart = new Date()
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+  weekStart.setHours(0, 0, 0, 0)
+
+  for (const child of children ?? []) {
+    const { data: learning } = await supabase
+      .from('learning_progress')
+      .select('item_id, mastered, attempts, last_seen')
+      .eq('user_id', child.id)
+
+    const masteredLetters = (learning ?? []).filter(r => r.mastered && r.item_id.startsWith('letter_')).length
+
+    // Timp estimat: activitate din această săptămână
+    const thisWeekActivity = (learning ?? []).filter(r => {
+      const seen = new Date(r.last_seen)
+      return seen >= weekStart
+    }).reduce((s, r) => s + r.attempts, 0)
+
+    const { data: questsThisWeek } = await supabase
+      .from('quest_completions')
+      .select('id')
+      .eq('user_id', child.id)
+      .gte('completed_at', weekStart.toISOString())
+
+    const minutesThisWeek = Math.round((thisWeekActivity * 12) / 60) + (questsThisWeek?.length ?? 0) * 5
+
+    childStats[child.id] = { masteredLetters, minutesThisWeek }
+  }
+
   return (
     <DashboardClient
       parentProfile={parentProfile}
       children={children ?? []}
+      childStats={childStats}
+      totalLetters={totalLetters}
       showOnboarding={showOnboarding}
     />
   )

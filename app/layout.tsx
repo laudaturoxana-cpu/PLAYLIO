@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Fredoka, Nunito } from 'next/font/google'
+import { Fredoka, Nunito, Inter } from 'next/font/google'
 import './globals.css'
 
 const fredoka = Fredoka({
@@ -13,6 +13,13 @@ const nunito = Nunito({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-nunito',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -88,7 +95,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ro" className={`${fredoka.variable} ${nunito.variable}`}>
+    <html lang="ro" className={`${fredoka.variable} ${nunito.variable} ${inter.variable}`}>
       <body className="font-nunito antialiased">{children}</body>
     </html>
   )

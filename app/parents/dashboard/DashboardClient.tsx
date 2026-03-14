@@ -3,15 +3,34 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { OnboardingModal } from '@/components/shared/OnboardingModal'
-import type { Profile } from '@/types'
+import ChildCard from '@/components/parents/ChildCard'
+
+interface ChildProfile {
+  id: string
+  full_name: string | null
+  level: number
+  coins: number
+  xp: number
+}
+
+interface ParentProfile {
+  id: string
+  full_name: string | null
+  role: 'child' | 'parent'
+  coins: number
+  level: number
+  xp: number
+}
 
 interface Props {
-  parentProfile: Profile
-  children: Profile[]
+  parentProfile: ParentProfile
+  children: ChildProfile[]
+  childStats: Record<string, { masteredLetters: number; minutesThisWeek: number }>
+  totalLetters: number
   showOnboarding: boolean
 }
 
-export function DashboardClient({ parentProfile, children, showOnboarding }: Props) {
+export function DashboardClient({ parentProfile, children, childStats, totalLetters, showOnboarding }: Props) {
   const router = useRouter()
   const [modalOpen, setModalOpen] = useState(showOnboarding)
 
@@ -20,8 +39,18 @@ export function DashboardClient({ parentProfile, children, showOnboarding }: Pro
     router.refresh()
   }
 
+  const parentName = parentProfile.full_name?.split(' ')[0] ?? 'Părinte'
+  const totalMinutesThisWeek = Object.values(childStats).reduce((s, c) => s + c.minutesThisWeek, 0)
+  const totalMasteredLetters = Object.values(childStats).reduce((s, c) => s + c.masteredLetters, 0)
+
   return (
-    <>
+    <div
+      className="min-h-screen"
+      style={{
+        background: 'linear-gradient(135deg, rgba(79,195,247,0.04) 0%, rgba(255,213,79,0.04) 100%)',
+        backgroundColor: 'var(--white)',
+      }}
+    >
       {modalOpen && (
         <OnboardingModal
           parentId={parentProfile.id}
@@ -29,93 +58,111 @@ export function DashboardClient({ parentProfile, children, showOnboarding }: Pro
         />
       )}
 
-      <div className="flex flex-col gap-8">
-        {/* Welcome header */}
-        <div className="rounded-3xl bg-white p-6 md:p-8 shadow-[var(--shadow-sm)] border border-black/5">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="font-fredoka text-3xl font-semibold text-[var(--dark)] mb-1">
-                Bun venit,{' '}
-                {parentProfile.full_name?.split(' ')[0] ?? 'Părinte'}! 👋
-              </h1>
-              <p className="font-nunito text-base text-[var(--gray)]">
-                {children.length === 0
-                  ? 'Creează profilul copilului pentru a începe.'
-                  : `Ai ${children.length} ${children.length === 1 ? 'copil' : 'copii'} în Playlio.`}
-              </p>
-            </div>
-            {children.length === 0 && (
-              <button
-                onClick={() => setModalOpen(true)}
-                className="inline-flex items-center justify-center rounded-full font-nunito font-bold text-base text-white px-6 py-3 min-h-[48px] transition-all hover:opacity-90 active:scale-95"
-                style={{ backgroundColor: 'var(--coral)', boxShadow: 'var(--shadow-coral)' }}
-              >
-                + Adaugă profil copil
-              </button>
-            )}
+      <div className="max-w-lg mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p className="font-inter text-sm text-[var(--gray)]">Bun venit,</p>
+            <h1 className="font-fredoka text-2xl font-semibold text-[var(--dark)]">
+              {parentName} 👋
+            </h1>
           </div>
+          <a
+            href="/auth/signout"
+            className="font-inter text-xs text-[var(--gray)] underline"
+            style={{ touchAction: 'manipulation' }}
+          >
+            Ieșire
+          </a>
         </div>
 
-        {/* Profiluri copii */}
+        {/* Overview stats — afișat doar dacă există copii */}
         {children.length > 0 && (
-          <div>
-            <h2 className="font-fredoka text-2xl font-semibold text-[var(--dark)] mb-4">
-              Profiluri copii
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {children.map((child) => (
-                <div
-                  key={child.id}
-                  className="rounded-3xl bg-white p-6 shadow-[var(--shadow-sm)] border border-black/5 flex flex-col gap-4"
-                >
-                  {/* Avatar placeholder */}
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center font-fredoka text-2xl font-semibold text-white"
-                    style={{ backgroundColor: 'var(--sky)' }}
-                    aria-hidden="true"
-                  >
-                    {child.full_name?.charAt(0)?.toUpperCase() ?? '?'}
-                  </div>
-                  <div>
-                    <p className="font-fredoka text-xl font-semibold text-[var(--dark)]">
-                      {child.full_name}
-                    </p>
-                    <p className="font-nunito text-sm text-[var(--gray)]">
-                      Nivel {child.level} · {child.coins} coins
-                    </p>
-                  </div>
-                  <a
-                    href={`/worlds?child=${child.id}`}
-                    className="inline-flex items-center justify-center rounded-full font-nunito font-semibold text-sm text-white px-4 py-2.5 min-h-[40px] transition-all hover:opacity-90 active:scale-95"
-                    style={{ backgroundColor: 'var(--mint-dark)' }}
-                  >
-                    Joacă acum ca {child.full_name?.split(' ')[0]}
-                  </a>
-                </div>
-              ))}
-
-              {/* Card add child */}
-              <button
-                onClick={() => setModalOpen(true)}
-                className="rounded-3xl border-2 border-dashed border-black/15 p-6 flex flex-col items-center justify-center gap-3 text-[var(--gray)] hover:border-[var(--coral)] hover:text-[var(--coral)] transition-all duration-200 min-h-[180px]"
-              >
-                <span className="text-3xl" aria-hidden="true">+</span>
-                <span className="font-nunito text-sm font-semibold">Adaugă copil</span>
-              </button>
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xl">⏱️</span>
+                <span className="font-inter text-xs text-[var(--gray)]">Minute jucate săpt. asta</span>
+              </div>
+              <p className="font-fredoka text-3xl font-semibold text-[var(--sky-dark)]">
+                {totalMinutesThisWeek}m
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xl">📚</span>
+                <span className="font-inter text-xs text-[var(--gray)]">Litere stăpânite</span>
+              </div>
+              <p className="font-fredoka text-3xl font-semibold text-[var(--coral)]">
+                {totalMasteredLetters}/{totalLetters * children.length}
+              </p>
             </div>
           </div>
         )}
 
-        {/* Placeholder Sprint 8 */}
-        <div className="rounded-3xl bg-white p-6 md:p-8 shadow-[var(--shadow-sm)] border border-black/5">
-          <h2 className="font-fredoka text-2xl font-semibold text-[var(--dark)] mb-2">
-            Rapoarte săptămânale
+        {/* Copii */}
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-inter text-sm font-semibold text-[var(--dark)]">
+            Copiii tăi ({children.length})
           </h2>
-          <p className="font-nunito text-base text-[var(--gray)]">
-            Statisticile detaliate și rapoartele educaționale vor fi disponibile în curând.
+          <button
+            onClick={() => setModalOpen(true)}
+            className="font-inter text-xs text-[var(--sky)] underline"
+            style={{ touchAction: 'manipulation' }}
+          >
+            + Adaugă copil
+          </button>
+        </div>
+
+        {children.length === 0 ? (
+          <div className="flex flex-col items-center gap-4 rounded-3xl bg-white border border-black/5 shadow-sm p-8 text-center">
+            <span className="text-5xl">👶</span>
+            <div>
+              <p className="font-inter text-base font-semibold text-[var(--dark)]">
+                Niciun copil adăugat încă
+              </p>
+              <p className="font-inter text-sm text-[var(--gray)] mt-1">
+                Adaugă primul copil pentru a începe aventura!
+              </p>
+            </div>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="rounded-full bg-[var(--coral)] px-6 py-3 font-inter text-base font-semibold text-white shadow-md active:scale-95 transition-transform"
+              style={{ touchAction: 'manipulation' }}
+            >
+              Adaugă copil 🎉
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {children.map(child => (
+              <ChildCard
+                key={child.id}
+                child={child}
+                masteredLetters={childStats[child.id]?.masteredLetters ?? 0}
+                totalLetters={totalLetters}
+                minutesThisWeek={childStats[child.id]?.minutesThisWeek ?? 0}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Tip pentru părinți */}
+        <div className="mt-6 rounded-2xl bg-[var(--sky)]/08 border border-[var(--sky)]/20 p-4">
+          <p className="font-inter text-xs font-semibold text-[var(--sky-dark)] mb-1">💡 Sfat</p>
+          <p className="font-inter text-sm text-[var(--dark)]">
+            {children.length === 0
+              ? 'Playlio e conceput pentru 3-10 ani. Sesiunile scurte de 10-15 min/zi dau cele mai bune rezultate!'
+              : totalMinutesThisWeek < 10
+              ? 'Activitate redusă săptămâna asta. Joacă împreună cu copilul — e mai motivant! 🎮'
+              : 'Bravo! Constanța zilnică de 10-15 minute face diferența în alfabetizare.'}
           </p>
         </div>
+
+        <p className="font-inter text-xs text-[var(--gray)] text-center mt-8">
+          © 2026 Playlio · Sigur pentru copii
+        </p>
       </div>
-    </>
+    </div>
   )
 }
