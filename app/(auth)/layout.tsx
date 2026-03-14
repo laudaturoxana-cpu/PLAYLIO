@@ -29,7 +29,7 @@ export default function AuthLayout({
       <Link
         href="/"
         className="relative z-10 mb-8 font-fredoka text-3xl font-semibold"
-        aria-label="Playlio — înapoi la pagina principală"
+        aria-label="Playlio — back to home page"
       >
         <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
         <span style={{ color: 'var(--coral)' }}>O</span>
@@ -42,7 +42,7 @@ export default function AuthLayout({
 
       {/* Footer minimal */}
       <p className="relative z-10 mt-6 font-nunito text-xs text-[var(--gray)]">
-        © 2026 Playlio · Sigur pentru copii
+        © 2026 Playlio · Safe for kids
       </p>
     </div>
   )

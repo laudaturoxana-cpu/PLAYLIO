@@ -64,7 +64,7 @@ export function CTASection() {
             />
             <PricingCard
               name="Playlio Plus"
-              price="5€/lună"
+              price="5€/mo"
               priceNote="Cancel anytime"
               features={PLUS_FEATURES}
               ctaLabel="Try 7 days free"

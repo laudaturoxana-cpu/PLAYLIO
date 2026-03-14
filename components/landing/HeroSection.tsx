@@ -102,22 +102,12 @@ export function HeroSection() {
         </div>
 
         {/* Lio mascot + 4 world badges */}
-        <div
-          className="relative w-full"
-          style={{ margin: '0 auto', maxWidth: '500px', height: 'clamp(200px, 40vw, 320px)' }}
-          aria-hidden="true"
-        >
-          {/* Glow background */}
-          <div
-            className="absolute inset-0 rounded-[32px]"
-            style={{ background: 'radial-gradient(ellipse at center, rgba(79,195,247,0.10) 0%, rgba(255,112,67,0.06) 100%)' }}
-          />
-
+        <div className="w-full" style={{ margin: '0 auto', maxWidth: '480px' }} aria-hidden="true">
           {/* Lio center */}
-          <div className="absolute top-1/2 left-1/2" style={{ transform: 'translate(-50%, -50%)' }}>
+          <div className="flex justify-center" style={{ marginBottom: '16px' }}>
             <svg
-              width="90"
-              height="90"
+              width="80"
+              height="80"
               viewBox="0 0 80 80"
               role="img"
               aria-label="Lio Mascot"
@@ -142,35 +132,32 @@ export function HeroSection() {
             </svg>
           </div>
 
-          {/* 4 floating world badges */}
-          {[
-            { label: 'Adventure', emoji: '🗺️', bg: 'rgba(102,187,106,0.15)', color: '#2E7D32', top: '8%', left: '2%', delay: '0s' },
-            { label: 'Builder', emoji: '🏗️', bg: 'rgba(79,195,247,0.15)', color: '#0277BD', top: '8%', right: '2%', delay: '0.5s' },
-            { label: 'Learning', emoji: '📚', bg: 'rgba(255,112,67,0.15)', color: '#BF360C', bottom: '12%', left: '2%', delay: '1s' },
-            { label: 'Jump', emoji: '🎮', bg: 'rgba(255,213,79,0.20)', color: '#F57F17', bottom: '12%', right: '2%', delay: '1.5s' },
-          ].map((c) => (
-            <div
-              key={c.label}
-              className="absolute flex flex-col items-center gap-1.5"
-              style={{
-                background: 'white',
-                borderRadius: '16px',
-                padding: '10px 14px',
-                boxShadow: '0 6px 24px rgba(0,0,0,0.10)',
-                minWidth: '90px',
-                top: c.top,
-                bottom: (c as { bottom?: string }).bottom,
-                left: (c as { left?: string }).left,
-                right: (c as { right?: string }).right,
-                animation: `float 3s ease-in-out ${c.delay} infinite`,
-              }}
-            >
-              <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
-                {c.emoji}
+          {/* 4 world badges — 2x2 grid, always visible on all screens */}
+          <div className="grid grid-cols-2" style={{ gap: '12px' }}>
+            {[
+              { label: 'Adventure', emoji: '🗺️', bg: 'rgba(102,187,106,0.15)', color: '#2E7D32', delay: '0s' },
+              { label: 'Builder', emoji: '🏗️', bg: 'rgba(79,195,247,0.15)', color: '#0277BD', delay: '0.5s' },
+              { label: 'Learning', emoji: '📚', bg: 'rgba(255,112,67,0.15)', color: '#BF360C', delay: '1s' },
+              { label: 'Jump', emoji: '🎮', bg: 'rgba(255,213,79,0.20)', color: '#F57F17', delay: '1.5s' },
+            ].map((c) => (
+              <div
+                key={c.label}
+                className="flex items-center gap-3"
+                style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  padding: 'clamp(10px, 2vw, 14px)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                  animation: `float 3s ease-in-out ${c.delay} infinite`,
+                }}
+              >
+                <div style={{ width: 36, height: 36, minWidth: 36, borderRadius: 10, backgroundColor: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
+                  {c.emoji}
+                </div>
+                <span className="font-fredoka font-semibold" style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', color: c.color }}>{c.label}</span>
               </div>
-              <span className="font-fredoka font-semibold" style={{ fontSize: 12, color: c.color }}>{c.label}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

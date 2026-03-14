@@ -48,10 +48,10 @@ export default function GlobalError({ error, reset }: ErrorProps) {
 
         <div>
           <h2 className="font-fredoka text-2xl font-semibold text-[var(--dark)] mb-2">
-            Hmm, ceva nu a mers...
+            Hmm, something went wrong...
           </h2>
           <p className="font-nunito text-base text-[var(--gray)]">
-            Nu-ți fă griji! Lio rezolvă totul. Încearcă din nou!
+            Don&apos;t worry! Lio will fix it. Try again!
           </p>
         </div>
 
@@ -64,14 +64,14 @@ export default function GlobalError({ error, reset }: ErrorProps) {
               background: 'linear-gradient(90deg, var(--coral), var(--coral-dark))',
             }}
           >
-            🔄 Încearcă din nou
+            🔄 Try again
           </button>
           <a
             href="/worlds"
             className="font-nunito text-sm text-[var(--gray)] underline"
             style={{ touchAction: 'manipulation' }}
           >
-            Înapoi la lumi
+            Back to worlds
           </a>
         </div>
       </div>

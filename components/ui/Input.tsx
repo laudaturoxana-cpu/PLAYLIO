@@ -27,7 +27,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           >
             {label}
             {props.required && (
-              <span className="ml-1 text-coral" aria-label="câmp obligatoriu">
+              <span className="ml-1 text-coral" aria-label="required field">
                 *
               </span>
             )}

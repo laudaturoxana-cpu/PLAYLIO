@@ -45,10 +45,10 @@ export default function NotFound() {
             404
           </h1>
           <h2 className="font-fredoka text-2xl font-semibold text-[var(--dark)] mb-2">
-            Lio s-a rătăcit!
+            Lio got lost!
           </h2>
           <p className="font-nunito text-base text-[var(--gray)]">
-            Această pagină nu există. Hai să ne întoarcem acasă!
+            This page doesn&apos;t exist. Let&apos;s go back home!
           </p>
         </div>
 
@@ -61,14 +61,14 @@ export default function NotFound() {
               background: 'linear-gradient(90deg, var(--sky), var(--sky-dark))',
             }}
           >
-            🏠 Înapoi la lumi
+            🏠 Back to worlds
           </Link>
           <Link
             href="/"
             className="font-nunito text-sm text-[var(--gray)] underline"
             style={{ touchAction: 'manipulation' }}
           >
-            Pagina principală
+            Home page
           </Link>
         </div>
       </div>
