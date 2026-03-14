@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { cn } from '@/lib/utils/cn'
 
 interface WorldCardProps {
   icon: string
@@ -12,7 +11,7 @@ interface WorldCardProps {
   bulletColor: string
   ctaLabel: string
   ctaHref: string
-  gradient: string
+  gradientStyle: string
   accentColor: string
 }
 
@@ -27,19 +26,15 @@ export function WorldCard({
   bulletColor,
   ctaLabel,
   ctaHref,
-  gradient,
+  gradientStyle,
   accentColor,
 }: WorldCardProps) {
   return (
     <article
-      className={cn(
-        'group relative rounded-[24px] p-7 md:p-8',
-        'transition-all duration-[250ms] ease-out',
-        'hover:-translate-y-[6px] hover:shadow-[0_12px_40px_rgba(0,0,0,0.10)]',
-        gradient
-      )}
+      className="group relative rounded-[24px] p-7 md:p-8 transition-all duration-[250ms] ease-out hover:-translate-y-[6px] hover:shadow-[0_12px_40px_rgba(0,0,0,0.10)]"
       style={{
         border: '1.5px solid rgba(0,0,0,0.07)',
+        background: gradientStyle,
       }}
     >
       <div className="flex flex-col gap-4">

@@ -69,10 +69,14 @@ export function HeroSection() {
             style={{
               fontSize: 'clamp(44px, 9vw, 64px)',
               fontWeight: 600,
+              display: 'block',
               background: 'linear-gradient(90deg, #4FC3F7 0%, #FF7043 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              color: 'transparent',
+              lineHeight: 1.1,
+              paddingBottom: '4px',
             }}
           >
             Lumea Playlio

@@ -47,8 +47,8 @@ export function CTASection() {
 
           {/* FIX 1: Pricing cards — grid 2 col, max-width 900px, gap 24px */}
           <div
-            className="grid grid-cols-1 md:grid-cols-2 mb-10 mx-auto"
-            style={{ gap: '24px', maxWidth: '900px' }}
+            className="grid grid-cols-1 md:grid-cols-2 mb-10"
+            style={{ gap: '24px', width: '100%' }}
           >
             <PricingCard
               name="Gratuit"

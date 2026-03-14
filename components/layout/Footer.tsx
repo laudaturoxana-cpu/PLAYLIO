@@ -38,13 +38,15 @@ function FooterColumn({
           <li key={link.label}>
             <Link
               href={link.href}
-              className="font-nunito transition-colors duration-200 hover:text-[#FAFAFA]"
+              className="font-nunito hover:text-white"
               style={{
                 display: 'block',
-                fontSize: '14px',
-                color: '#9E9E9E',
-                marginBottom: '10px',
+                fontSize: '15px',
+                fontWeight: 500,
+                color: '#BDBDBD',
+                marginBottom: '12px',
                 textDecoration: 'none',
+                transition: 'color 200ms ease',
               }}
             >
               {link.label}

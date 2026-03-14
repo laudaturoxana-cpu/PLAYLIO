@@ -38,7 +38,8 @@ export function ParentsSection() {
   return (
     <section
       id="parinti"
-      className="px-4 py-12 md:py-20 bg-[var(--light)]"
+      className="px-4 py-12 md:py-20"
+      style={{ backgroundColor: '#F5F5F5' }}
       aria-labelledby="parents-heading"
     >
       <div className="mx-auto max-w-6xl">
@@ -57,8 +58,8 @@ export function ParentsSection() {
 
         {/* FIX 16: Benefit cards grid 2 col, max-width 900px */}
         <div
-          className="grid grid-cols-1 md:grid-cols-2 mb-12 mx-auto"
-          style={{ gap: '20px', maxWidth: '900px' }}
+          className="grid grid-cols-1 md:grid-cols-2 mb-12"
+          style={{ gap: '20px', width: '100%' }}
         >
           {BENEFIT_CARDS.map((card) => (
             <article
