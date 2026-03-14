@@ -3,22 +3,23 @@ import { Fredoka, Nunito, Inter } from 'next/font/google'
 import ServiceWorkerRegister from '@/components/shared/ServiceWorkerRegister'
 import './globals.css'
 
+// FIX 13: latin-ext necesar pentru ă, î, â, ș, ț românești
 const fredoka = Fredoka({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600'],
   variable: '--font-fredoka',
   display: 'swap',
 })
 
 const nunito = Nunito({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-nunito',
   display: 'swap',
 })
 
 const inter = Inter({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600'],
   variable: '--font-inter',
   display: 'swap',

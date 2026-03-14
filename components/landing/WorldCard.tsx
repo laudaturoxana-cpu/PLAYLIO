@@ -5,9 +5,11 @@ interface WorldCardProps {
   icon: string
   title: string
   badge: string
-  badgeColor: string
+  badgeBg: string
+  badgeTextColor: string
   description: string
   features: string[]
+  bulletColor: string
   ctaLabel: string
   ctaHref: string
   gradient: string
@@ -18,9 +20,11 @@ export function WorldCard({
   icon,
   title,
   badge,
-  badgeColor,
+  badgeBg,
+  badgeTextColor,
   description,
   features,
+  bulletColor,
   ctaLabel,
   ctaHref,
   gradient,
@@ -29,29 +33,35 @@ export function WorldCard({
   return (
     <article
       className={cn(
-        'group relative rounded-3xl p-6 md:p-8',
-        'border border-white/80',
-        'shadow-[var(--shadow-sm)]',
+        'group relative rounded-[24px] p-7 md:p-8',
         'transition-all duration-[250ms] ease-out',
-        'hover:-translate-y-2 hover:shadow-[var(--shadow-md)]',
+        'hover:-translate-y-[6px] hover:shadow-[0_12px_40px_rgba(0,0,0,0.10)]',
         gradient
       )}
+      style={{
+        border: '1.5px solid rgba(0,0,0,0.07)',
+      }}
     >
       <div className="flex flex-col gap-4">
-        {/* Icon + Badge */}
+        {/* Icon + Badge — FIX 8: badge cu uppercase + letter-spacing */}
         <div className="flex items-start justify-between">
           <div
             className="flex items-center justify-center w-16 h-16 rounded-2xl text-3xl"
-            style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 15%, white)` }}
+            style={{ backgroundColor: badgeBg }}
             aria-hidden="true"
           >
             {icon}
           </div>
           <span
-            className="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold font-nunito"
+            className="inline-flex items-center rounded-full font-nunito"
             style={{
-              backgroundColor: `color-mix(in srgb, ${accentColor} 15%, white)`,
-              color: accentColor,
+              backgroundColor: badgeBg,
+              color: badgeTextColor,
+              padding: '4px 12px',
+              fontSize: '12px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
             }}
           >
             {badge}
@@ -68,13 +78,13 @@ export function WorldCard({
           {description}
         </p>
 
-        {/* Features */}
+        {/* FIX 14: Features cu culori bullet specifice per lume */}
         <ul className="flex flex-col gap-1.5 list-none">
           {features.map((feature) => (
             <li
               key={feature}
               className="font-nunito text-sm font-medium"
-              style={{ color: accentColor }}
+              style={{ color: bulletColor }}
             >
               {feature}
             </li>

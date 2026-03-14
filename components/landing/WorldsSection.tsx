@@ -5,52 +5,60 @@ const WORLDS = [
     icon: '🗺️',
     title: 'Adventure World',
     badge: 'Explorare',
-    badgeColor: 'var(--mint-dark)',
+    badgeBg: 'rgba(102,187,106,0.15)',
+    badgeTextColor: '#2E7D32',
     description:
       'Explorează 5 zone magice, colectează comori și completează misiuni cu Lio ghidul tău.',
     features: ['• 5 zone de explorat', '• 50+ misiuni', '• Personaje prietenoase'],
+    bulletColor: '#66BB6A',
     ctaLabel: 'Explorează →',
     ctaHref: '/play/adventure',
     gradient: 'bg-[linear-gradient(135deg,rgba(102,187,106,0.08)_0%,rgba(255,249,196,0.15)_100%)]',
-    accentColor: 'var(--mint-dark)',
+    accentColor: '#2E7D32',
   },
   {
     icon: '🏗️',
     title: 'Builder World',
     badge: 'Creativitate',
-    badgeColor: 'var(--sky-dark)',
+    badgeBg: 'rgba(79,195,247,0.15)',
+    badgeTextColor: '#0277BD',
     description:
       'Construiește și decorează propria casă. Alege mobilă, culori și obiecte câștigate în joc.',
     features: ['• 6 camere de decorat', '• 100+ obiecte', '• Casa ta unică'],
+    bulletColor: '#4FC3F7',
     ctaLabel: 'Construiește →',
     ctaHref: '/play/builder',
-    gradient: 'bg-[linear-gradient(135deg,rgba(79,195,247,0.08)_0%,rgba(206,147,216,0.12)_100%)]',
-    accentColor: 'var(--sky-dark)',
+    gradient: 'bg-[linear-gradient(135deg,rgba(79,195,247,0.08)_0%,rgba(237,231,246,0.12)_100%)]',
+    accentColor: '#0277BD',
   },
   {
     icon: '📚',
     title: 'Learning World',
     badge: 'Educație',
-    badgeColor: 'var(--coral-dark)',
+    badgeBg: 'rgba(255,112,67,0.15)',
+    badgeTextColor: '#BF360C',
     description:
       '6 mini-jocuri care predau litere, cifre, culori, forme și logică — fără ca cei mici să simtă că învață.',
     features: ['• Litere & cifre', '• Gândire logică', '• Adaptat vârstei'],
+    bulletColor: '#FF7043',
     ctaLabel: 'Învață →',
     ctaHref: '/play/learning',
-    gradient: 'bg-[linear-gradient(135deg,rgba(255,112,67,0.08)_0%,rgba(102,187,106,0.10)_100%)]',
-    accentColor: 'var(--coral-dark)',
+    gradient: 'bg-[linear-gradient(135deg,rgba(255,112,67,0.08)_0%,rgba(232,245,233,0.12)_100%)]',
+    accentColor: '#BF360C',
   },
   {
     icon: '🎮',
     title: 'Jump World',
     badge: 'Distracție',
-    badgeColor: '#F57F17',
+    badgeBg: 'rgba(255,213,79,0.20)',
+    badgeTextColor: '#F57F17',
     description:
       'Platformer colorat cu nivele progresive. Sari, evită obstacole, colectează stele și bate recorduri.',
     features: ['• 3 dificultăți', '• 15 nivele', '• Boss levels'],
+    bulletColor: '#F57F17',
     ctaLabel: 'Joacă →',
     ctaHref: '/play/jump',
-    gradient: 'bg-[linear-gradient(135deg,rgba(255,213,79,0.10)_0%,rgba(255,249,196,0.20)_100%)]',
+    gradient: 'bg-[linear-gradient(135deg,rgba(255,213,79,0.10)_0%,rgba(232,234,246,0.12)_100%)]',
     accentColor: '#F57F17',
   },
 ]
@@ -59,7 +67,7 @@ export function WorldsSection() {
   return (
     <section
       id="lumi"
-      className="px-4 py-20 md:py-28 bg-[var(--light)]"
+      className="px-4 py-12 md:py-20 bg-[var(--light)]"
       aria-labelledby="worlds-heading"
     >
       <div className="mx-auto max-w-6xl">

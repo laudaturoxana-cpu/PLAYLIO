@@ -21,7 +21,7 @@ export function CTASection() {
   return (
     <section
       id="despre"
-      className="px-4 py-20 md:py-28"
+      className="px-4 py-12 md:py-20"
       aria-labelledby="cta-heading"
     >
       <div className="mx-auto max-w-5xl">
@@ -45,8 +45,11 @@ export function CTASection() {
             Alătură-te familiilor care au ales un ecran mai bun.
           </p>
 
-          {/* Pricing cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 max-w-2xl mx-auto">
+          {/* FIX 1: Pricing cards — grid 2 col, max-width 900px, gap 24px */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 mb-10 mx-auto"
+            style={{ gap: '24px', maxWidth: '900px' }}
+          >
             <PricingCard
               name="Gratuit"
               price="0€"
@@ -72,10 +75,10 @@ export function CTASection() {
             Nu e nevoie de card bancar pentru versiunea gratuită.
           </p>
 
-          {/* Big shimmer CTA */}
+          {/* FIX 18: Buton CTA galben final */}
           <Link
             href="/register"
-            className="inline-flex items-center justify-center rounded-full font-nunito font-bold text-lg md:text-xl text-white px-10 py-5 min-h-[60px] transition-all duration-300 hover:opacity-90 active:scale-95 shimmer-bg"
+            className="cta-yellow-btn inline-flex items-center justify-center font-nunito font-bold transition-all duration-300 active:scale-95 hover:scale-[1.03]"
             aria-label="Creează cont acum și primești 50 coins bonus"
           >
             Creează cont acum — primești 50 coins bonus 🪙

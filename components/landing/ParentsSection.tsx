@@ -1,19 +1,20 @@
+// FIX 11: Culori icon wrapper conform spec
 const BENEFIT_CARDS = [
   {
     icon: '🔒',
-    iconBg: 'rgba(255,112,67,0.12)',
+    iconBg: 'rgba(79,195,247,0.15)',
     title: 'Zero chat cu necunoscuți',
     text: 'Playlio nu are niciun sistem de chat sau comunicare între jucători. Copilul tău nu poate fi contactat de nimeni. Deloc.',
   },
   {
     icon: '📵',
-    iconBg: 'rgba(79,195,247,0.12)',
+    iconBg: 'rgba(102,187,106,0.15)',
     title: 'Fără reclame în niciun moment',
     text: 'Nici în versiunea gratuită nu există reclame. Nu pop-ups, nu bannere, nu video ads. Promisiunea noastră necondiționată.',
   },
   {
     icon: '🎓',
-    iconBg: 'rgba(102,187,106,0.12)',
+    iconBg: 'rgba(255,213,79,0.15)',
     title: 'Educație reală, joc real',
     text: 'Litere, cifre, logică și creativitate predate invizibil prin gameplay. Copilul tău avansează la școală fără să știe că "face teme".',
   },
@@ -37,7 +38,7 @@ export function ParentsSection() {
   return (
     <section
       id="parinti"
-      className="px-4 py-20 md:py-28 bg-[var(--light)]"
+      className="px-4 py-12 md:py-20 bg-[var(--light)]"
       aria-labelledby="parents-heading"
     >
       <div className="mx-auto max-w-6xl">
@@ -54,25 +55,49 @@ export function ParentsSection() {
           </p>
         </div>
 
-        {/* Benefit cards grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        {/* FIX 16: Benefit cards grid 2 col, max-width 900px */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 mb-12 mx-auto"
+          style={{ gap: '20px', maxWidth: '900px' }}
+        >
           {BENEFIT_CARDS.map((card) => (
             <article
               key={card.title}
-              className="flex gap-5 rounded-3xl bg-white p-6 shadow-[var(--shadow-sm)] border border-black/5 transition-all duration-250 hover:shadow-[var(--shadow-md)]"
+              className="flex gap-4 transition-all duration-250 hover:shadow-[var(--shadow-md)]"
+              style={{
+                background: '#FAFAFA',
+                border: '1.5px solid rgba(0,0,0,0.07)',
+                borderRadius: '20px',
+                padding: '24px',
+                alignItems: 'flex-start',
+                minHeight: '120px',
+              }}
             >
+              {/* FIX 11: Icon wrapper 52x52px */}
               <div
-                className="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-2xl text-2xl"
-                style={{ backgroundColor: card.iconBg }}
+                className="flex-shrink-0 flex items-center justify-center"
+                style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '14px',
+                  backgroundColor: card.iconBg,
+                  fontSize: '24px',
+                }}
                 aria-hidden="true"
               >
                 {card.icon}
               </div>
-              <div className="flex flex-col gap-2">
-                <h3 className="font-fredoka text-xl font-semibold text-[var(--dark)]">
+              <div className="flex flex-col gap-1.5">
+                <h3
+                  className="font-fredoka font-semibold text-[var(--dark)]"
+                  style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px' }}
+                >
                   {card.title}
                 </h3>
-                <p className="font-nunito text-sm text-[var(--gray)] leading-relaxed">
+                <p
+                  className="font-nunito text-[var(--gray)]"
+                  style={{ fontSize: '14px', lineHeight: 1.6 }}
+                >
                   {card.text}
                 </p>
               </div>
@@ -97,12 +122,29 @@ export function ParentsSection() {
           ))}
         </div>
 
-        {/* Testimonial */}
-        <div className="mx-auto max-w-xl rounded-3xl bg-white p-8 shadow-[var(--shadow-sm)] border border-black/5 text-center">
-          {/* Stars */}
+        {/* FIX 17: Testimonial — integrat vizual */}
+        <div
+          className="mx-auto text-center"
+          style={{
+            background: 'white',
+            border: '1.5px solid rgba(0,0,0,0.07)',
+            borderRadius: '20px',
+            padding: '28px 32px',
+            maxWidth: '600px',
+            margin: '40px auto 0',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+          }}
+        >
+          {/* Stars — ★ text pentru colorare CSS */}
           <div className="flex justify-center gap-1 mb-4" aria-label="5 stele din 5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} className="text-2xl" aria-hidden="true">⭐</span>
+              <span
+                key={i}
+                aria-hidden="true"
+                style={{ color: '#FFD54F', fontSize: '20px' }}
+              >
+                ★
+              </span>
             ))}
           </div>
           <blockquote>
@@ -110,7 +152,6 @@ export function ParentsSection() {
               &ldquo;Andrei cere mereu &lsquo;encore la jocul cu litere&rsquo;. Nu și-a dat seama niciodată că de fapt exersează pentru școală.&rdquo;
             </p>
             <footer className="flex items-center justify-center gap-3">
-              {/* Avatar placeholder */}
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center font-fredoka font-semibold text-white text-sm"
                 style={{ backgroundColor: 'var(--purple)' }}

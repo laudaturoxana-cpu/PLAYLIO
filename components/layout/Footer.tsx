@@ -1,19 +1,18 @@
 import Link from 'next/link'
 
+// FIX 2: Linkuri reale conform spec
 const PRODUCT_LINKS = [
   { href: '#lumi', label: 'Cele 4 Lumi' },
   { href: '#avatar', label: 'Creator Avatar' },
   { href: '/register?plan=plus', label: 'Playlio Plus' },
   { href: '#', label: 'Noutăți' },
-  { href: '#', label: 'Roadmap' },
 ]
 
 const COMPANY_LINKS = [
   { href: '#', label: 'Despre noi' },
   { href: '#', label: 'Blog' },
-  { href: '#', label: 'Cariere' },
   { href: '#', label: 'Contact' },
-  { href: '#', label: 'Parteneriate' },
+  { href: '#', label: 'Cariere' },
 ]
 
 const LEGAL_LINKS = [
@@ -21,7 +20,6 @@ const LEGAL_LINKS = [
   { href: '#', label: 'Termeni și condiții' },
   { href: '#', label: 'GDPR' },
   { href: '#', label: 'Ghid părinți' },
-  { href: '#', label: 'Cookie Policy' },
 ]
 
 function FooterColumn({
@@ -34,12 +32,20 @@ function FooterColumn({
   return (
     <div className="flex flex-col gap-4">
       <h3 className="font-fredoka text-lg font-semibold text-[#FAFAFA]">{title}</h3>
-      <ul className="flex flex-col gap-2.5 list-none">
+      {/* FIX 2: display block, margin-bottom 10px, hover culoare */}
+      <ul className="flex flex-col list-none">
         {links.map((link) => (
           <li key={link.label}>
             <Link
               href={link.href}
-              className="font-nunito text-sm text-[#9E9E9E] transition-colors duration-200 hover:text-[#FAFAFA]"
+              className="font-nunito transition-colors duration-200 hover:text-[#FAFAFA]"
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                color: '#9E9E9E',
+                marginBottom: '10px',
+                textDecoration: 'none',
+              }}
             >
               {link.label}
             </Link>
@@ -64,11 +70,23 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <Link
               href="/"
-              className="font-fredoka text-3xl font-semibold"
+              className="font-fredoka font-semibold"
+              style={{ fontSize: '28px' }}
               aria-label="Playlio — pagina principală"
             >
               <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
-              <span style={{ color: 'var(--coral)' }}>O</span>
+              <span
+                className="inline-block"
+                style={{
+                  color: 'white',
+                  backgroundColor: 'var(--coral)',
+                  borderRadius: '50%',
+                  padding: '0 5px',
+                  lineHeight: 1.2,
+                }}
+              >
+                O
+              </span>
             </Link>
             <p className="font-nunito text-sm text-[#9E9E9E] leading-relaxed max-w-[200px]">
               O lume sigură și colorată pentru copiii tăi.
@@ -81,8 +99,8 @@ export function Footer() {
               playlio.fun
             </Link>
 
-            {/* Social placeholders */}
-            <div className="flex gap-3 mt-1" aria-label="Rețele sociale">
+            {/* FIX 19: Social icons 32x32px, gap 12px, hover opacity */}
+            <div className="flex mt-1" style={{ gap: '12px' }} aria-label="Rețele sociale">
               {[
                 { label: 'Instagram', icon: '📸' },
                 { label: 'TikTok', icon: '🎵' },
@@ -92,8 +110,12 @@ export function Footer() {
                   key={label}
                   href="#"
                   aria-label={`Playlio pe ${label}`}
-                  className="flex items-center justify-center w-10 h-10 rounded-xl text-lg transition-all duration-200 hover:scale-110"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
+                  className="flex items-center justify-center rounded-xl text-lg transition-opacity duration-200 hover:opacity-70"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                  }}
                 >
                   {icon}
                 </a>

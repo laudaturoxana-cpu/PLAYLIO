@@ -127,7 +127,7 @@ export function AvatarSection() {
   return (
     <section
       id="avatar"
-      className="px-4 py-20 md:py-28"
+      className="px-4 py-12 md:py-20"
       aria-labelledby="avatar-heading"
     >
       <div className="mx-auto max-w-6xl">
@@ -206,12 +206,20 @@ export function AvatarSection() {
               onSelect={update('outfitColor')}
             />
 
+            {/* FIX 10: CTA button — nu full-width, max-width 380px, centrat */}
             <Link
               href="/register"
-              className="mt-2 inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all duration-300 hover:opacity-90 active:scale-95"
+              className="mt-2 inline-flex items-center justify-center rounded-full font-nunito font-bold text-lg text-white transition-all duration-300 active:scale-95 hover:scale-[1.03]"
               style={{
                 backgroundColor: 'var(--coral)',
-                boxShadow: 'var(--shadow-coral)',
+                boxShadow: '0 6px 24px rgba(255,112,67,0.35)',
+                display: 'block',
+                padding: '16px 48px',
+                maxWidth: '380px',
+                margin: '0 auto',
+                fontSize: '18px',
+                fontWeight: 700,
+                textAlign: 'center',
               }}
             >
               Creează Avatar Gratuit

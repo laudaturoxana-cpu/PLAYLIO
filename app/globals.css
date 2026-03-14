@@ -214,10 +214,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* FIX 13: Font assignments explicite */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-fredoka), 'Fredoka One', cursive;
+  font-family: var(--font-fredoka), 'Fredoka', 'Fredoka One', cursive !important;
   line-height: 1.2;
   font-weight: 500;
+}
+
+.font-fredoka {
+  font-family: var(--font-fredoka), 'Fredoka', 'Fredoka One', cursive !important;
+}
+
+button, input, label, li, select, textarea {
+  font-family: var(--font-nunito), 'Nunito', sans-serif;
 }
 
 a {
@@ -260,6 +269,21 @@ a {
   outline: 3px solid var(--sky);
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+/* FIX 18: CTA yellow button */
+.cta-yellow-btn {
+  background-color: #FFD54F;
+  color: #212121;
+  padding: 18px 48px;
+  min-width: min(400px, 100%);
+  border-radius: 9999px;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 6px 24px rgba(255,213,79,0.40);
+}
+.cta-yellow-btn:hover {
+  background-color: #FFC107;
 }
 
 /* Scrollbar */

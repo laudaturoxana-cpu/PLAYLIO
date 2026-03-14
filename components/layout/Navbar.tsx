@@ -45,14 +45,26 @@ export function Navbar() {
           className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-8"
           aria-label="Navigare principală"
         >
-          {/* Logo */}
+          {/* FIX 5: Logo cu O rotitor */}
           <Link
             href="/"
-            className="font-fredoka text-3xl font-semibold tracking-wide"
+            className="font-fredoka font-semibold tracking-wide"
+            style={{ fontSize: '28px' }}
             aria-label="Playlio — pagina principală"
           >
             <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
-            <span style={{ color: 'var(--coral)' }}>O</span>
+            <span
+              className="inline-block transition-transform duration-300 hover:rotate-[20deg]"
+              style={{
+                color: 'white',
+                backgroundColor: 'var(--coral)',
+                borderRadius: '50%',
+                padding: '0 5px',
+                lineHeight: 1.2,
+              }}
+            >
+              O
+            </span>
           </Link>
 
           {/* Desktop links */}
@@ -116,11 +128,23 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="font-fredoka text-2xl font-semibold"
+            className="font-fredoka font-semibold"
+            style={{ fontSize: '24px' }}
             onClick={() => setMobileOpen(false)}
           >
             <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
-            <span style={{ color: 'var(--coral)' }}>O</span>
+            <span
+              className="inline-block"
+              style={{
+                color: 'white',
+                backgroundColor: 'var(--coral)',
+                borderRadius: '50%',
+                padding: '0 4px',
+                lineHeight: 1.2,
+              }}
+            >
+              O
+            </span>
           </Link>
           <button
             className="flex items-center justify-center h-10 w-10 rounded-xl hover:bg-[var(--light)] transition-colors"

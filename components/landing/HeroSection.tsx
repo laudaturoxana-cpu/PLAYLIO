@@ -4,6 +4,7 @@ interface FloatingCard {
   label: string
   emoji: string
   color: string
+  bgColor: string
   delay: string
   top?: string
   bottom?: string
@@ -12,10 +13,10 @@ interface FloatingCard {
 }
 
 const FLOATING_CARDS: FloatingCard[] = [
-  { label: 'Adventure', emoji: '🗺️', color: 'var(--mint)', delay: '0s', top: '10%', left: '5%' },
-  { label: 'Builder', emoji: '🏗️', color: 'var(--sky)', delay: '0.4s', top: '15%', right: '8%' },
-  { label: 'Learning', emoji: '📚', color: 'var(--coral)', delay: '0.8s', bottom: '25%', left: '3%' },
-  { label: 'Jump', emoji: '🎮', color: 'var(--sun)', delay: '1.2s', bottom: '20%', right: '5%' },
+  { label: 'Adventure', emoji: '🗺️', color: 'var(--mint-dark)', bgColor: 'rgba(102,187,106,0.15)', delay: '0s', top: '10%', left: '5%' },
+  { label: 'Builder', emoji: '🏗️', color: 'var(--sky-dark)', bgColor: 'rgba(79,195,247,0.15)', delay: '0.5s', top: '15%', right: '8%' },
+  { label: 'Learning', emoji: '📚', color: 'var(--coral-dark)', bgColor: 'rgba(255,112,67,0.15)', delay: '1s', bottom: '25%', left: '3%' },
+  { label: 'Jump', emoji: '🎮', color: '#F57F17', bgColor: 'rgba(255,213,79,0.20)', delay: '1.5s', bottom: '20%', right: '5%' },
 ]
 
 export function HeroSection() {
@@ -51,13 +52,24 @@ export function HeroSection() {
           🌍 Sigur pentru copii · Fără reclame · Educativ
         </span>
 
-        {/* H1 */}
-        <h1 className="font-fredoka font-semibold text-[var(--dark)]">
-          <span className="block text-4xl md:text-5xl lg:text-6xl mb-1">Bine ai venit în</span>
+        {/* FIX 20: echilibru tipografic — FIX 4: gradient explicit hex */}
+        <h1 className="font-fredoka text-[var(--dark)]" style={{ lineHeight: 1.1 }}>
           <span
-            className="block text-5xl md:text-6xl lg:text-7xl"
+            className="block"
             style={{
-              background: 'linear-gradient(90deg, var(--sky), var(--coral))',
+              fontSize: 'clamp(28px, 6vw, 40px)',
+              fontWeight: 400,
+              marginBottom: 0,
+            }}
+          >
+            Bine ai venit în
+          </span>
+          <span
+            className="block"
+            style={{
+              fontSize: 'clamp(44px, 9vw, 64px)',
+              fontWeight: 600,
+              background: 'linear-gradient(90deg, #4FC3F7 0%, #FF7043 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -85,9 +97,14 @@ export function HeroSection() {
           >
             Începe Aventura
           </Link>
+          {/* FIX 9: border + culoare sky blue, hover sky */}
           <Link
             href="#lumi"
-            className="inline-flex items-center justify-center rounded-full font-nunito font-bold text-lg text-[var(--dark)] px-9 py-4 min-h-[56px] border-2 border-[var(--dark)] transition-all duration-300 hover:bg-[var(--dark)] hover:text-white active:scale-95"
+            className="inline-flex items-center justify-center rounded-full font-nunito font-bold text-lg px-9 py-4 min-h-[56px] border-2 transition-all duration-300 active:scale-95 hover:bg-[#4FC3F7] hover:text-white hover:border-[#4FC3F7]"
+            style={{
+              borderColor: '#4FC3F7',
+              color: '#4FC3F7',
+            }}
           >
             Descoperă lumile
           </Link>
@@ -111,14 +128,22 @@ export function HeroSection() {
           aria-hidden="true"
         />
 
-        {/* Floating world cards */}
+        {/* FIX 7: Floating world cards — min-width 130px, icon container 44x44px */}
         {FLOATING_CARDS.map((card) => (
           <div
             key={card.label}
-            className="absolute flex flex-col items-center gap-1 rounded-2xl px-3 py-2 shadow-[var(--shadow-md)] bg-white"
+            className="absolute bg-white"
             style={{
+              minWidth: '130px',
+              padding: '14px 18px',
+              borderRadius: '20px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px',
               animationName: 'float',
-              animationDuration: '4s',
+              animationDuration: '3s',
               animationTimingFunction: 'ease-in-out',
               animationIterationCount: 'infinite',
               animationDelay: card.delay,
@@ -129,54 +154,62 @@ export function HeroSection() {
             }}
             aria-hidden="true"
           >
-            <span className="text-2xl">{card.emoji}</span>
+            <div
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                backgroundColor: card.bgColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '24px',
+                flexShrink: 0,
+              }}
+            >
+              {card.emoji}
+            </div>
             <span
-              className="font-fredoka text-sm font-semibold"
-              style={{ color: card.color }}
+              className="font-fredoka font-semibold"
+              style={{ color: card.color, fontSize: '14px' }}
             >
               {card.label}
             </span>
           </div>
         ))}
 
-        {/* Lio mascot — center */}
+        {/* FIX 6: Lio mascot SVG custom — bounce 3s */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
           <svg
             width="100"
             height="100"
-            viewBox="0 0 100 100"
+            viewBox="0 0 80 80"
             role="img"
             aria-label="Mascota Lio"
-            style={{ animation: 'bounce-soft 2s ease-in-out infinite' }}
+            style={{ animation: 'bounce-soft 3s ease-in-out infinite' }}
           >
             <defs>
-              <radialGradient id="lio-body" cx="40%" cy="35%" r="65%">
-                <stop offset="0%" stopColor="#FFE082" />
-                <stop offset="100%" stopColor="#FFD54F" />
+              <radialGradient id="bodyGrad" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stopColor="#FFE57F" />
+                <stop offset="100%" stopColor="#FF8F00" />
               </radialGradient>
             </defs>
             {/* Corp */}
-            <circle cx="50" cy="54" r="38" fill="url(#lio-body)" />
-            <circle cx="50" cy="54" r="38" fill="var(--coral)" opacity="0.12" />
+            <circle cx="40" cy="44" r="30" fill="url(#bodyGrad)" />
             {/* Ochi */}
-            <circle cx="38" cy="48" r="6" fill="var(--dark)" />
-            <circle cx="62" cy="48" r="6" fill="var(--dark)" />
-            <circle cx="40" cy="45.5" r="2" fill="white" />
-            <circle cx="64" cy="45.5" r="2" fill="white" />
-            {/* Zâmbet */}
-            <path
-              d="M 36 62 Q 50 72 64 62"
-              stroke="var(--dark)"
-              strokeWidth="3"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Antene */}
-            <circle cx="34" cy="18" r="7" fill="var(--sky)" />
-            <circle cx="66" cy="14" r="5.5" fill="var(--coral)" />
-            {/* Stele decorative */}
-            <text x="6" y="30" fontSize="14" style={{ animation: 'spin-slow 8s linear infinite', transformOrigin: '13px 24px' }}>⭐</text>
-            <text x="76" y="88" fontSize="12">✨</text>
+            <circle cx="30" cy="40" r="5" fill="#212121" />
+            <circle cx="50" cy="40" r="5" fill="#212121" />
+            {/* Reflexe ochi */}
+            <circle cx="32" cy="38" r="2" fill="white" />
+            <circle cx="52" cy="38" r="2" fill="white" />
+            {/* Gura zambet */}
+            <path d="M30 52 Q40 62 50 52" stroke="#212121" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            {/* Antena stanga */}
+            <circle cx="28" cy="16" r="5" fill="#4FC3F7" />
+            <line x1="28" y1="21" x2="32" y2="28" stroke="#4FC3F7" strokeWidth="2" />
+            {/* Antena dreapta */}
+            <circle cx="52" cy="12" r="4" fill="#FF7043" />
+            <line x1="52" y1="16" x2="48" y2="24" stroke="#FF7043" strokeWidth="2" />
           </svg>
         </div>
 
