@@ -44,6 +44,7 @@ export interface Database {
           xp?: number
           updated_at?: string
         }
+        Relationships: []
       }
       avatars: {
         Row: {
@@ -80,6 +81,7 @@ export interface Database {
           accessories?: Json
           updated_at?: string
         }
+        Relationships: []
       }
       progress: {
         Row: {
@@ -109,6 +111,7 @@ export interface Database {
           time_played_seconds?: number
           updated_at?: string
         }
+        Relationships: []
       }
       learning_progress: {
         Row: {
@@ -137,6 +140,7 @@ export interface Database {
           mastered?: boolean
           last_seen?: string
         }
+        Relationships: []
       }
       quests: {
         Row: {
@@ -177,6 +181,7 @@ export interface Database {
           order_index?: number
           is_active?: boolean
         }
+        Relationships: []
       }
       quest_completions: {
         Row: {
@@ -192,6 +197,7 @@ export interface Database {
           completed_at?: string
         }
         Update: Record<string, never>
+        Relationships: []
       }
       inventory: {
         Row: {
@@ -209,6 +215,7 @@ export interface Database {
           acquired_at?: string
         }
         Update: Record<string, never>
+        Relationships: []
       }
       builder_state: {
         Row: {
@@ -230,6 +237,7 @@ export interface Database {
           unlocked_rooms?: string[]
           updated_at?: string
         }
+        Relationships: []
       }
       coin_transactions: {
         Row: {
@@ -249,6 +257,7 @@ export interface Database {
           created_at?: string
         }
         Update: Record<string, never>
+        Relationships: []
       }
       daily_rewards: {
         Row: {
@@ -269,6 +278,7 @@ export interface Database {
           day_streak?: number
           coins_earned?: number
         }
+        Relationships: []
       }
       jump_scores: {
         Row: {
@@ -294,7 +304,11 @@ export interface Database {
           stars?: number
           time_ms?: number | null
         }
+        Relationships: []
       }
+    }
+    Views: {
+      [_ in never]: never
     }
     Functions: {
       add_coins: {
@@ -317,5 +331,8 @@ export interface Database {
       }
     }
     Enums: Record<string, never>
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
 }
