@@ -297,6 +297,9 @@ body, p, span, a, button, input, li, label {
   font-family: 'Nunito', sans-serif;
 }
 
+/* Footer hover links */
+.footer-link:hover { color: white !important; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--light); border-radius: 9999px; }

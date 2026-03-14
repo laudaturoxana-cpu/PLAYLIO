@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
-import { cn } from '@/lib/utils/cn'
 
 const NAV_LINKS = [
   { href: '#lumi', label: 'Lumi' },
@@ -23,41 +22,38 @@ export function Navbar() {
   }, [])
 
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
   return (
     <>
       <header
-        className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        style={
           scrolled
-            ? 'bg-white/90 backdrop-blur-md shadow-[0_2px_16px_rgba(0,0,0,0.08)]'
-            : 'bg-transparent'
-        )}
+            ? { background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 16px rgba(0,0,0,0.08)' }
+            : { background: 'transparent' }
+        }
       >
         <nav
-          className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-8"
+          className="mx-auto flex items-center justify-between"
+          style={{ maxWidth: '1152px', padding: '12px 16px' }}
           aria-label="Navigare principală"
         >
-          {/* FIX 5: Logo cu O rotitor */}
+          {/* Logo */}
           <Link
             href="/"
-            className="font-fredoka font-semibold tracking-wide"
-            style={{ fontSize: '28px' }}
+            className="font-fredoka font-semibold"
+            style={{ fontSize: 'clamp(22px, 3.5vw, 28px)', letterSpacing: '0.02em' }}
             aria-label="Playlio — pagina principală"
           >
-            <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
+            <span style={{ color: '#4FC3F7' }}>PLAYLI</span>
             <span
-              className="inline-block transition-transform duration-300 hover:rotate-[20deg]"
+              className="inline-block transition-transform duration-300"
               style={{
                 color: 'white',
-                backgroundColor: 'var(--coral)',
+                backgroundColor: '#FF7043',
                 borderRadius: '50%',
                 padding: '0 5px',
                 lineHeight: 1.2,
@@ -68,12 +64,15 @@ export function Navbar() {
           </Link>
 
           {/* Desktop links */}
-          <ul className="hidden md:flex items-center gap-8 list-none">
+          <ul className="hidden md:flex items-center list-none" style={{ gap: '32px' }}>
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="font-nunito text-base font-semibold text-[var(--dark)] transition-colors duration-200 hover:text-[var(--coral)]"
+                  className="font-nunito font-semibold transition-colors duration-200"
+                  style={{ fontSize: '15px', color: '#212121' }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#FF7043' }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#212121' }}
                 >
                   {link.label}
                 </Link>
@@ -84,10 +83,13 @@ export function Navbar() {
           {/* Desktop CTA */}
           <Link
             href="/register"
-            className="hidden md:inline-flex items-center justify-center rounded-full font-nunito font-semibold text-base text-white px-6 py-3 min-h-[44px] transition-all duration-[300ms] hover:opacity-90 active:scale-95"
+            className="hidden md:inline-flex items-center justify-center rounded-full font-nunito font-semibold text-white transition-all duration-300 active:scale-95"
             style={{
-              backgroundColor: 'var(--coral)',
-              boxShadow: 'var(--shadow-coral)',
+              backgroundColor: '#FF7043',
+              boxShadow: '0 4px 20px rgba(255,112,67,0.35)',
+              padding: '10px 24px',
+              fontSize: '15px',
+              minHeight: '44px',
             }}
           >
             Începe Gratuit
@@ -95,7 +97,8 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="flex md:hidden items-center justify-center h-11 w-11 rounded-xl text-[var(--dark)] transition-colors hover:bg-black/5"
+            className="flex md:hidden items-center justify-center rounded-xl transition-colors duration-200"
+            style={{ width: '44px', height: '44px', color: '#212121' }}
             onClick={() => setMobileOpen(true)}
             aria-expanded={mobileOpen}
             aria-label="Deschide meniu"
@@ -108,7 +111,8 @@ export function Navbar() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          className="fixed inset-0 z-40 md:hidden"
+          style={{ background: 'rgba(0,0,0,0.45)' }}
           onClick={() => setMobileOpen(false)}
           aria-hidden="true"
         />
@@ -119,11 +123,17 @@ export function Navbar() {
         role="dialog"
         aria-modal="true"
         aria-label="Meniu navigare"
-        className={cn(
-          'fixed top-0 right-0 z-50 h-full w-72 bg-white shadow-2xl transition-transform duration-300 ease-out md:hidden',
-          'flex flex-col p-6 gap-6',
-          mobileOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
+        className="fixed top-0 right-0 z-50 md:hidden flex flex-col"
+        style={{
+          width: '280px',
+          height: '100%',
+          background: 'white',
+          boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
+          padding: '20px',
+          gap: '20px',
+          transform: mobileOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 300ms ease-out',
+        }}
       >
         <div className="flex items-center justify-between">
           <Link
@@ -132,12 +142,12 @@ export function Navbar() {
             style={{ fontSize: '24px' }}
             onClick={() => setMobileOpen(false)}
           >
-            <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
+            <span style={{ color: '#4FC3F7' }}>PLAYLI</span>
             <span
               className="inline-block"
               style={{
                 color: 'white',
-                backgroundColor: 'var(--coral)',
+                backgroundColor: '#FF7043',
                 borderRadius: '50%',
                 padding: '0 4px',
                 lineHeight: 1.2,
@@ -147,7 +157,8 @@ export function Navbar() {
             </span>
           </Link>
           <button
-            className="flex items-center justify-center h-10 w-10 rounded-xl hover:bg-[var(--light)] transition-colors"
+            className="flex items-center justify-center rounded-xl transition-colors duration-200"
+            style={{ width: '40px', height: '40px', color: '#212121' }}
             onClick={() => setMobileOpen(false)}
             aria-label="Închide meniu"
           >
@@ -155,12 +166,13 @@ export function Navbar() {
           </button>
         </div>
 
-        <ul className="flex flex-col gap-2 list-none">
+        <ul className="flex flex-col list-none" style={{ gap: '4px' }}>
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="block font-nunito text-lg font-semibold text-[var(--dark)] py-3 px-3 rounded-xl hover:bg-[var(--light)] hover:text-[var(--coral)] transition-colors"
+                className="block font-nunito font-semibold rounded-xl transition-colors duration-200"
+                style={{ fontSize: '17px', color: '#212121', padding: '12px 12px' }}
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
@@ -169,14 +181,22 @@ export function Navbar() {
           ))}
         </ul>
 
-        <Link
-          href="/register"
-          className="mt-auto inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95"
-          style={{ backgroundColor: 'var(--coral)', boxShadow: 'var(--shadow-coral)' }}
-          onClick={() => setMobileOpen(false)}
-        >
-          Începe Gratuit
-        </Link>
+        <div style={{ marginTop: 'auto' }}>
+          <Link
+            href="/register"
+            className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-white transition-all active:scale-95"
+            style={{
+              backgroundColor: '#FF7043',
+              boxShadow: '0 4px 20px rgba(255,112,67,0.35)',
+              padding: '16px 24px',
+              fontSize: '17px',
+              minHeight: '56px',
+            }}
+            onClick={() => setMobileOpen(false)}
+          >
+            Începe Gratuit
+          </Link>
+        </div>
       </div>
     </>
   )

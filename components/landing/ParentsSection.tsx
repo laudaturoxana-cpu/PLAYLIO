@@ -1,4 +1,3 @@
-// FIX 11: Culori icon wrapper conform spec
 const BENEFIT_CARDS = [
   {
     icon: '🔒',
@@ -38,48 +37,51 @@ export function ParentsSection() {
   return (
     <section
       id="parinti"
-      className="px-4 py-12 md:py-20"
-      style={{ backgroundColor: '#F5F5F5' }}
+      className="px-4"
+      style={{ backgroundColor: '#F5F5F5', paddingTop: 'clamp(48px, 8vw, 80px)', paddingBottom: 'clamp(48px, 8vw, 80px)' }}
       aria-labelledby="parents-heading"
     >
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto" style={{ maxWidth: '1152px' }}>
         {/* Heading */}
-        <div className="text-center mb-12 md:mb-16">
+        <div className="text-center" style={{ marginBottom: 'clamp(32px, 5vw, 56px)' }}>
           <h2
             id="parents-heading"
-            className="font-fredoka text-4xl md:text-5xl font-semibold text-[var(--dark)] mb-4"
+            className="font-fredoka font-semibold"
+            style={{ fontSize: 'clamp(28px, 5vw, 48px)', color: '#212121', marginBottom: '12px' }}
           >
             Conceput cu grijă pentru părinți
           </h2>
-          <p className="font-nunito text-lg md:text-xl text-[var(--gray)] max-w-2xl mx-auto">
+          <p
+            className="font-nunito mx-auto"
+            style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6 }}
+          >
             Tu decizi. Tu controlezi. Copilul tău se bucură în siguranță deplină.
           </p>
         </div>
 
-        {/* FIX 16: Benefit cards grid 2 col, max-width 900px */}
+        {/* Benefit cards */}
         <div
-          className="grid grid-cols-1 md:grid-cols-2 mb-12"
-          style={{ gap: '20px', width: '100%' }}
+          className="grid grid-cols-1 sm:grid-cols-2"
+          style={{ gap: 'clamp(14px, 2.5vw, 20px)', marginBottom: 'clamp(32px, 5vw, 48px)' }}
         >
           {BENEFIT_CARDS.map((card) => (
             <article
               key={card.title}
-              className="flex gap-4 transition-all duration-250 hover:shadow-[var(--shadow-md)]"
+              className="flex gap-4"
               style={{
                 background: '#FAFAFA',
                 border: '1.5px solid rgba(0,0,0,0.07)',
                 borderRadius: '20px',
-                padding: '24px',
+                padding: 'clamp(16px, 3vw, 24px)',
                 alignItems: 'flex-start',
-                minHeight: '120px',
               }}
             >
-              {/* FIX 11: Icon wrapper 52x52px */}
               <div
                 className="flex-shrink-0 flex items-center justify-center"
                 style={{
                   width: '52px',
                   height: '52px',
+                  minWidth: '52px',
                   borderRadius: '14px',
                   backgroundColor: card.iconBg,
                   fontSize: '24px',
@@ -90,14 +92,14 @@ export function ParentsSection() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <h3
-                  className="font-fredoka font-semibold text-[var(--dark)]"
-                  style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px' }}
+                  className="font-fredoka font-semibold"
+                  style={{ fontSize: 'clamp(14px, 2vw, 16px)', color: '#212121', marginBottom: '4px' }}
                 >
                   {card.title}
                 </h3>
                 <p
-                  className="font-nunito text-[var(--gray)]"
-                  style={{ fontSize: '14px', lineHeight: 1.6 }}
+                  className="font-nunito"
+                  style={{ fontSize: 'clamp(13px, 1.8vw, 14px)', color: '#757575', lineHeight: 1.6 }}
                 >
                   {card.text}
                 </p>
@@ -108,7 +110,8 @@ export function ParentsSection() {
 
         {/* Trust badges */}
         <div
-          className="flex flex-wrap justify-center gap-3 mb-12"
+          className="flex flex-wrap justify-center"
+          style={{ gap: '10px', marginBottom: 'clamp(32px, 5vw, 48px)' }}
           role="list"
           aria-label="Garanții de siguranță"
         >
@@ -116,51 +119,61 @@ export function ParentsSection() {
             <span
               key={badge}
               role="listitem"
-              className="inline-flex items-center rounded-full px-4 py-2 font-nunito text-sm font-semibold bg-white shadow-[var(--shadow-sm)] border border-[var(--mint-light)] text-[var(--mint-dark)]"
+              className="inline-flex items-center font-nunito font-semibold"
+              style={{
+                background: 'white',
+                border: '1.5px solid #A5D6A7',
+                borderRadius: '9999px',
+                padding: '8px 16px',
+                fontSize: 'clamp(12px, 1.8vw, 14px)',
+                color: '#388E3C',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              }}
             >
               {badge}
             </span>
           ))}
         </div>
 
-        {/* FIX 17: Testimonial — integrat vizual */}
+        {/* Testimonial */}
         <div
           className="mx-auto text-center"
           style={{
             background: 'white',
             border: '1.5px solid rgba(0,0,0,0.07)',
             borderRadius: '20px',
-            padding: '28px 32px',
+            padding: 'clamp(20px, 4vw, 32px)',
             maxWidth: '600px',
-            margin: '40px auto 0',
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
           }}
         >
-          {/* Stars — ★ text pentru colorare CSS */}
-          <div className="flex justify-center gap-1 mb-4" aria-label="5 stele din 5">
+          <div className="flex justify-center gap-1" style={{ marginBottom: '16px' }} aria-label="5 stele din 5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <span
-                key={i}
-                aria-hidden="true"
-                style={{ color: '#FFD54F', fontSize: '20px' }}
-              >
-                ★
-              </span>
+              <span key={i} aria-hidden="true" style={{ color: '#FFD54F', fontSize: '20px' }}>★</span>
             ))}
           </div>
           <blockquote>
-            <p className="font-nunito text-base md:text-lg text-[var(--dark)] italic leading-relaxed mb-6">
+            <p
+              className="font-nunito italic"
+              style={{ fontSize: 'clamp(14px, 2.5vw, 17px)', color: '#212121', lineHeight: 1.7, marginBottom: '20px' }}
+            >
               &ldquo;Andrei cere mereu &lsquo;encore la jocul cu litere&rsquo;. Nu și-a dat seama niciodată că de fapt exersează pentru școală.&rdquo;
             </p>
             <footer className="flex items-center justify-center gap-3">
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center font-fredoka font-semibold text-white text-sm"
-                style={{ backgroundColor: 'var(--purple)' }}
+                className="flex items-center justify-center font-fredoka font-semibold text-white"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  backgroundColor: '#CE93D8',
+                  fontSize: '13px',
+                }}
                 aria-hidden="true"
               >
                 MC
               </div>
-              <cite className="not-italic font-nunito font-semibold text-sm text-[var(--dark)]">
+              <cite className="not-italic font-nunito font-semibold" style={{ fontSize: '14px', color: '#212121' }}>
                 Maria C., mamă, București
               </cite>
             </footer>

@@ -1,6 +1,5 @@
 import Link from 'next/link'
 
-// FIX 2: Linkuri reale conform spec
 const PRODUCT_LINKS = [
   { href: '#lumi', label: 'Cele 4 Lumi' },
   { href: '#avatar', label: 'Creator Avatar' },
@@ -22,32 +21,19 @@ const LEGAL_LINKS = [
   { href: '#', label: 'Ghid părinți' },
 ]
 
-function FooterColumn({
-  title,
-  links,
-}: {
-  title: string
-  links: { href: string; label: string }[]
-}) {
+function FooterColumn({ title, links }: { title: string; links: { href: string; label: string }[] }) {
   return (
-    <div className="flex flex-col gap-4">
-      <h3 className="font-fredoka text-lg font-semibold text-[#FAFAFA]">{title}</h3>
-      {/* FIX 2: display block, margin-bottom 10px, hover culoare */}
+    <div className="flex flex-col" style={{ gap: '16px' }}>
+      <h3 className="font-fredoka font-semibold" style={{ fontSize: '17px', color: '#FAFAFA' }}>
+        {title}
+      </h3>
       <ul className="flex flex-col list-none">
         {links.map((link) => (
           <li key={link.label}>
             <Link
               href={link.href}
-              className="font-nunito hover:text-white"
-              style={{
-                display: 'block',
-                fontSize: '15px',
-                fontWeight: 500,
-                color: '#BDBDBD',
-                marginBottom: '12px',
-                textDecoration: 'none',
-                transition: 'color 200ms ease',
-              }}
+              className="footer-link font-nunito block transition-colors duration-200"
+              style={{ fontSize: '14px', fontWeight: 500, color: '#BDBDBD', marginBottom: '10px', textDecoration: 'none' }}
             >
               {link.label}
             </Link>
@@ -61,27 +47,29 @@ function FooterColumn({
 export function Footer() {
   return (
     <footer
-      className="px-4 pt-16 pb-8"
-      style={{ backgroundColor: 'var(--dark)' }}
+      className="px-4"
+      style={{ backgroundColor: '#212121', paddingTop: 'clamp(48px, 8vw, 64px)', paddingBottom: 'clamp(24px, 4vw, 32px)' }}
       aria-label="Footer Playlio"
     >
-      <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-
+      <div className="mx-auto" style={{ maxWidth: '1152px' }}>
+        <div
+          className="grid grid-cols-2 md:grid-cols-4"
+          style={{ gap: 'clamp(24px, 4vw, 40px)', marginBottom: 'clamp(32px, 5vw, 48px)' }}
+        >
           {/* Brand column */}
-          <div className="flex flex-col gap-4">
+          <div className="col-span-2 md:col-span-1 flex flex-col" style={{ gap: '16px' }}>
             <Link
               href="/"
               className="font-fredoka font-semibold"
               style={{ fontSize: '28px' }}
               aria-label="Playlio — pagina principală"
             >
-              <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
+              <span style={{ color: '#4FC3F7' }}>PLAYLI</span>
               <span
                 className="inline-block"
                 style={{
                   color: 'white',
-                  backgroundColor: 'var(--coral)',
+                  backgroundColor: '#FF7043',
                   borderRadius: '50%',
                   padding: '0 5px',
                   lineHeight: 1.2,
@@ -90,19 +78,14 @@ export function Footer() {
                 O
               </span>
             </Link>
-            <p className="font-nunito text-sm text-[#9E9E9E] leading-relaxed max-w-[200px]">
+            <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E', lineHeight: 1.6, maxWidth: '200px' }}>
               O lume sigură și colorată pentru copiii tăi.
             </p>
-            <Link
-              href="/"
-              className="font-nunito text-sm font-semibold"
-              style={{ color: 'var(--sky)' }}
-            >
+            <Link href="/" className="font-nunito font-semibold" style={{ fontSize: '13px', color: '#4FC3F7' }}>
               playlio.fun
             </Link>
 
-            {/* FIX 19: Social icons 32x32px, gap 12px, hover opacity */}
-            <div className="flex mt-1" style={{ gap: '12px' }} aria-label="Rețele sociale">
+            <div className="flex" style={{ gap: '10px' }} aria-label="Rețele sociale">
               {[
                 { label: 'Instagram', icon: '📸' },
                 { label: 'TikTok', icon: '🎵' },
@@ -112,10 +95,10 @@ export function Footer() {
                   key={label}
                   href="#"
                   aria-label={`Playlio pe ${label}`}
-                  className="flex items-center justify-center rounded-xl text-lg transition-opacity duration-200 hover:opacity-70"
+                  className="flex items-center justify-center rounded-xl text-lg transition-opacity duration-200"
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: '36px',
+                    height: '36px',
                     backgroundColor: 'rgba(255,255,255,0.08)',
                   }}
                 >
@@ -132,13 +115,13 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div
-          className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-8"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+          className="flex flex-col sm:flex-row items-center justify-between"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '24px', gap: '12px' }}
         >
-          <p className="font-nunito text-sm text-[#9E9E9E]">
+          <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E' }}>
             © 2026 Playlio. Construit cu ❤️ pentru copiii lumii.
           </p>
-          <p className="font-nunito text-sm text-[#9E9E9E]">
+          <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E' }}>
             🇷🇴 Făcut în România
           </p>
         </div>

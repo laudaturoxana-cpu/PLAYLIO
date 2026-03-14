@@ -31,18 +31,26 @@ export function WorldCard({
 }: WorldCardProps) {
   return (
     <article
-      className="group relative rounded-[24px] p-7 md:p-8 transition-all duration-[250ms] ease-out hover:-translate-y-[6px] hover:shadow-[0_12px_40px_rgba(0,0,0,0.10)]"
+      className="relative rounded-[24px] transition-all duration-250"
       style={{
         border: '1.5px solid rgba(0,0,0,0.07)',
         background: gradientStyle,
+        padding: 'clamp(20px, 4vw, 32px)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
       }}
     >
       <div className="flex flex-col gap-4">
-        {/* Icon + Badge — FIX 8: badge cu uppercase + letter-spacing */}
-        <div className="flex items-start justify-between">
+        {/* Icon + Badge */}
+        <div className="flex items-start justify-between gap-2">
           <div
-            className="flex items-center justify-center w-16 h-16 rounded-2xl text-3xl"
-            style={{ backgroundColor: badgeBg }}
+            className="flex items-center justify-center rounded-2xl"
+            style={{
+              width: 'clamp(52px, 8vw, 64px)',
+              height: 'clamp(52px, 8vw, 64px)',
+              minWidth: '52px',
+              backgroundColor: badgeBg,
+              fontSize: 'clamp(22px, 4vw, 30px)',
+            }}
             aria-hidden="true"
           >
             {icon}
@@ -53,10 +61,11 @@ export function WorldCard({
               backgroundColor: badgeBg,
               color: badgeTextColor,
               padding: '4px 12px',
-              fontSize: '12px',
-              fontWeight: 600,
+              fontSize: '11px',
+              fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
+              whiteSpace: 'nowrap',
             }}
           >
             {badge}
@@ -64,16 +73,22 @@ export function WorldCard({
         </div>
 
         {/* Title */}
-        <h3 className="font-fredoka text-2xl font-semibold text-[var(--dark)]">
+        <h3
+          className="font-fredoka font-semibold"
+          style={{ fontSize: 'clamp(18px, 3vw, 24px)', color: '#212121' }}
+        >
           {title}
         </h3>
 
         {/* Description */}
-        <p className="font-nunito text-base text-[var(--gray)] leading-relaxed">
+        <p
+          className="font-nunito leading-relaxed"
+          style={{ fontSize: 'clamp(13px, 2vw, 15px)', color: '#757575' }}
+        >
           {description}
         </p>
 
-        {/* FIX 14: Features cu culori bullet specifice per lume */}
+        {/* Features */}
         <ul className="flex flex-col gap-1.5 list-none">
           {features.map((feature) => (
             <li
@@ -89,8 +104,8 @@ export function WorldCard({
         {/* CTA */}
         <Link
           href={ctaHref}
-          className="inline-flex items-center gap-1 font-nunito text-base font-bold mt-2 transition-all duration-200 hover:gap-2"
-          style={{ color: accentColor }}
+          className="inline-flex items-center gap-1 font-nunito font-bold mt-2"
+          style={{ fontSize: '15px', color: accentColor }}
           aria-label={`${ctaLabel} — ${title}`}
         >
           {ctaLabel}
