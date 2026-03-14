@@ -2,34 +2,34 @@ const BENEFIT_CARDS = [
   {
     icon: '🔒',
     iconBg: 'rgba(79,195,247,0.15)',
-    title: 'Zero chat cu necunoscuți',
-    text: 'Playlio nu are niciun sistem de chat sau comunicare între jucători. Copilul tău nu poate fi contactat de nimeni. Deloc.',
+    title: 'Zero chat with strangers',
+    text: 'Playlio has no chat or player communication system. Your child cannot be contacted by anyone. Ever.',
   },
   {
     icon: '📵',
     iconBg: 'rgba(102,187,106,0.15)',
-    title: 'Fără reclame în niciun moment',
-    text: 'Nici în versiunea gratuită nu există reclame. Nu pop-ups, nu bannere, nu video ads. Promisiunea noastră necondiționată.',
+    title: 'Zero ads, ever',
+    text: 'Not even in the free version. No pop-ups, no banners, no video ads. Our unconditional promise.',
   },
   {
     icon: '🎓',
     iconBg: 'rgba(255,213,79,0.15)',
-    title: 'Educație reală, joc real',
-    text: 'Litere, cifre, logică și creativitate predate invizibil prin gameplay. Copilul tău avansează la școală fără să știe că "face teme".',
+    title: 'Real education, real play',
+    text: 'Letters, numbers, logic and creativity taught invisibly through gameplay. Your child advances at school without knowing they\'re "doing homework".',
   },
   {
     icon: '🛡️',
     iconBg: 'rgba(206,147,216,0.15)',
-    title: 'GDPR & date 100% protejate',
-    text: 'Conform cu legislația europeană. Datele copilului nu sunt vândute, nu sunt partajate, nu sunt folosite pentru publicitate.',
+    title: 'GDPR & data 100% protected',
+    text: 'Compliant with European law. Your child\'s data is never sold, shared, or used for advertising.',
   },
 ]
 
 const TRUST_BADGES = [
-  '✓ Adecvat 3–10 ani',
-  '✓ Fără violență',
-  '✓ Control parental complet',
-  '✓ Conținut pozitiv',
+  '✓ Ages 3–10',
+  '✓ No violence',
+  '✓ Full parental control',
+  '✓ Positive content',
   '✓ COPPA compliant',
 ]
 
@@ -49,13 +49,13 @@ export function ParentsSection() {
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)', color: '#212121', marginBottom: '12px' }}
           >
-            Conceput cu grijă pentru părinți
+            Designed with care for parents
           </h2>
           <p
             className="font-nunito"
             style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6, margin: '0 auto' }}
           >
-            Tu decizi. Tu controlezi. Copilul tău se bucură în siguranță deplină.
+            You decide. You control. Your child plays in complete safety.
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export function ParentsSection() {
           className="flex flex-wrap justify-center"
           style={{ gap: '10px', marginBottom: 'clamp(32px, 5vw, 48px)' }}
           role="list"
-          aria-label="Garanții de siguranță"
+          aria-label="Safety guarantees"
         >
           {TRUST_BADGES.map((badge) => (
             <span
@@ -148,7 +148,7 @@ export function ParentsSection() {
             boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
           }}
         >
-          <div className="flex justify-center gap-1" style={{ marginBottom: '16px' }} aria-label="5 stele din 5">
+          <div className="flex justify-center gap-1" style={{ marginBottom: '16px' }} aria-label="5 out of 5 stars">
             {Array.from({ length: 5 }).map((_, i) => (
               <span key={i} aria-hidden="true" style={{ color: '#FFD54F', fontSize: '20px' }}>★</span>
             ))}
@@ -158,7 +158,7 @@ export function ParentsSection() {
               className="font-nunito italic"
               style={{ fontSize: 'clamp(14px, 2.5vw, 17px)', color: '#212121', lineHeight: 1.7, marginBottom: '20px' }}
             >
-              &ldquo;Andrei cere mereu &lsquo;encore la jocul cu litere&rsquo;. Nu și-a dat seama niciodată că de fapt exersează pentru școală.&rdquo;
+              &ldquo;Andrei always asks for &lsquo;more of the letters game&rsquo;. He never realized he was actually practicing for school.&rdquo;
             </p>
             <footer className="flex items-center justify-center gap-3">
               <div
@@ -175,7 +175,7 @@ export function ParentsSection() {
                 MC
               </div>
               <cite className="not-italic font-nunito font-semibold" style={{ fontSize: '14px', color: '#212121' }}>
-                Maria C., mamă, București
+                Maria C., mom, Bucharest
               </cite>
             </footer>
           </blockquote>

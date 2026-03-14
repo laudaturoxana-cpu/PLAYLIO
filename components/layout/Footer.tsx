@@ -1,24 +1,24 @@
 import Link from 'next/link'
 
 const PRODUCT_LINKS = [
-  { href: '#lumi', label: 'Cele 4 Lumi' },
-  { href: '#avatar', label: 'Creator Avatar' },
+  { href: '#lumi', label: 'The 4 Worlds' },
+  { href: '#avatar', label: 'Avatar Creator' },
   { href: '/register?plan=plus', label: 'Playlio Plus' },
-  { href: '#', label: 'Noutăți' },
+  { href: '#', label: 'News' },
 ]
 
 const COMPANY_LINKS = [
-  { href: '#', label: 'Despre noi' },
+  { href: '#', label: 'About us' },
   { href: '#', label: 'Blog' },
   { href: '#', label: 'Contact' },
-  { href: '#', label: 'Cariere' },
+  { href: '#', label: 'Careers' },
 ]
 
 const LEGAL_LINKS = [
-  { href: '#', label: 'Politică confidențialitate' },
-  { href: '#', label: 'Termeni și condiții' },
+  { href: '#', label: 'Privacy Policy' },
+  { href: '#', label: 'Terms & Conditions' },
   { href: '#', label: 'GDPR' },
-  { href: '#', label: 'Ghid părinți' },
+  { href: '#', label: 'Parents Guide' },
 ]
 
 function FooterColumn({ title, links }: { title: string; links: { href: string; label: string }[] }) {
@@ -49,7 +49,7 @@ export function Footer() {
     <footer
       className="px-4"
       style={{ backgroundColor: '#212121', paddingTop: 'clamp(48px, 8vw, 64px)', paddingBottom: 'clamp(24px, 4vw, 32px)' }}
-      aria-label="Footer Playlio"
+      aria-label="Playlio footer"
     >
       <div style={{ maxWidth: '1152px', margin: '0 auto', width: '100%' }}>
         <div
@@ -62,7 +62,7 @@ export function Footer() {
               href="/"
               className="font-fredoka font-semibold"
               style={{ fontSize: '28px' }}
-              aria-label="Playlio — pagina principală"
+              aria-label="Playlio — home page"
             >
               <span style={{ color: '#4FC3F7' }}>PLAYLI</span>
               <span
@@ -79,13 +79,13 @@ export function Footer() {
               </span>
             </Link>
             <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E', lineHeight: 1.6, maxWidth: '200px' }}>
-              O lume sigură și colorată pentru copiii tăi.
+              A safe and colorful world for your kids.
             </p>
             <Link href="/" className="font-nunito font-semibold" style={{ fontSize: '13px', color: '#4FC3F7' }}>
               playlio.fun
             </Link>
 
-            <div className="flex" style={{ gap: '10px' }} aria-label="Rețele sociale">
+            <div className="flex" style={{ gap: '10px' }} aria-label="Social media">
               {[
                 { label: 'Instagram', icon: '📸' },
                 { label: 'TikTok', icon: '🎵' },
@@ -94,7 +94,7 @@ export function Footer() {
                 <a
                   key={label}
                   href="#"
-                  aria-label={`Playlio pe ${label}`}
+                  aria-label={`Playlio on ${label}`}
                   className="flex items-center justify-center rounded-xl text-lg transition-opacity duration-200"
                   style={{
                     width: '36px',
@@ -108,9 +108,9 @@ export function Footer() {
             </div>
           </div>
 
-          <FooterColumn title="Produs" links={PRODUCT_LINKS} />
-          <FooterColumn title="Companie" links={COMPANY_LINKS} />
-          <FooterColumn title="Legal & Siguranță" links={LEGAL_LINKS} />
+          <FooterColumn title="Product" links={PRODUCT_LINKS} />
+          <FooterColumn title="Company" links={COMPANY_LINKS} />
+          <FooterColumn title="Legal & Safety" links={LEGAL_LINKS} />
         </div>
 
         {/* Bottom bar */}
@@ -119,10 +119,10 @@ export function Footer() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '24px', gap: '12px' }}
         >
           <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E' }}>
-            © 2026 Playlio. Construit cu ❤️ pentru copiii lumii.
+            © 2026 Playlio. Built with ❤️ for kids worldwide.
           </p>
           <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E' }}>
-            🇷🇴 Făcut în România
+            🇷🇴 Made in Romania
           </p>
         </div>
       </div>

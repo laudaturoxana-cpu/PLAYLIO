@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
 
 const schema = z.object({
-  email: z.string().email('Adresă de email invalidă'),
+  email: z.string().email('Invalid email address'),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -44,11 +44,10 @@ export default function ForgotPasswordPage() {
           ✉️
         </div>
         <h1 className="font-fredoka text-2xl font-semibold text-[var(--dark)]">
-          Email trimis!
+          Email sent!
         </h1>
         <p className="font-nunito text-base text-[var(--gray)] leading-relaxed">
-          Dacă adresa există în Playlio, vei primi un link pentru resetarea parolei în
-          câteva minute.
+          If the address exists in Playlio, you&apos;ll receive a password reset link within a few minutes.
         </p>
         <Link
           href="/login"
@@ -56,7 +55,7 @@ export default function ForgotPasswordPage() {
           style={{ color: 'var(--coral)' }}
         >
           <ArrowLeft size={16} aria-hidden="true" />
-          Înapoi la autentificare
+          Back to login
         </Link>
       </div>
     )
@@ -69,16 +68,16 @@ export default function ForgotPasswordPage() {
           href="/login"
           className="inline-flex items-center gap-1.5 font-nunito text-sm font-semibold mb-4 hover:underline"
           style={{ color: 'var(--gray)' }}
-          aria-label="Înapoi la autentificare"
+          aria-label="Back to login"
         >
           <ArrowLeft size={16} aria-hidden="true" />
-          Înapoi
+          Back
         </Link>
         <h1 className="font-fredoka text-3xl font-semibold text-[var(--dark)] mb-1">
-          Resetare parolă
+          Reset password
         </h1>
         <p className="font-nunito text-sm text-[var(--gray)]">
-          Introdu email-ul contului tău și îți trimitem un link de resetare.
+          Enter your account email and we&apos;ll send you a reset link.
         </p>
       </div>
 
@@ -86,7 +85,7 @@ export default function ForgotPasswordPage() {
         <Input
           type="email"
           label="Email"
-          placeholder="parinte@email.com"
+          placeholder="parent@email.com"
           autoComplete="email"
           error={errors.email?.message}
           required
@@ -102,10 +101,10 @@ export default function ForgotPasswordPage() {
           {isSubmitting ? (
             <>
               <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-              Se trimite...
+              Sending...
             </>
           ) : (
-            'Trimite link de resetare'
+            'Send reset link'
           )}
         </button>
       </form>

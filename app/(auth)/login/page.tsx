@@ -10,21 +10,21 @@ import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
 
 const schema = z.object({
-  email: z.string().email('Adresă de email invalidă'),
-  password: z.string().min(1, 'Parola este obligatorie'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
   remember_me: z.boolean().optional(),
 })
 
 type FormValues = z.infer<typeof schema>
 
 const SUPABASE_ERRORS: Record<string, string> = {
-  'Invalid login credentials': 'Email sau parolă incorecte. Încearcă din nou.',
-  'Email not confirmed': 'Trebuie să confirmi email-ul înainte de a te autentifica.',
-  'Too many requests': 'Prea multe încercări. Încearcă din nou în câteva minute.',
+  'Invalid login credentials': 'Incorrect email or password. Try again.',
+  'Email not confirmed': 'You must confirm your email before logging in.',
+  'Too many requests': 'Too many attempts. Try again in a few minutes.',
 }
 
 function getErrorMessage(msg: string): string {
-  return SUPABASE_ERRORS[msg] ?? 'Ceva nu a mers. Încearcă din nou.'
+  return SUPABASE_ERRORS[msg] ?? 'Something went wrong. Please try again.'
 }
 
 export default function LoginPage() {
@@ -82,16 +82,16 @@ export default function LoginPage() {
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="font-fredoka text-3xl font-semibold text-[var(--dark)] mb-1">
-          Bine ai revenit!
+          Welcome back!
         </h1>
         <p className="font-nunito text-sm text-[var(--gray)]">
-          Nu ai cont?{' '}
+          Don&apos;t have an account?{' '}
           <Link
             href="/register"
             className="font-semibold hover:underline"
             style={{ color: 'var(--coral)' }}
           >
-            Creează unul gratuit
+            Create one for free
           </Link>
         </p>
       </div>
@@ -102,7 +102,7 @@ export default function LoginPage() {
         onClick={handleGoogleLogin}
         disabled={googleLoading}
         className="inline-flex items-center justify-center gap-3 w-full rounded-full font-nunito font-semibold text-base text-[var(--dark)] px-6 py-3 min-h-[48px] border-2 border-black/10 bg-white transition-all hover:border-[var(--sky)] hover:shadow-[var(--shadow-sm)] active:scale-95 disabled:opacity-60"
-        aria-label="Autentifică-te cu Google"
+        aria-label="Sign in with Google"
       >
         {googleLoading ? (
           <span className="h-5 w-5 rounded-full border-2 border-[var(--gray)] border-t-transparent animate-spin" />
@@ -126,12 +126,12 @@ export default function LoginPage() {
             />
           </svg>
         )}
-        Continuă cu Google
+        Continue with Google
       </button>
 
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-black/8" />
-        <span className="font-nunito text-sm text-[var(--gray)]">sau cu email</span>
+        <span className="font-nunito text-sm text-[var(--gray)]">or with email</span>
         <div className="flex-1 h-px bg-black/8" />
       </div>
 
@@ -149,7 +149,7 @@ export default function LoginPage() {
         <Input
           type="email"
           label="Email"
-          placeholder="parinte@email.com"
+          placeholder="parent@email.com"
           autoComplete="email"
           error={errors.email?.message}
           {...register('email')}
@@ -158,15 +158,15 @@ export default function LoginPage() {
         <div className="relative">
           <Input
             type={showPass ? 'text' : 'password'}
-            label="Parolă"
-            placeholder="Parola ta"
+            label="Password"
+            placeholder="Your password"
             autoComplete="current-password"
             error={errors.password?.message}
             {...register('password')}
           />
           <button
             type="button"
-            aria-label={showPass ? 'Ascunde parola' : 'Arată parola'}
+            aria-label={showPass ? 'Hide password' : 'Show password'}
             onClick={() => setShowPass((p) => !p)}
             className="absolute right-3 top-9 flex items-center justify-center w-8 h-8 text-[var(--gray)]"
           >
@@ -181,14 +181,14 @@ export default function LoginPage() {
               className="h-4 w-4 rounded accent-[var(--coral)]"
               {...register('remember_me')}
             />
-            <span className="font-nunito text-sm text-[var(--gray)]">Ține-mă minte</span>
+            <span className="font-nunito text-sm text-[var(--gray)]">Remember me</span>
           </label>
           <Link
             href="/forgot-password"
             className="font-nunito text-sm font-semibold hover:underline"
             style={{ color: 'var(--coral)' }}
           >
-            Ai uitat parola?
+            Forgot password?
           </Link>
         </div>
 
@@ -201,10 +201,10 @@ export default function LoginPage() {
           {isSubmitting ? (
             <>
               <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-              Se autentifică...
+              Signing in...
             </>
           ) : (
-            'Intră în Playlio'
+            'Enter Playlio'
           )}
         </button>
       </form>

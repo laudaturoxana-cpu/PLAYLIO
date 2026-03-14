@@ -2,19 +2,19 @@ import Link from 'next/link'
 import { PricingCard } from './PricingCard'
 
 const FREE_FEATURES = [
-  'Avatar creator complet',
-  'Adventure World — Zona 1',
-  '2 mini-jocuri Learning',
-  '1 nivel Jump World',
+  'Full avatar creator',
+  'Adventure World — Zone 1',
+  '2 Learning mini-games',
+  '1 Jump World level',
 ]
 
 const PLUS_FEATURES = [
-  'Tot din Gratuit',
-  'Toate lumile deblocate',
-  'Conținut premium exclusiv',
-  'Dashboard părinți complet',
-  'Rapoarte săptămânale',
-  'Teme sezoniere',
+  'Everything in Free',
+  'All worlds unlocked',
+  'Exclusive premium content',
+  'Full parent dashboard',
+  'Weekly reports',
+  'Seasonal themes',
 ]
 
 export function CTASection() {
@@ -40,13 +40,13 @@ export function CTASection() {
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(28px, 6vw, 56px)', color: '#212121', marginBottom: '12px' }}
           >
-            Gata să pornești aventura?
+            Ready to start the adventure?
           </h2>
           <p
             className="font-nunito"
             style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '480px', margin: `0 auto clamp(32px, 5vw, 48px)`, lineHeight: 1.6 }}
           >
-            Alătură-te familiilor care au ales un ecran mai bun.
+            Join the families who chose a better screen.
           </p>
 
           {/* Pricing cards */}
@@ -55,22 +55,22 @@ export function CTASection() {
             style={{ gap: 'clamp(16px, 3vw, 24px)', marginBottom: 'clamp(20px, 3vw, 32px)' }}
           >
             <PricingCard
-              name="Gratuit"
+              name="Free"
               price="0€"
-              priceNote="Mereu gratuit"
+              priceNote="Always free"
               features={FREE_FEATURES}
-              ctaLabel="Începe Gratuit"
+              ctaLabel="Start Free"
               ctaHref="/register"
             />
             <PricingCard
               name="Playlio Plus"
               price="5€/lună"
-              priceNote="Anulezi oricând"
+              priceNote="Cancel anytime"
               features={PLUS_FEATURES}
-              ctaLabel="Încearcă 7 zile gratuit"
+              ctaLabel="Try 7 days free"
               ctaHref="/register?plan=plus"
               highlighted
-              badge="Recomandat"
+              badge="Recommended"
             />
           </div>
 
@@ -78,13 +78,13 @@ export function CTASection() {
             className="font-nunito"
             style={{ fontSize: '13px', color: '#9E9E9E', marginBottom: 'clamp(24px, 4vw, 40px)' }}
           >
-            Nu e nevoie de card bancar pentru versiunea gratuită.
+            No credit card needed for the free version.
           </p>
 
           <Link
             href="/register"
             className="inline-flex items-center justify-center font-nunito font-bold transition-all duration-300 active:scale-95"
-            aria-label="Creează cont acum și primești 50 coins bonus"
+            aria-label="Create account now and get 50 bonus coins"
             style={{
               backgroundColor: '#FFD54F',
               color: '#212121',
@@ -97,7 +97,7 @@ export function CTASection() {
               maxWidth: '480px',
             }}
           >
-            Creează cont acum — primești 50 coins bonus 🪙
+            Create account now — get 50 bonus coins 🪙
           </Link>
         </div>
       </div>

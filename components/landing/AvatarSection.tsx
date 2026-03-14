@@ -114,13 +114,13 @@ export function AvatarSection() {
               className="font-fredoka font-semibold"
               style={{ fontSize: 'clamp(28px, 5vw, 44px)', color: '#212121', marginBottom: '8px' }}
             >
-              Creează-ți personajul
+              Create your character
             </h2>
             <p
               className="font-nunito"
               style={{ fontSize: 'clamp(14px, 2vw, 16px)', color: '#757575' }}
             >
-              Fii exact cine vrei în lumea Playlio
+              Be exactly who you want in the Playlio world
             </p>
           </div>
 
@@ -160,32 +160,32 @@ export function AvatarSection() {
                 <AvatarSVG config={config} />
               </div>
               <p className="font-fredoka" style={{ fontSize: '16px', color: '#212121' }}>
-                Aventurierul tău
+                Your adventurer
               </p>
             </div>
 
             {/* Controls */}
             <div className="flex flex-col w-full" style={{ gap: 'clamp(16px, 3vw, 24px)', maxWidth: '480px' }}>
               <ColorDots
-                label="Culoarea părului"
+                label="Hair color"
                 options={AVATAR_HAIR_COLORS}
                 selected={config.hairColor}
                 onSelect={update('hairColor')}
               />
               <ColorDots
-                label="Tonul tenului"
+                label="Skin tone"
                 options={AVATAR_SKIN_TONES}
                 selected={config.skinTone}
                 onSelect={update('skinTone')}
               />
               <ColorDots
-                label="Culoarea ochilor"
+                label="Eye color"
                 options={AVATAR_EYE_COLORS}
                 selected={config.eyeColor}
                 onSelect={update('eyeColor')}
               />
               <ColorDots
-                label="Culoarea hainelor"
+                label="Outfit color"
                 options={AVATAR_OUTFIT_COLORS}
                 selected={config.outfitColor}
                 onSelect={update('outfitColor')}
@@ -205,10 +205,10 @@ export function AvatarSection() {
                   marginTop: '8px',
                 }}
               >
-                Creează Avatar Gratuit
+                Create Free Avatar
               </Link>
               <p className="text-center font-nunito" style={{ fontSize: '12px', color: '#9E9E9E' }}>
-                Fără cont necesar · Îl salvezi după înregistrare
+                No account needed · Save it after registration
               </p>
             </div>
           </div>

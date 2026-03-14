@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 
 const NAV_LINKS = [
-  { href: '#lumi', label: 'Lumi' },
+  { href: '#lumi', label: 'Worlds' },
   { href: '#avatar', label: 'Avatar' },
-  { href: '#parinti', label: 'Părinți' },
-  { href: '#despre', label: 'Despre' },
+  { href: '#parinti', label: 'Parents' },
+  { href: '#despre', label: 'About' },
 ] as const
 
 export function Navbar() {
@@ -39,14 +39,14 @@ export function Navbar() {
         <nav
           className="mx-auto flex items-center justify-between"
           style={{ maxWidth: '1152px', margin: '0 auto', padding: '12px 16px', width: '100%' }}
-          aria-label="Navigare principală"
+          aria-label="Main navigation"
         >
           {/* Logo */}
           <Link
             href="/"
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(22px, 3.5vw, 28px)', letterSpacing: '0.02em' }}
-            aria-label="Playlio — pagina principală"
+            aria-label="Playlio — home page"
           >
             <span style={{ color: '#4FC3F7' }}>PLAYLI</span>
             <span
@@ -92,7 +92,7 @@ export function Navbar() {
               minHeight: '44px',
             }}
           >
-            Începe Gratuit
+            Start Free
           </Link>
 
           {/* Mobile hamburger */}
@@ -101,7 +101,7 @@ export function Navbar() {
             style={{ width: '44px', height: '44px', color: '#212121' }}
             onClick={() => setMobileOpen(true)}
             aria-expanded={mobileOpen}
-            aria-label="Deschide meniu"
+            aria-label="Open menu"
           >
             <Menu size={24} aria-hidden="true" />
           </button>
@@ -122,7 +122,7 @@ export function Navbar() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Meniu navigare"
+        aria-label="Navigation menu"
         className="fixed top-0 right-0 z-50 md:hidden flex flex-col"
         style={{
           width: '280px',
@@ -160,7 +160,7 @@ export function Navbar() {
             className="flex items-center justify-center rounded-xl transition-colors duration-200"
             style={{ width: '40px', height: '40px', color: '#212121' }}
             onClick={() => setMobileOpen(false)}
-            aria-label="Închide meniu"
+            aria-label="Close menu"
           >
             <X size={22} aria-hidden="true" />
           </button>
@@ -194,7 +194,7 @@ export function Navbar() {
             }}
             onClick={() => setMobileOpen(false)}
           >
-            Începe Gratuit
+            Start Free
           </Link>
         </div>
       </div>
