@@ -27,18 +27,18 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Playlio — Lumea Jocurilor Educative',
+    default: 'Playlio — The World of Educational Games',
     template: '%s | Playlio',
   },
   description:
-    'O lume colorată și sigură unde copiii cu vârste între 3 și 10 ani explorează, construiesc, învață și se joacă — fără reclame, fără pericole.',
+    'A colorful and safe world where kids aged 3–10 explore, build, learn and play — no ads, no dangers.',
   keywords: [
-    'jocuri educative copii',
-    'platforma educativa',
-    'invatare prin joc',
-    'jocuri sigure copii',
-    'litere cifre copii',
-    'aventura virtuala copii',
+    'educational games for kids',
+    'educational platform',
+    'learning through play',
+    'safe games for kids',
+    'letters numbers kids',
+    'virtual adventure kids',
     'Playlio',
   ],
   authors: [{ name: 'Playlio', url: 'https://playlio.fun' }],
@@ -49,26 +49,26 @@ export const metadata: Metadata = {
   ),
   openGraph: {
     type: 'website',
-    locale: 'ro_RO',
+    locale: 'en_US',
     url: 'https://playlio.fun',
     siteName: 'Playlio',
-    title: 'Playlio — Lumea Jocurilor Educative',
+    title: 'Playlio — The World of Educational Games',
     description:
-      'O lume colorată și sigură unde copiii explorează, construiesc, învață și se joacă.',
+      'A colorful and safe world where kids explore, build, learn and play — no ads, no dangers.',
     images: [
       {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Playlio — Lumea Jocurilor Educative',
+        alt: 'Playlio — The World of Educational Games',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Playlio — Lumea Jocurilor Educative',
+    title: 'Playlio — The World of Educational Games',
     description:
-      'O lume colorată și sigură unde copiii explorează, construiesc, învață și se joacă.',
+      'A colorful and safe world where kids explore, build, learn and play — no ads, no dangers.',
     images: ['/images/og-image.png'],
   },
   manifest: '/manifest.json',
@@ -98,7 +98,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ro" className={`${fredoka.variable} ${nunito.variable} ${inter.variable}`}>
+    <html lang="en" className={`${fredoka.variable} ${nunito.variable} ${inter.variable}`}>
       <body className="font-nunito antialiased">
         <ServiceWorkerRegister />
         {children}
