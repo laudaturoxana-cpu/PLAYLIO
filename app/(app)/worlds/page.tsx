@@ -123,7 +123,7 @@ export default async function WorldsPage() {
         }}
       >
         {/* Top HUD */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           {/* Level + XP */}
           <div className="flex items-center gap-3">
             <div
@@ -164,21 +164,43 @@ export default async function WorldsPage() {
             </div>
           </div>
 
-          {/* Coins */}
-          <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full"
-            style={{
-              background: 'rgba(255,213,79,0.12)',
-              border: '1.5px solid rgba(255,193,7,0.3)',
-            }}
-          >
-            <span style={{ fontSize: 'clamp(16px, 2vw, 20px)' }}>🪙</span>
-            <span
-              className="font-fredoka font-semibold"
-              style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', color: '#F57F17' }}
+          {/* Right side: coins + parent dashboard */}
+          <div className="flex items-center gap-2">
+            {/* Coins */}
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-full"
+              style={{
+                background: 'rgba(255,213,79,0.12)',
+                border: '1.5px solid rgba(255,193,7,0.3)',
+              }}
             >
-              {coins.toLocaleString('en-US')}
-            </span>
+              <span style={{ fontSize: 'clamp(16px, 2vw, 20px)' }}>🪙</span>
+              <span
+                className="font-fredoka font-semibold"
+                style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', color: '#F57F17' }}
+              >
+                {coins.toLocaleString('en-US')}
+              </span>
+            </div>
+
+            {/* Parent dashboard button */}
+            {isParent && (
+              <Link
+                href="/parents/dashboard"
+                className="flex items-center justify-center rounded-2xl bg-white border border-black/8 shadow-sm active:scale-95 transition-transform"
+                style={{
+                  width: 'clamp(40px, 5vw, 48px)',
+                  height: 'clamp(40px, 5vw, 48px)',
+                  fontSize: 'clamp(18px, 2vw, 22px)',
+                  touchAction: 'manipulation',
+                  flexShrink: 0,
+                }}
+                aria-label="Parent dashboard"
+                title="Parent dashboard"
+              >
+                👨‍👧
+              </Link>
+            )}
           </div>
         </div>
 
