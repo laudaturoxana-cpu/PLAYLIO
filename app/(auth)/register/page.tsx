@@ -111,7 +111,7 @@ export default function RegisterPage() {
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="font-fredoka text-3xl font-semibold text-[var(--dark)] mb-1">
-          Create free account
+          Create parent account
         </h1>
         <p className="font-nunito text-sm text-[var(--gray)]">
           Already have an account?{' '}
@@ -122,6 +122,17 @@ export default function RegisterPage() {
           >
             Log in
           </Link>
+        </p>
+      </div>
+
+      {/* Parent/child model explanation */}
+      <div
+        className="rounded-2xl px-4 py-3 flex items-start gap-3"
+        style={{ background: 'rgba(79,195,247,0.10)', border: '1.5px solid rgba(79,195,247,0.25)' }}
+      >
+        <span className="text-xl flex-shrink-0">👨‍👧</span>
+        <p className="font-nunito text-sm text-[var(--dark)] leading-relaxed">
+          <strong>This is the parent&apos;s account.</strong> After creating it, you&apos;ll add your child&apos;s name &amp; age inside the app — no separate account needed for children!
         </p>
       </div>
 
@@ -137,7 +148,7 @@ export default function RegisterPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         <Input
-          label="Your name"
+          label="Your name (parent)"
           placeholder="e.g. Maria"
           autoComplete="given-name"
           error={errors.full_name?.message}
