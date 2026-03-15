@@ -61,7 +61,7 @@ export default function RoomCanvas({
 
   return (
     <div
-      className="relative w-full rounded-3xl overflow-hidden shadow-md border border-black/08"
+      className="relative w-full rounded-3xl overflow-hidden shadow-md border border-black/10"
       style={{
         background: theme.bg,
         aspectRatio: '3/2',

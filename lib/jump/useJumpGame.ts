@@ -4,11 +4,11 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import type { JumpLevel, Platform } from './levels'
 import { calculateStars } from './levels'
 
-// Dimensiunile scenei (px) — fixe pentru fizică consistentă
+// Scene dimensions (px) — fixed for consistent physics
 export const SCENE_W = 360
 export const SCENE_H = 480
 
-// Personajul
+// Character
 const CHAR_W = 32
 const CHAR_H = 36
 const GRAVITY = 0.55
@@ -118,7 +118,7 @@ export function useJumpGame(level: JumpLevel) {
     // Gravitație
     vy = Math.min(vy + GRAVITY, MAX_FALL)
 
-    // Mișcare orizontală
+    // Horizontal movement
     if (ctrl.left)  { vx = -MOVE_SPEED; facing = 'left' }
     else if (ctrl.right) { vx = MOVE_SPEED; facing = 'right' }
     else vx = 0
@@ -129,7 +129,7 @@ export function useJumpGame(level: JumpLevel) {
     // Platfome colidare
     const platforms = getCurrentPlatforms()
     for (const { px } of platforms) {
-      // Coliziune de sus (aterizare)
+      // Top collision (aterizare)
       if (
         vx >= -MOVE_SPEED && vx <= MOVE_SPEED && // nu intrat din lateral
         x + CHAR_W > px.x &&
@@ -156,7 +156,7 @@ export function useJumpGame(level: JumpLevel) {
     // Bounds orizontale
     x = Math.max(0, Math.min(SCENE_W - CHAR_W, x))
 
-    // Căzut din scenă = mort
+    // Fell out of scene = mort
     if (y > SCENE_H + 50) {
       runningRef.current = false
       setIsDead(true)
@@ -166,7 +166,7 @@ export function useJumpGame(level: JumpLevel) {
       return
     }
 
-    // Colectare monede
+    // Coin collection
     const newCollected = new Set(collectedRef.current)
     for (const coin of level.coins) {
       if (newCollected.has(coin.id)) continue

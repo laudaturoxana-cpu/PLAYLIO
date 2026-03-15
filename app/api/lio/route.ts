@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
           { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_LOW_AND_ABOVE' },
         ],
       }),
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined,
     })
 
     if (!res.ok) {

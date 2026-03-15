@@ -17,6 +17,10 @@ export default function AppNav() {
 
   function isActive(href: string) {
     if (href === '/worlds') return pathname === '/worlds'
+    // Prevent /play/learning from matching when on /play/learning/numbers
+    if (href === '/play/learning') {
+      return pathname.startsWith('/play/learning') && !pathname.startsWith('/play/learning/numbers')
+    }
     return pathname.startsWith(href)
   }
 

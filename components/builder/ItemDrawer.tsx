@@ -118,7 +118,7 @@ export default function ItemDrawer({
           )
         })}
         {items.length === 0 && (
-          <p className="col-span-4 font-nunito text-xs text-center py-4" style={{ color: 'var(--gray)' }}>
+          <p className="col-span-full font-nunito text-xs text-center py-4" style={{ color: 'var(--gray)' }}>
             No items in this category for this room yet!
           </p>
         )}
