@@ -1,4 +1,8 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { setActiveChild } from '@/app/actions/setActiveChild'
 
 interface ChildProfile {
   id: string
@@ -16,8 +20,14 @@ interface ChildCardProps {
 }
 
 export default function ChildCard({ child, masteredLetters, totalLetters, minutesThisWeek }: ChildCardProps) {
+  const router = useRouter()
   const name = child.full_name ?? 'Child'
-  const levelProgress = (child.xp % 100)  // xp progress toward next level (simplified)
+  const levelProgress = (child.xp % 100)
+
+  async function handlePlay() {
+    await setActiveChild(child.id)
+    router.push('/worlds')
+  }
 
   return (
     <div className="rounded-3xl bg-white border border-black/5 shadow-sm overflow-hidden">
@@ -100,10 +110,10 @@ export default function ChildCard({ child, masteredLetters, totalLetters, minute
         </div>
       </div>
 
-      {/* Quick play link */}
+      {/* Quick play button */}
       <div className="px-4 pb-4">
-        <Link
-          href="/worlds"
+        <button
+          onClick={handlePlay}
           className="flex items-center justify-center gap-2 w-full rounded-2xl py-2.5 font-inter text-sm font-semibold text-white active:scale-95 transition-transform"
           style={{
             touchAction: 'manipulation',
@@ -111,7 +121,7 @@ export default function ChildCard({ child, masteredLetters, totalLetters, minute
           }}
         >
           🎮 Play now
-        </Link>
+        </button>
       </div>
     </div>
   )

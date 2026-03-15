@@ -54,8 +54,14 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/parents/dashboard?onboarding=true`)
   }
 
-  // Profil existent — redirecționare în funcție de rol
-  if (existingProfile.role === 'parent') {
+  // Profil fără rol (creat de trigger) — set role parent
+  if (!existingProfile.role || existingProfile.role === 'parent') {
+    if (!existingProfile.role) {
+      await supabase
+        .from('profiles')
+        .update({ role: 'parent' })
+        .eq('id', user.id)
+    }
     return NextResponse.redirect(`${origin}${next}`)
   }
 

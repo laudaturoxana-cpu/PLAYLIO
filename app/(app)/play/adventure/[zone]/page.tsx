@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { getZoneBySlug } from '@/lib/adventure/zones'
 import ZoneGame from './ZoneGame'
+import { getActiveChildProfile } from '@/lib/getActiveChildProfile'
 
 interface PageProps {
   params: Promise<{ zone: string }>
@@ -19,13 +20,9 @@ export default async function ZonePage({ params }: PageProps) {
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('level, coins, full_name, age')
-    .eq('id', user.id)
-    .single()
+  const profile = await getActiveChildProfile(user.id)
 
-  const playerLevel = profile?.level ?? 1
+  const playerLevel = profile.level ?? 1
 
   // Misiunile completate pentru această zonă
   const questIds = zone.quests.map(q => q.id)
@@ -43,8 +40,8 @@ export default async function ZonePage({ params }: PageProps) {
       userId={user.id}
       playerLevel={playerLevel}
       completedQuestIds={completedQuestIds}
-      childName={profile?.full_name ?? 'Explorer'}
-      childAge={profile?.age ?? 6}
+      childName={profile.full_name ?? 'Explorer'}
+      childAge={profile.age ?? 6}
     />
   )
 }

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { getActiveChildProfile } from '@/lib/getActiveChildProfile'
 
 const WORLDS = [
   {
@@ -68,16 +69,39 @@ export default async function WorldsPage() {
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
+  // Check parent role
+  const { data: parentProfile } = await supabase
     .from('profiles')
-    .select('full_name, coins, level, xp')
+    .select('role')
     .eq('id', user.id)
     .single()
 
-  const name = profile?.full_name ?? 'Explorer'
-  const coins = profile?.coins ?? 0
-  const level = profile?.level ?? 1
-  const xp = profile?.xp ?? 0
+  const isParent = parentProfile?.role === 'parent'
+
+  const profile = await getActiveChildProfile(user.id)
+  const isPlayingAsChild = profile.activeChildId !== null
+
+  // If parent hasn't selected a child yet, redirect to dashboard
+  if (isParent && !isPlayingAsChild) {
+    // Check if they have children
+    const { data: children } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('parent_id', user.id)
+      .eq('role', 'child')
+      .limit(1)
+
+    if (!children || children.length === 0) {
+      redirect('/parents/dashboard?onboarding=true')
+    } else {
+      redirect('/parents/dashboard')
+    }
+  }
+
+  const name = profile.full_name ?? 'Explorer'
+  const coins = profile.coins
+  const level = profile.level
+  const xp = profile.xp
   const xpForNext = level * 100
   const xpPercent = Math.min(100, Math.round((xp / xpForNext) * 100))
 
@@ -171,6 +195,14 @@ export default async function WorldsPage() {
           >
             Which world are we exploring today?
           </p>
+          {isPlayingAsChild && (
+            <div
+              className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full font-inter text-xs font-semibold"
+              style={{ background: 'rgba(79,195,247,0.12)', color: '#0277BD', border: '1px solid rgba(79,195,247,0.25)' }}
+            >
+              🦁 Playing as {name}
+            </div>
+          )}
         </div>
 
         {/* World cards — 2 cols on mobile, 3 on tablet, 5 on desktop */}

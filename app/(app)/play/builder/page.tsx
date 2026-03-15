@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import BuilderClient from './BuilderClient'
+import { getActiveChildProfile } from '@/lib/getActiveChildProfile'
 
 export default async function BuilderWorldPage() {
   const supabase = await createClient()
@@ -10,11 +11,7 @@ export default async function BuilderWorldPage() {
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, coins, age')
-    .eq('id', user.id)
-    .single()
+  const profile = await getActiveChildProfile(user.id)
 
   const { data: inventory } = await supabase
     .from('inventory')
@@ -32,9 +29,9 @@ export default async function BuilderWorldPage() {
   return (
     <BuilderClient
       userId={user.id}
-      profileName={profile?.full_name ?? 'Builder'}
-      childAge={profile?.age ?? 6}
-      initialCoins={profile?.coins ?? 0}
+      profileName={profile.full_name ?? 'Builder'}
+      childAge={profile.age ?? 6}
+      initialCoins={profile.coins}
       ownedItemIds={ownedItemIds}
       unlockedRoomIds={builderState?.unlocked_rooms ?? ['bedroom']}
     />

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import LetterGame from './LetterGame'
+import { getActiveChildProfile } from '@/lib/getActiveChildProfile'
 
 interface PageProps {
   searchParams: Promise<{ series?: string }>
@@ -17,19 +18,15 @@ export default async function LettersPage({ searchParams }: PageProps) {
   const { series: seriesParam } = await searchParams
   const series = seriesParam === '2' ? 2 : seriesParam === '3' ? 3 : 1
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('id, coins, full_name, age')
-    .eq('id', user.id)
-    .single()
+  const profile = await getActiveChildProfile(user.id)
 
   return (
     <LetterGame
       userId={user.id}
-      initialCoins={profile?.coins ?? 0}
+      initialCoins={profile.coins}
       series={series as 1 | 2 | 3}
-      childName={profile?.full_name ?? 'Explorer'}
-      childAge={profile?.age ?? 6}
+      childName={profile.full_name ?? 'Explorer'}
+      childAge={profile.age ?? 6}
     />
   )
 }

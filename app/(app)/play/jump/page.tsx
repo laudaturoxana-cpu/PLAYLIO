@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import JumpClient from './JumpClient'
+import { getActiveChildProfile } from '@/lib/getActiveChildProfile'
 
 export default async function JumpWorldPage() {
   const supabase = await createClient()
@@ -10,11 +11,7 @@ export default async function JumpWorldPage() {
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, coins')
-    .eq('id', user.id)
-    .single()
+  const profile = await getActiveChildProfile(user.id)
 
   // Best scores per nivel
   const { data: scores } = await supabase
@@ -32,8 +29,8 @@ export default async function JumpWorldPage() {
   return (
     <JumpClient
       userId={user.id}
-      profileName={profile?.full_name ?? 'Jucătorule'}
-      initialCoins={profile?.coins ?? 0}
+      profileName={profile.full_name ?? 'Jucătorule'}
+      initialCoins={profile.coins}
       bestScores={bestScores}
     />
   )
