@@ -26,9 +26,10 @@ interface SettingsClientProps {
   childId: string
   childName: string
   childAge: number
+  ageNotSet?: boolean
 }
 
-export default function SettingsClient({ childId, childName, childAge: initialAge }: SettingsClientProps) {
+export default function SettingsClient({ childId, childName, childAge: initialAge, ageNotSet }: SettingsClientProps) {
   const [settings, setSettings] = useState<ChildSettings>(DEFAULT_SETTINGS)
   const [saved, setSaved] = useState(false)
   const [age, setAge] = useState(initialAge)
@@ -157,7 +158,21 @@ export default function SettingsClient({ childId, childName, childAge: initialAg
         </div>
 
         {/* Child age */}
-        <div className="rounded-3xl bg-white border border-black/5 shadow-sm mb-4 overflow-hidden">
+        <div
+          className="rounded-3xl bg-white shadow-sm mb-4 overflow-hidden"
+          style={{
+            border: ageNotSet ? '2px solid rgba(255,112,67,0.5)' : '1px solid rgba(0,0,0,0.05)',
+          }}
+        >
+          {ageNotSet && (
+            <div
+              className="px-5 py-2.5 flex items-center gap-2 font-inter text-xs font-semibold"
+              style={{ background: 'rgba(255,112,67,0.1)', color: '#BF360C' }}
+            >
+              <span>⚠️</span>
+              <span>Age not set — set it below so Lio knows how to talk to {childName}!</span>
+            </div>
+          )}
           <div className="px-5 py-4 border-b border-black/5">
             <div className="flex items-center gap-2">
               <span className="text-xl">🎂</span>

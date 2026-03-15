@@ -30,6 +30,7 @@ export default async function ChildSettingsPage({ params }: PageProps) {
       childId={childId}
       childName={childProfile.full_name ?? 'Child'}
       childAge={childProfile.age ?? 6}
+      ageNotSet={childProfile.age === null}
     />
   )
 }

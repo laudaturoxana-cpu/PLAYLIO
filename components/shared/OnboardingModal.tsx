@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { setActiveChild } from '@/app/actions/setActiveChild'
 
 interface ChildData {
   name: string
@@ -28,8 +30,10 @@ interface Props {
 }
 
 export function OnboardingModal({ parentId, onComplete }: Props) {
+  const router = useRouter()
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [createdChildId, setCreatedChildId] = useState<string | null>(null)
   const [data, setData] = useState<ChildData>({ name: '', age: 6, avatarPreset: 0 })
 
   async function handleFinish() {
@@ -61,6 +65,9 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
       setSaving(false)
       return
     }
+
+    // Store child ID so "Let's explore" can set active child
+    setCreatedChildId(childProfile.id)
 
     // Create avatar with chosen preset
     await supabase.from('avatars').insert({
@@ -249,7 +256,14 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
               </p>
             </div>
             <button
-              onClick={onComplete}
+              onClick={async () => {
+                if (createdChildId) {
+                  await setActiveChild(createdChildId)
+                  router.push('/worlds')
+                } else {
+                  onComplete()
+                }
+              }}
               className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95 shimmer-bg"
             >
               Let's explore! 🚀

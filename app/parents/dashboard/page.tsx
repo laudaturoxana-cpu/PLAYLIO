@@ -28,7 +28,7 @@ export default async function ParentsDashboardPage({
 
   const { data: children } = await supabase
     .from('profiles')
-    .select('id, full_name, level, coins, xp')
+    .select('id, full_name, level, coins, xp, age')
     .eq('parent_id', user.id)
     .eq('role', 'child')
 

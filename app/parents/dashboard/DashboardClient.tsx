@@ -11,6 +11,7 @@ interface ChildProfile {
   level: number
   coins: number
   xp: number
+  age: number | null
 }
 
 interface ParentProfile {
@@ -136,13 +137,29 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
         ) : (
           <div className="flex flex-col gap-4">
             {children.map(child => (
-              <ChildCard
-                key={child.id}
-                child={child}
-                masteredLetters={childStats[child.id]?.masteredLetters ?? 0}
-                totalLetters={totalLetters}
-                minutesThisWeek={childStats[child.id]?.minutesThisWeek ?? 0}
-              />
+              <div key={child.id}>
+                {!child.age && (
+                  <a
+                    href={`/parents/settings/${child.id}`}
+                    className="flex items-center gap-2 mb-2 px-4 py-2.5 rounded-2xl font-inter text-sm font-semibold"
+                    style={{
+                      background: 'rgba(255,213,79,0.18)',
+                      border: '1.5px solid rgba(255,193,7,0.35)',
+                      color: '#E65100',
+                      touchAction: 'manipulation',
+                    }}
+                  >
+                    <span>⚠️</span>
+                    <span>{child.full_name ?? 'Child'} doesn&apos;t have an age set — AI won&apos;t be personalized. Tap to fix →</span>
+                  </a>
+                )}
+                <ChildCard
+                  child={child}
+                  masteredLetters={childStats[child.id]?.masteredLetters ?? 0}
+                  totalLetters={totalLetters}
+                  minutesThisWeek={childStats[child.id]?.minutesThisWeek ?? 0}
+                />
+              </div>
             ))}
           </div>
         )}
