@@ -114,15 +114,16 @@ export default async function WorldsPage() {
       }}
     >
       <div
+        className="flex flex-col gap-8"
         style={{
           maxWidth: '1100px',
           margin: '0 auto',
           width: '100%',
-          padding: 'clamp(16px, 4vw, 48px) clamp(16px, 4vw, 32px)',
+          padding: 'clamp(28px, 5vw, 56px) clamp(20px, 4vw, 40px)',
         }}
       >
         {/* Top HUD */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between">
           {/* Level + XP */}
           <div className="flex items-center gap-3">
             <div
@@ -182,7 +183,7 @@ export default async function WorldsPage() {
         </div>
 
         {/* Greeting */}
-        <div className="mb-8">
+        <div>
           <h1
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(26px, 4vw, 42px)', color: '#212121' }}
@@ -207,8 +208,8 @@ export default async function WorldsPage() {
 
         {/* World cards — 2 cols on mobile, 3 on tablet, 5 on desktop */}
         <div
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mb-8"
-          style={{ gap: 'clamp(12px, 2vw, 24px)' }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+          style={{ gap: 'clamp(16px, 2.5vw, 28px)' }}
         >
           {WORLDS.map((world) => (
             <Link
@@ -216,8 +217,8 @@ export default async function WorldsPage() {
               href={world.href}
               className="flex flex-col rounded-3xl active:scale-95 transition-transform"
               style={{
-                padding: 'clamp(16px, 2.5vw, 28px)',
-                gap: 'clamp(12px, 1.5vw, 20px)',
+                padding: 'clamp(18px, 3vw, 32px)',
+                gap: 'clamp(14px, 2vw, 22px)',
                 backgroundColor: world.bg,
                 border: `1.5px solid ${world.border}`,
                 boxShadow: `0 4px 20px ${world.shadow}`,
@@ -263,7 +264,7 @@ export default async function WorldsPage() {
         <div
           className="rounded-3xl"
           style={{
-            padding: 'clamp(14px, 2vw, 24px)',
+            padding: 'clamp(18px, 2.5vw, 28px)',
             background: 'linear-gradient(135deg, rgba(79,195,247,0.08), rgba(255,213,79,0.08))',
             border: '1.5px solid rgba(79,195,247,0.15)',
           }}
