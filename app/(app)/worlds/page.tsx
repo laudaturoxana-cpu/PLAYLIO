@@ -4,8 +4,8 @@ import Link from 'next/link'
 
 const WORLDS = [
   {
-    label: 'Lumea Literelor',
-    sublabel: 'Fonică & Citire',
+    label: 'Letters World',
+    sublabel: 'Phonics & Reading',
     emoji: '📚',
     href: '/play/learning',
     gradient: 'linear-gradient(135deg, #FF8A65, #FF7043)',
@@ -15,8 +15,8 @@ const WORLDS = [
     textColor: '#D84315',
   },
   {
-    label: 'Lumea Aventurii',
-    sublabel: 'Explorare & Stele',
+    label: 'Adventure World',
+    sublabel: 'Explore & Stars',
     emoji: '🗺️',
     href: '/play/adventure',
     gradient: 'linear-gradient(135deg, #66BB6A, #43A047)',
@@ -26,8 +26,8 @@ const WORLDS = [
     textColor: '#2E7D32',
   },
   {
-    label: 'Lumea Construcțiilor',
-    sublabel: 'Decorează & Creează',
+    label: 'Builder World',
+    sublabel: 'Decorate & Create',
     emoji: '🏗️',
     href: '/play/builder',
     gradient: 'linear-gradient(135deg, #4FC3F7, #0288D1)',
@@ -37,8 +37,8 @@ const WORLDS = [
     textColor: '#01579B',
   },
   {
-    label: 'Lumea Salturilor',
-    sublabel: 'Platforme & Sărituri',
+    label: 'Jump World',
+    sublabel: 'Platforms & Jumps',
     emoji: '🎮',
     href: '/play/jump',
     gradient: 'linear-gradient(135deg, #FFD54F, #F9A825)',
@@ -63,7 +63,7 @@ export default async function WorldsPage() {
     .eq('id', user.id)
     .single()
 
-  const name = profile?.full_name ?? 'Aventurierule'
+  const name = profile?.full_name ?? 'Explorer'
   const coins = profile?.coins ?? 0
   const level = profile?.level ?? 1
   const xp = profile?.xp ?? 0
@@ -75,83 +75,121 @@ export default async function WorldsPage() {
       className="min-h-screen"
       style={{
         background: 'linear-gradient(180deg, rgba(79,195,247,0.06) 0%, rgba(255,255,255,0) 30%)',
-        backgroundColor: 'var(--white)',
+        backgroundColor: '#ffffff',
       }}
     >
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div
+        style={{
+          maxWidth: '1100px',
+          margin: '0 auto',
+          width: '100%',
+          padding: 'clamp(16px, 4vw, 48px) clamp(16px, 4vw, 32px)',
+        }}
+      >
         {/* Top HUD */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           {/* Level + XP */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div
-              className="flex items-center justify-center w-10 h-10 rounded-2xl font-fredoka text-base font-semibold text-white"
-              style={{ background: 'linear-gradient(135deg, var(--sky), var(--sky-dark))' }}
+              className="flex items-center justify-center rounded-2xl font-fredoka font-semibold text-white"
+              style={{
+                width: 'clamp(40px, 5vw, 52px)',
+                height: 'clamp(40px, 5vw, 52px)',
+                fontSize: 'clamp(16px, 2vw, 20px)',
+                background: 'linear-gradient(135deg, #4FC3F7, #0288D1)',
+              }}
             >
               {level}
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="font-inter text-[10px] text-[var(--gray)] leading-none">Nivel</span>
-              <div className="flex items-center gap-1">
+            <div className="flex flex-col gap-1">
+              <span className="font-inter text-xs" style={{ color: '#757575' }}>
+                Level
+              </span>
+              <div className="flex items-center gap-2">
                 <div
                   className="h-2 rounded-full overflow-hidden"
-                  style={{ width: '56px', backgroundColor: 'rgba(0,0,0,0.08)' }}
+                  style={{
+                    width: 'clamp(56px, 8vw, 96px)',
+                    backgroundColor: 'rgba(0,0,0,0.08)',
+                  }}
                 >
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
                       width: `${xpPercent}%`,
-                      background: 'linear-gradient(90deg, var(--sky), var(--sky-dark))',
+                      background: 'linear-gradient(90deg, #4FC3F7, #0288D1)',
                     }}
                   />
                 </div>
-                <span className="font-inter text-[10px] text-[var(--gray)]">{xp}/{xpForNext}</span>
+                <span className="font-inter text-xs" style={{ color: '#757575' }}>
+                  {xp}/{xpForNext} XP
+                </span>
               </div>
             </div>
           </div>
 
           {/* Coins */}
           <div
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+            className="flex items-center gap-2 px-4 py-2 rounded-full"
             style={{
               background: 'rgba(255,213,79,0.12)',
               border: '1.5px solid rgba(255,193,7,0.3)',
             }}
           >
-            <span className="text-base leading-none">🪙</span>
-            <span className="font-fredoka text-sm font-semibold text-[var(--sun-dark)]">
-              {coins.toLocaleString('ro-RO')}
+            <span style={{ fontSize: 'clamp(16px, 2vw, 20px)' }}>🪙</span>
+            <span
+              className="font-fredoka font-semibold"
+              style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', color: '#F57F17' }}
+            >
+              {coins.toLocaleString('en-US')}
             </span>
           </div>
         </div>
 
         {/* Greeting */}
-        <div className="mb-6">
-          <h1 className="font-fredoka text-3xl font-semibold text-[var(--dark)]">
-            Salut, {name}! 👋
+        <div className="mb-8">
+          <h1
+            className="font-fredoka font-semibold"
+            style={{ fontSize: 'clamp(26px, 4vw, 42px)', color: '#212121' }}
+          >
+            Hi, {name}! 👋
           </h1>
-          <p className="font-nunito text-sm text-[var(--gray)] mt-1">
-            În ce lume explorăm azi?
+          <p
+            className="font-nunito mt-1"
+            style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', color: '#757575' }}
+          >
+            Which world are we exploring today?
           </p>
         </div>
 
-        {/* World cards */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        {/* World cards — 2 cols on mobile/tablet, 4 cols on desktop */}
+        <div
+          className="grid grid-cols-2 lg:grid-cols-4 mb-8"
+          style={{ gap: 'clamp(12px, 2vw, 24px)' }}
+        >
           {WORLDS.map((world) => (
             <Link
               key={world.label}
               href={world.href}
-              className="flex flex-col gap-3 rounded-3xl p-5 active:scale-95 transition-transform"
+              className="flex flex-col rounded-3xl active:scale-95 transition-transform"
               style={{
+                padding: 'clamp(16px, 2.5vw, 28px)',
+                gap: 'clamp(12px, 1.5vw, 20px)',
                 backgroundColor: world.bg,
                 border: `1.5px solid ${world.border}`,
-                boxShadow: `0 4px 16px ${world.shadow}`,
+                boxShadow: `0 4px 20px ${world.shadow}`,
                 touchAction: 'manipulation',
               }}
             >
               {/* Icon */}
               <div
-                className="flex items-center justify-center w-12 h-12 rounded-2xl text-2xl"
-                style={{ background: world.gradient }}
+                className="flex items-center justify-center rounded-2xl"
+                style={{
+                  width: 'clamp(48px, 6vw, 72px)',
+                  height: 'clamp(48px, 6vw, 72px)',
+                  fontSize: 'clamp(22px, 3vw, 32px)',
+                  background: world.gradient,
+                }}
               >
                 {world.emoji}
               </div>
@@ -159,12 +197,18 @@ export default async function WorldsPage() {
               {/* Text */}
               <div>
                 <p
-                  className="font-fredoka text-sm font-semibold leading-tight"
-                  style={{ color: world.textColor }}
+                  className="font-fredoka font-semibold leading-tight"
+                  style={{
+                    fontSize: 'clamp(13px, 1.4vw, 18px)',
+                    color: world.textColor,
+                  }}
                 >
                   {world.label}
                 </p>
-                <p className="font-inter text-[11px] text-[var(--gray)] mt-0.5">
+                <p
+                  className="font-inter mt-1"
+                  style={{ fontSize: 'clamp(11px, 1vw, 14px)', color: '#757575' }}
+                >
                   {world.sublabel}
                 </p>
               </div>
@@ -174,20 +218,27 @@ export default async function WorldsPage() {
 
         {/* Daily tip */}
         <div
-          className="rounded-3xl p-4"
+          className="rounded-3xl"
           style={{
+            padding: 'clamp(14px, 2vw, 24px)',
             background: 'linear-gradient(135deg, rgba(79,195,247,0.08), rgba(255,213,79,0.08))',
             border: '1.5px solid rgba(79,195,247,0.15)',
           }}
         >
           <div className="flex items-start gap-3">
-            <span className="text-xl mt-0.5">💡</span>
+            <span style={{ fontSize: 'clamp(18px, 2vw, 24px)', marginTop: '2px' }}>💡</span>
             <div>
-              <p className="font-inter text-xs font-semibold text-[var(--sky-dark)] mb-0.5">
-                Sfatul zilei
+              <p
+                className="font-inter font-semibold mb-1"
+                style={{ fontSize: 'clamp(11px, 1.1vw, 14px)', color: '#0277BD' }}
+              >
+                Daily tip
               </p>
-              <p className="font-nunito text-sm text-[var(--dark)] leading-relaxed">
-                Joacă 10 minute pe zi în Lumea Literelor pentru a avansa rapid!
+              <p
+                className="font-nunito leading-relaxed"
+                style={{ fontSize: 'clamp(13px, 1.3vw, 16px)', color: '#212121' }}
+              >
+                Play 10 minutes a day in Letters World to level up fast!
               </p>
             </div>
           </div>
