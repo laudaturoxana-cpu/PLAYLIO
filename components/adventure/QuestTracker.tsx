@@ -16,7 +16,7 @@ export default function QuestTracker({
   return (
     <div className="flex flex-col gap-2">
       <p className="font-nunito text-xs font-semibold text-[var(--gray)] uppercase tracking-wide">
-        Misiuni
+        Quests
       </p>
       {quests.map(quest => {
         const done = completedQuestIds.includes(quest.id)

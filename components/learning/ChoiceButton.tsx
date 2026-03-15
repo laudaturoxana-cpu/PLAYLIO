@@ -6,9 +6,9 @@ import type { LetterData } from '@/lib/learning/phonetics'
 interface ChoiceButtonProps {
   letter: LetterData
   onChoose: (letter: LetterData) => void
-  isHighlighted?: boolean  // nivel 1 + greșeala 3: evidențiat verde
+  isHighlighted?: boolean  // level 1 + wrong 3: highlighted green
   isDisabled?: boolean
-  showHint?: boolean       // nivel 2: contur clipitor la greșeală
+  showHint?: boolean       // level 2: blinking border on wrong
   wasChosen?: boolean
   wasCorrect?: boolean
 }
@@ -55,11 +55,11 @@ export default function ChoiceButton({
   return (
     <button
       ref={buttonRef}
-      // Touch events nativi — NU click cu delay 300ms
+      // Native touch events — NO click with 300ms delay
       onTouchEnd={handleInteraction}
       onClick={handleInteraction}
       disabled={isDisabled}
-      aria-label={`Litera ${letter.letter} — ${letter.word}`}
+      aria-label={`Letter ${letter.letter} — ${letter.word}`}
       aria-pressed={wasChosen}
       className={`
         relative flex flex-col items-center justify-center gap-1
@@ -71,14 +71,14 @@ export default function ChoiceButton({
         ${isDisabled ? 'cursor-default opacity-80' : 'cursor-pointer hover:-translate-y-1'}
       `}
       style={{
-        // Touch target MINIM 60×60px (nu 44px — copiii au degete neprecise)
+        // Touch target MINIMUM 60×60px (not 44px — children have imprecise fingers)
         minWidth: '80px',
         minHeight: '80px',
         width: '100%',
         aspectRatio: '1 / 1',
         borderColor,
         backgroundColor: bgColor,
-        touchAction: 'manipulation', // previne double-tap zoom
+        touchAction: 'manipulation', // prevents double-tap zoom
         WebkitTapHighlightColor: 'transparent',
         boxShadow: isHighlighted
           ? '0 0 0 3px var(--mint-dark)'
@@ -86,23 +86,23 @@ export default function ChoiceButton({
         transition: 'transform 0.15s, box-shadow 0.15s, border-color 0.15s',
       }}
     >
-      {/* Emoji obiect concret (Piaget: niciodată simbolul abstract izolat) */}
+      {/* Concrete object emoji (Piaget: never the abstract symbol in isolation) */}
       <span className="text-3xl leading-none" aria-hidden="true">
         {letter.emoji}
       </span>
-      {/* Litera */}
+      {/* Letter */}
       <span
         className="font-fredoka text-2xl font-semibold leading-none"
         style={{ color: letter.color }}
       >
         {letter.letter}
       </span>
-      {/* Cuvântul */}
+      {/* Word */}
       <span className="font-nunito text-xs text-[var(--gray)] leading-none">
         {letter.word}
       </span>
 
-      {/* Indicator corect/greșit */}
+      {/* Correct/wrong indicator */}
       {wasChosen && (
         <span
           className="absolute -top-2 -right-2 text-lg"

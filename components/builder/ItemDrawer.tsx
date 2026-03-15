@@ -11,9 +11,9 @@ interface ItemDrawerProps {
 }
 
 const CATEGORIES: { id: ItemCategory; label: string; emoji: string }[] = [
-  { id: 'furniture',   label: 'Mobilier',   emoji: '🛏️' },
-  { id: 'decoration',  label: 'Decorații',  emoji: '🌸' },
-  { id: 'wallpaper',   label: 'Tapet',      emoji: '🖼️' },
+  { id: 'furniture',   label: 'Furniture',   emoji: '🛏️' },
+  { id: 'decoration',  label: 'Decorations', emoji: '🌸' },
+  { id: 'wallpaper',   label: 'Wallpaper',   emoji: '🖼️' },
 ]
 
 export default function ItemDrawer({
@@ -81,7 +81,7 @@ export default function ItemDrawer({
                 opacity: !canAfford && !owned ? 0.45 : 1,
                 minHeight: '64px',
               }}
-              aria-label={`${item.name}${item.price > 0 ? ` — ${item.price} monede` : ' — gratuit'}`}
+              aria-label={`${item.name}${item.price > 0 ? ` — ${item.price} coins` : ' — free'}`}
               aria-pressed={isSelected}
             >
               <span
@@ -111,7 +111,7 @@ export default function ItemDrawer({
                 </div>
               )}
               {item.isRare && (
-                <span className="font-nunito text-[8px] font-bold text-[var(--sun-dark)]">✨ Rar</span>
+                <span className="font-nunito text-[8px] font-bold" style={{ color: 'var(--sun-dark)' }}>✨ Rare</span>
               )}
             </button>
           )

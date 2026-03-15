@@ -9,13 +9,13 @@ import type { ItemProgress } from '@/lib/learning/adaptiveEngine'
 interface LearningMapProps {
   userId: string
   profileName: string
-  masteredSet: string[]  // itemIds masterite din Supabase
+  masteredSet: string[]  // mastered itemIds from Supabase
 }
 
 export default function LearningMap({ userId, profileName, masteredSet }: LearningMapProps) {
   const [offlineProgress, setOfflineProgress] = useState<Map<string, ItemProgress>>(new Map())
 
-  // Merge progres Supabase cu IndexedDB (offline > Supabase pentru datele noi)
+  // Merge Supabase progress with IndexedDB (offline > Supabase for new data)
   useEffect(() => {
     loadAllProgressOffline().then(rows => {
       const map = new Map<string, ItemProgress>()
@@ -37,13 +37,13 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
   const totalLetters = PHONETIC_LETTERS.length
   const totalMastered = PHONETIC_LETTERS.filter(l => isMastered(`letter_${l.letter}`)).length
 
-  // Prima literă nemasterită per serie → cea activă
+  // First unmastered letter per series → the active one
   function getSeriesStatus(series: SeriesId): 'locked' | 'active' | 'complete' {
     const letters = getLettersBySeries(series)
     const allMastered = letters.every(l => isMastered(`letter_${l.letter}`))
     if (allMastered) return 'complete'
 
-    // Seriile se deblochează secvențial
+    // Series unlock sequentially
     if (series === 1) return 'active'
     const prevSeries = (series - 1) as SeriesId
     const prevLetters = getLettersBySeries(prevSeries)
@@ -59,29 +59,29 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
           href="/worlds"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform font-nunito text-lg"
           style={{ touchAction: 'manipulation' }}
-          aria-label="Înapoi la lumi"
+          aria-label="Back to worlds"
         >
           ←
         </Link>
         <div className="text-center">
           <h1 className="font-fredoka text-xl font-semibold text-[var(--coral-dark)]">
-            📚 Lumea Literelor
+            📚 Letters World
           </h1>
           <p className="font-nunito text-xs text-[var(--gray)]">
-            {totalMastered}/{totalLetters} litere stăpânite
+            {totalMastered}/{totalLetters} letters mastered
           </p>
         </div>
         <div className="w-10" />
       </div>
 
-      {/* Progress global */}
+      {/* Global progress */}
       <div
         className="mb-6 h-3 rounded-full bg-[var(--gray-light,#f0f0f0)] overflow-hidden"
         role="progressbar"
         aria-valuenow={Math.round((totalMastered / totalLetters) * 100)}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`${totalMastered} din ${totalLetters} litere stăpânite`}
+        aria-label={`${totalMastered} of ${totalLetters} letters mastered`}
       >
         <div
           className="h-full rounded-full transition-all duration-700"
@@ -92,19 +92,19 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
         />
       </div>
 
-      {/* Mesaj personalizat Lio */}
+      {/* Personalized Lio message */}
       <div className="mb-6 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-black/5">
         <span className="text-3xl flex-shrink-0">📖</span>
         <p className="font-nunito text-sm text-[var(--dark)]">
           {totalMastered === 0
-            ? `Bună, ${profileName}! Hai să învățăm literele împreună! 🌟`
+            ? `Hi, ${profileName}! Let's learn the letters together! 🌟`
             : totalMastered === totalLetters
-            ? `${profileName}, ai stăpânit toate literele! Ești fantastic! 🏆`
-            : `${profileName}, mai ai ${totalLetters - totalMastered} litere de stăpânit! Continuă! 💪`}
+            ? `${profileName}, you mastered all the letters! You're fantastic! 🏆`
+            : `${profileName}, you have ${totalLetters - totalMastered} more letters to master! Keep going! 💪`}
         </p>
       </div>
 
-      {/* Serii de litere */}
+      {/* Letter series */}
       <div className="flex flex-col gap-4">
         {([1, 2, 3] as SeriesId[]).map(series => {
           const info = SERIES_INFO[series]
@@ -121,7 +121,7 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
                   : 'bg-white border-black/5 shadow-sm'
               }`}
             >
-              {/* Header serie */}
+              {/* Series header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{info.emoji}</span>
@@ -133,19 +133,19 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
                       {info.title}
                     </p>
                     <p className="font-nunito text-xs text-[var(--gray)]">
-                      {seriesMastered}/{letters.length} litere
+                      {seriesMastered}/{letters.length} letters
                     </p>
                   </div>
                 </div>
                 {status === 'locked' && (
-                  <span className="text-xl" aria-label="Blocat">🔒</span>
+                  <span className="text-xl" aria-label="Locked">🔒</span>
                 )}
                 {status === 'complete' && (
-                  <span className="text-xl" aria-label="Completat">✅</span>
+                  <span className="text-xl" aria-label="Completed">✅</span>
                 )}
               </div>
 
-              {/* Literele din serie */}
+              {/* Letters in series */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {letters.map(letter => {
                   const mastered = isMastered(`letter_${letter.letter}`)
@@ -176,7 +176,7 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
                       </div>
                       {!mastered && status !== 'locked' && lvl > 1 && (
                         <span className="font-nunito text-[9px] text-[var(--gray)]">
-                          Nv.{lvl}
+                          Lv.{lvl}
                         </span>
                       )}
                     </div>
@@ -195,9 +195,9 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
                       ? 'linear-gradient(90deg, var(--mint-dark), var(--sky))'
                       : `linear-gradient(90deg, ${info.color}, ${info.color}cc)`,
                   }}
-                  aria-label={`${status === 'complete' ? 'Repetă' : 'Începe'} ${info.title}`}
+                  aria-label={`${status === 'complete' ? 'Repeat' : 'Start'} ${info.title}`}
                 >
-                  <span>{status === 'complete' ? '🔄 Repetă' : '▶️ Joacă'}</span>
+                  <span>{status === 'complete' ? '🔄 Replay' : '▶️ Play'}</span>
                 </Link>
               )}
             </div>
@@ -205,7 +205,7 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
         })}
       </div>
 
-      {/* Spațiu pentru bottom nav */}
+      {/* Space for bottom nav */}
       <div className="h-6" />
     </div>
   )

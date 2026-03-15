@@ -39,7 +39,7 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
     router.refresh()
   }
 
-  const parentName = parentProfile.full_name?.split(' ')[0] ?? 'Părinte'
+  const parentName = parentProfile.full_name?.split(' ')[0] ?? 'Parent'
   const totalMinutesThisWeek = Object.values(childStats).reduce((s, c) => s + c.minutesThisWeek, 0)
   const totalMasteredLetters = Object.values(childStats).reduce((s, c) => s + c.masteredLetters, 0)
 
@@ -62,7 +62,7 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <p className="font-inter text-sm text-[var(--gray)]">Bun venit,</p>
+            <p className="font-inter text-sm text-[var(--gray)]">Welcome,</p>
             <h1 className="font-fredoka text-2xl font-semibold text-[var(--dark)]">
               {parentName} 👋
             </h1>
@@ -72,17 +72,17 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
             className="font-inter text-xs text-[var(--gray)] underline"
             style={{ touchAction: 'manipulation' }}
           >
-            Ieșire
+            Sign out
           </a>
         </div>
 
-        {/* Overview stats — afișat doar dacă există copii */}
+        {/* Overview stats — shown only if children exist */}
         {children.length > 0 && (
           <div className="grid grid-cols-2 gap-3 mb-6">
             <div className="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl">⏱️</span>
-                <span className="font-inter text-xs text-[var(--gray)]">Minute jucate săpt. asta</span>
+                <span className="font-inter text-xs text-[var(--gray)]">Minutes played this week</span>
               </div>
               <p className="font-fredoka text-3xl font-semibold text-[var(--sky-dark)]">
                 {totalMinutesThisWeek}m
@@ -91,7 +91,7 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
             <div className="rounded-2xl bg-white border border-black/5 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl">📚</span>
-                <span className="font-inter text-xs text-[var(--gray)]">Litere stăpânite</span>
+                <span className="font-inter text-xs text-[var(--gray)]">Letters mastered</span>
               </div>
               <p className="font-fredoka text-3xl font-semibold text-[var(--coral)]">
                 {totalMasteredLetters}/{totalLetters * children.length}
@@ -100,17 +100,17 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
           </div>
         )}
 
-        {/* Copii */}
+        {/* Children */}
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-inter text-sm font-semibold text-[var(--dark)]">
-            Copiii tăi ({children.length})
+            Your children ({children.length})
           </h2>
           <button
             onClick={() => setModalOpen(true)}
             className="font-inter text-xs text-[var(--sky)] underline"
             style={{ touchAction: 'manipulation' }}
           >
-            + Adaugă copil
+            + Add child
           </button>
         </div>
 
@@ -119,10 +119,10 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
             <span className="text-5xl">👶</span>
             <div>
               <p className="font-inter text-base font-semibold text-[var(--dark)]">
-                Niciun copil adăugat încă
+                No children added yet
               </p>
               <p className="font-inter text-sm text-[var(--gray)] mt-1">
-                Adaugă primul copil pentru a începe aventura!
+                Add your first child to start the adventure!
               </p>
             </div>
             <button
@@ -130,7 +130,7 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
               className="rounded-full bg-[var(--coral)] px-6 py-3 font-inter text-base font-semibold text-white shadow-md active:scale-95 transition-transform"
               style={{ touchAction: 'manipulation' }}
             >
-              Adaugă copil 🎉
+              Add child 🎉
             </button>
           </div>
         ) : (
@@ -147,20 +147,20 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
           </div>
         )}
 
-        {/* Tip pentru părinți */}
+        {/* Tip for parents */}
         <div className="mt-6 rounded-2xl bg-[var(--sky)]/08 border border-[var(--sky)]/20 p-4">
-          <p className="font-inter text-xs font-semibold text-[var(--sky-dark)] mb-1">💡 Sfat</p>
+          <p className="font-inter text-xs font-semibold text-[var(--sky-dark)] mb-1">💡 Tip</p>
           <p className="font-inter text-sm text-[var(--dark)]">
             {children.length === 0
-              ? 'Playlio e conceput pentru 3-10 ani. Sesiunile scurte de 10-15 min/zi dau cele mai bune rezultate!'
+              ? 'Playlio is designed for ages 3-10. Short sessions of 10-15 min/day give the best results!'
               : totalMinutesThisWeek < 10
-              ? 'Activitate redusă săptămâna asta. Joacă împreună cu copilul — e mai motivant! 🎮'
-              : 'Bravo! Constanța zilnică de 10-15 minute face diferența în alfabetizare.'}
+              ? 'Low activity this week. Play together with your child — it\'s more motivating! 🎮'
+              : 'Great! Daily consistency of 10-15 minutes makes a real difference in literacy.'}
           </p>
         </div>
 
         <p className="font-inter text-xs text-[var(--gray)] text-center mt-8">
-          © 2026 Playlio · Sigur pentru copii
+          © 2026 Playlio · Safe for kids
         </p>
       </div>
     </div>

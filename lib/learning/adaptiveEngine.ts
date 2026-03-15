@@ -1,16 +1,16 @@
 import { PHONETIC_LETTERS, getConfusablePair, type LetterData } from './phonetics'
 
-// Motor adaptiv — 5 niveluri (nu 3)
-// NIVEL 1 — SCAFFOLDED: arată răspunsul 2s înainte, 2 opțiuni, Lio explică regula
-// NIVEL 2 — GUIDED: 3 opțiuni, hint la greșeală (contur clipește 0.5s), Lio: "Aproape!"
-// NIVEL 3 — INDEPENDENT: 4 opțiuni, fără hint (standard)
-// NIVEL 4 — CHALLENGE: 4 opțiuni confuzibile (B/D, 6/9), timer blând, bonus coins rapid
-// NIVEL 5 — MASTERY CHECK: test 5 întrebări la 2 săptămâni, diplomă vizuală, raport părinți
+// Adaptive engine — 5 levels (not 3)
+// LEVEL 1 — SCAFFOLDED: shows answer 2s first, 2 options, Lio explains the rule
+// LEVEL 2 — GUIDED: 3 options, hint on wrong (border blinks 0.5s), Lio: "Almost!"
+// LEVEL 3 — INDEPENDENT: 4 options, no hint (standard)
+// LEVEL 4 — CHALLENGE: 4 confusable options (B/D, 6/9), gentle timer, fast bonus coins
+// LEVEL 5 — MASTERY CHECK: 5-question test every 2 weeks, visual diploma, parent report
 
 export type AdaptiveLevel = 1 | 2 | 3 | 4 | 5
 
 export interface ItemProgress {
-  itemId: string       // ex: "letter_S"
+  itemId: string       // e.g. "letter_S"
   attempts: number
   correct: number
   consecutiveCorrect: number
@@ -24,10 +24,10 @@ export interface Question {
   targetLetter: LetterData
   choices: LetterData[]
   level: AdaptiveLevel
-  showAnswerFirst: boolean   // nivel 1: arată răspunsul 2s înainte
-  hintEnabled: boolean       // nivel 2: hint la greșeală
-  timerSeconds: number | null // nivel 4: timer blând (30s)
-  bonusCoins: number         // nivel 4: bonus pentru răspuns rapid
+  showAnswerFirst: boolean   // level 1: show answer 2s first
+  hintEnabled: boolean       // level 2: hint on wrong
+  timerSeconds: number | null // level 4: gentle timer (30s)
+  bonusCoins: number         // level 4: bonus for fast answer
 }
 
 export interface LevelThresholds {
@@ -71,7 +71,7 @@ export function updateProgress(
 
   const threshold = THRESHOLDS[prev.level]
 
-  // Promovare nivel
+  // Level promotion
   if (wasCorrect && next.consecutiveCorrect >= threshold.toPromote) {
     next.consecutiveCorrect = 0
     if (prev.level < 5) {
@@ -81,7 +81,7 @@ export function updateProgress(
     }
   }
 
-  // Retrogradare nivel
+  // Level demotion
   if (!wasCorrect && next.consecutiveWrong >= threshold.toDemote) {
     next.consecutiveWrong = 0
     if (prev.level > 1) {
@@ -92,12 +92,12 @@ export function updateProgress(
   return next
 }
 
-// Generează distractori (opțiuni greșite) în funcție de nivel
+// Generate distractors (wrong options) based on level
 function getDistractors(target: LetterData, level: AdaptiveLevel, count: number): LetterData[] {
   const pool = PHONETIC_LETTERS.filter(l => l.letter !== target.letter)
 
   if (level === 4) {
-    // La CHALLENGE: preferă perechi confuzabile
+    // At CHALLENGE: prefer confusable pairs
     const confusable = getConfusablePair(target.letter)
     const confusableLetter = confusable ? PHONETIC_LETTERS.find(l => l.letter === confusable) : null
     const rest = pool.filter(l => l.letter !== confusable)
@@ -111,7 +111,7 @@ function getDistractors(target: LetterData, level: AdaptiveLevel, count: number)
     return picked.slice(0, count)
   }
 
-  // La alte niveluri: aleatoriu din pool
+  // At other levels: random from pool
   return shuffleArray(pool).slice(0, count)
 }
 
@@ -173,46 +173,46 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a
 }
 
-// Mesajele lui Lio per nivel și situație
+// Lio messages per level and situation
 export type LioSituation = 'start' | 'correct' | 'wrong_1' | 'wrong_2' | 'wrong_3' | 'level_up' | 'mastered'
 
 export const LIO_MESSAGES: Record<LioSituation, string[]> = {
   start: [
-    'Să găsim litera! 🎯',
-    'Ești pregătit? Hai să începem! ⭐',
-    'Această literă e super! Hai s-o găsim! 🌟',
+    'Find the letter! 🎯',
+    'Are you ready? Let\'s go! ⭐',
+    'This letter is super cool! Let\'s find it! 🌟',
   ],
   correct: [
-    'Bravo! Ești fantastic! ⭐',
-    'Corect! Ai ghicit din prima! 🎉',
-    'Minunat! Mai una? 🌈',
-    'Super! Ești un adevărat erou al literelor! 🏆',
-    'Perfect! Stele pentru tine! ✨',
+    'Amazing! You\'re fantastic! ⭐',
+    'Correct! You got it first try! 🎉',
+    'Wonderful! One more? 🌈',
+    'Super! You\'re a true letter hero! 🏆',
+    'Perfect! Stars for you! ✨',
   ],
   wrong_1: [
-    'Hmm, mai încearcă! 🤔',
-    'Nu-i asta, uită-te cu atenție! 👀',
-    'Aproape! Mai o dată! 💪',
+    'Hmm, try again! 🤔',
+    'Not that one — look carefully! 👀',
+    'Almost! One more time! 💪',
   ],
   wrong_2: [
-    'Aproape! Uită-te la imagine! 🖼️',
-    'Hai, poți! Litera e chiar acolo! 🎯',
-    'Nu-ți fă griji, uită-te bine! ❤️',
+    'Almost! Look at the picture! 🖼️',
+    'Come on, you can do it! The letter is right there! 🎯',
+    'Don\'t worry, look closely! ❤️',
   ],
   wrong_3: [
-    'Uite, litera corectă! Să o recunoaștem împreună! 📚',
-    'Hai să o privim cu atenție! 🔍',
-    'Aceasta e litera! Să o reținem! 💡',
+    'Here\'s the right letter! Let\'s look at it together! 📚',
+    'Let\'s look at it carefully! 🔍',
+    'This is the letter! Let\'s remember it! 💡',
   ],
   level_up: [
-    'WOW! Ai trecut la nivelul următor! 🚀',
-    'Ești din ce în ce mai bun! 🌟',
-    'Un nou nivel! Ești un campion! 🏆',
+    'WOW! You moved to the next level! 🚀',
+    'You\'re getting better and better! 🌟',
+    'A new level! You\'re a champion! 🏆',
   ],
   mastered: [
-    'AI STĂPÂNIT ACEASTĂ LITERĂ! 🎓',
-    'Felicitări! Litera e a ta! ⭐⭐⭐',
-    'Expert total! Ești incredibil! 🦁',
+    'YOU MASTERED THIS LETTER! 🎓',
+    'Congratulations! This letter is yours! ⭐⭐⭐',
+    'Total expert! You\'re incredible! 🦁',
   ],
 }
 
@@ -221,7 +221,7 @@ export function getLioMessage(situation: LioSituation): string {
   return messages[Math.floor(Math.random() * messages.length)]
 }
 
-// Calculează coins per răspuns
+// Calculate coins per answer
 export function calculateCoins(
   level: AdaptiveLevel,
   isCorrect: boolean,

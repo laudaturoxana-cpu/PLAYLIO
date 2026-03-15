@@ -37,7 +37,7 @@ export default async function ParentsLayout({
           <a
             href="/"
             className="font-fredoka text-2xl font-semibold"
-            aria-label="Playlio — pagina principală"
+            aria-label="Playlio — home page"
           >
             <span style={{ color: 'var(--sky)' }}>PLAYLI</span>
             <span style={{ color: 'var(--coral)' }}>O</span>
@@ -47,7 +47,7 @@ export default async function ParentsLayout({
               type="submit"
               className="font-nunito text-sm font-semibold text-[var(--gray)] hover:text-[var(--coral)] transition-colors px-3 py-2 rounded-xl hover:bg-[var(--light)]"
             >
-              Deconectare
+              Sign out
             </button>
           </form>
         </div>

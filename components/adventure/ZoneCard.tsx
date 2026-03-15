@@ -25,19 +25,19 @@ export default function ZoneCard({ zone, playerLevel, savedStars, isNew = false 
       }`}
       style={{ touchAction: 'manipulation' }}
     >
-      {/* Background gradient decorativ */}
+      {/* Decorative background gradient */}
       <div
         className="absolute inset-0 opacity-30 pointer-events-none"
         style={{ background: zone.bgGradient }}
       />
 
-      {/* Badge "Nou!" */}
+      {/* "New!" badge */}
       {isNew && unlocked && (
         <div
           className="absolute -top-1 -right-1 z-10 rounded-full px-2 py-0.5 font-nunito text-xs font-bold text-white shadow-sm"
           style={{ background: 'var(--coral)', animation: 'pop 0.4s ease' }}
         >
-          Nou! ✨
+          New! ✨
         </div>
       )}
 
@@ -59,10 +59,10 @@ export default function ZoneCard({ zone, playerLevel, savedStars, isNew = false 
             </div>
           </div>
           {!unlocked && (
-            <span className="text-xl flex-shrink-0 ml-2" aria-label="Blocat">🔒</span>
+            <span className="text-xl flex-shrink-0 ml-2" aria-label="Locked">🔒</span>
           )}
           {complete && (
-            <span className="text-xl flex-shrink-0 ml-2" aria-label="Completat">🏆</span>
+            <span className="text-xl flex-shrink-0 ml-2" aria-label="Completed">🏆</span>
           )}
         </div>
 
@@ -111,8 +111,8 @@ export default function ZoneCard({ zone, playerLevel, savedStars, isNew = false 
             style={{ color: zone.color }}
           >
             {zone.totalStars - savedStars === 1
-              ? '⚡ Ești la un pas! Mai ai O stea!'
-              : `💪 Mai ai ${zone.totalStars - savedStars} stele!`}
+              ? '⚡ So close! Just ONE star left!'
+              : `💪 ${zone.totalStars - savedStars} stars left!`}
           </p>
         )}
 
@@ -128,12 +128,12 @@ export default function ZoneCard({ zone, playerLevel, savedStars, isNew = false 
                 : `linear-gradient(90deg, ${zone.color}, ${zone.color}cc)`,
             }}
           >
-            {complete ? '🔄 Joacă din nou' : savedStars > 0 ? '▶️ Continuă' : '🗺️ Explorează'}
+            {complete ? '🔄 Play again' : savedStars > 0 ? '▶️ Continue' : '🗺️ Explore'}
           </Link>
         ) : (
           <div className="flex items-center justify-center gap-2 w-full rounded-2xl py-2.5 bg-[var(--gray-light,#f0f0f0)]">
             <span className="font-nunito text-sm text-[var(--gray)]">
-              🔒 Nivel {zone.requiredLevel} necesar
+              🔒 Level {zone.requiredLevel} required
             </span>
           </div>
         )}

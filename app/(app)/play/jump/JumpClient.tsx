@@ -57,15 +57,15 @@ function LevelSelect({
           href="/worlds"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform text-lg"
           style={{ touchAction: 'manipulation' }}
-          aria-label="Înapoi"
+          aria-label="Back"
         >
           ←
         </Link>
         <div className="text-center">
           <h1 className="font-fredoka text-xl font-semibold" style={{ color: '#F57F17' }}>
-            🎮 Lumea Jump
+            🎮 Jump World
           </h1>
-          <p className="font-nunito text-xs text-[var(--gray)]">Alege nivelul</p>
+          <p className="font-nunito text-xs text-[var(--gray)]">Choose level</p>
         </div>
         <div className="w-10" />
       </div>
@@ -73,7 +73,7 @@ function LevelSelect({
       <div className="mb-4 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-black/5">
         <span className="text-3xl" style={{ animation: 'float 2s ease-in-out infinite' }}>🎮</span>
         <p className="font-nunito text-sm text-[var(--dark)]">
-          Bună, {profileName}! Sari peste obstacole și adună monede! 🪙
+          Hi, {profileName}! Jump over obstacles and collect coins! 🪙
         </p>
       </div>
 
@@ -115,13 +115,13 @@ function LevelSelect({
                   ))}
                   {best && (
                     <span className="font-nunito text-xs text-[var(--gray)] ml-1">
-                      Record: {best.score} 🪙
+                      Best: {best.score} 🪙
                     </span>
                   )}
                 </div>
               </div>
               {!prevDone && <span className="text-xl">🔒</span>}
-              {prevDone && !best && <span className="font-nunito text-xs text-[var(--sky)]">Nou!</span>}
+              {prevDone && !best && <span className="font-nunito text-xs text-[var(--sky)]">New!</span>}
             </button>
           )
         })}
@@ -162,7 +162,7 @@ function JumpGame({
 
   const [savedResult, setSavedResult] = useState(false)
 
-  // Keyboard support (desktop/tabletă cu tastatură)
+  // Keyboard support (desktop/tablet with keyboard)
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'ArrowLeft')  setControl('left', true)
@@ -181,7 +181,7 @@ function JumpGame({
     }
   }, [setControl, jump])
 
-  // Salvează scorul la final
+  // Save score at the end
   useEffect(() => {
     if ((isComplete || isDead) && !savedResult && score > 0) {
       setSavedResult(true)
@@ -215,7 +215,7 @@ function JumpGame({
           onClick={onBack}
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform text-lg"
           style={{ touchAction: 'manipulation' }}
-          aria-label="Înapoi"
+          aria-label="Back"
         >
           ←
         </button>
@@ -225,14 +225,14 @@ function JumpGame({
           </p>
           {bestScore && (
             <p className="font-nunito text-xs text-[var(--gray)]">
-              Record: {bestScore.score} 🪙 {'⭐'.repeat(bestScore.stars)}
+              Best: {bestScore.score} 🪙 {'⭐'.repeat(bestScore.stars)}
             </p>
           )}
         </div>
         <div className="w-10" />
       </div>
 
-      {/* Jocul */}
+      {/* Game */}
       {!isRunning && !isEnd ? (
         /* Start screen */
         <div className="flex-1 flex flex-col items-center justify-center gap-5">
@@ -247,7 +247,7 @@ function JumpGame({
 
           <div className="text-center">
             <p className="font-nunito text-sm text-[var(--gray)]">
-              Adună cât mai multe monede în {level.timeLimit} secunde!
+              Collect as many coins as you can in {level.timeLimit} seconds!
             </p>
             <p className="font-nunito text-xs text-[var(--gray)] mt-1">
               {level.starThresholds[0]} 🪙 = ⭐ · {level.starThresholds[1]} 🪙 = ⭐⭐ · {level.starThresholds[2]} 🪙 = ⭐⭐⭐
@@ -264,7 +264,7 @@ function JumpGame({
               minHeight: '60px',
             }}
           >
-            🎮 Joacă!
+            🎮 Play!
           </button>
         </div>
       ) : isEnd ? (
@@ -284,7 +284,7 @@ function JumpGame({
               className="font-fredoka text-2xl font-semibold"
               style={{ color: '#F57F17' }}
             >
-              {isDead ? 'Ai căzut!' : 'Timp expirat!'}
+              {isDead ? 'You fell!' : 'Time\'s up!'}
             </h2>
 
             {/* Stars */}
@@ -310,7 +310,7 @@ function JumpGame({
                 <span className="font-fredoka text-2xl font-semibold text-[var(--sun-dark)]">
                   {score}
                 </span>
-                <span className="font-nunito text-xs text-[var(--gray)]">monede</span>
+                <span className="font-nunito text-xs text-[var(--gray)]">coins</span>
               </div>
               {stars > 0 && (
                 <div className="flex flex-col items-center">
@@ -318,7 +318,7 @@ function JumpGame({
                   <span className="font-fredoka text-2xl font-semibold text-[var(--mint-dark)]">
                     +{score * 2}
                   </span>
-                  <span className="font-nunito text-xs text-[var(--gray)]">coins câștigate</span>
+                  <span className="font-nunito text-xs text-[var(--gray)]">coins earned</span>
                 </div>
               )}
             </div>
@@ -329,20 +329,20 @@ function JumpGame({
                 className="rounded-full py-3 font-nunito text-base font-semibold text-white active:scale-95 transition-transform shadow-md"
                 style={{ touchAction: 'manipulation', background: 'linear-gradient(90deg, #F57F17, #FF8F00)' }}
               >
-                🔄 Din nou
+                🔄 Try again
               </button>
               <button
                 onClick={onBack}
                 className="rounded-full border-2 border-[rgba(0,0,0,0.08)] py-3 font-nunito text-base font-semibold text-[var(--gray)] active:scale-95 transition-transform"
                 style={{ touchAction: 'manipulation' }}
               >
-                ← Niveluri
+                ← Levels
               </button>
             </div>
           </div>
         </div>
       ) : (
-        /* Joc activ */
+        /* Active game */
         <>
           <JumpCanvas
             level={level}

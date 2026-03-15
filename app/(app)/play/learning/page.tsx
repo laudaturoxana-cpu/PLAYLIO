@@ -16,13 +16,13 @@ export default async function LearningWorldPage() {
     .eq('id', user.id)
     .single()
 
-  // Progresul de learning din Supabase (pentru starea inițială)
+  // Learning progress from Supabase (for initial state)
   const { data: learningRows } = await supabase
     .from('learning_progress')
     .select('item_id, attempts, correct, mastered')
     .eq('user_id', user.id)
 
-  // Transformăm în map: itemId → mastered
+  // Transform into map: itemId → mastered
   const masteredSet = new Set<string>(
     (learningRows ?? [])
       .filter(r => r.mastered)
@@ -32,7 +32,7 @@ export default async function LearningWorldPage() {
   return (
     <LearningMap
       userId={user.id}
-      profileName={profile?.full_name ?? 'Aventurierule'}
+      profileName={profile?.full_name ?? 'Explorer'}
       masteredSet={Array.from(masteredSet)}
     />
   )

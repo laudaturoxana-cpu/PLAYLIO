@@ -18,7 +18,7 @@ interface LetterGameProps {
   series: SeriesId
 }
 
-// Numărul de întrebări per sesiune (fereastra de atenție 3-5 ani = 5 minute)
+// Number of questions per session (attention window for ages 3-5 = 5 minutes)
 const QUESTIONS_PER_SESSION = 10
 
 export default function LetterGame({ userId, initialCoins, series }: LetterGameProps) {
@@ -43,7 +43,7 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
   const [chosenLetter, setChosenLetter] = useState<LetterData | null>(null)
   const [sessionDone, setSessionDone] = useState(false)
 
-  // Sync coins cu Supabase la ieșire / final sesiune
+  // Sync coins with Supabase on exit / session end
   const syncCoins = useCallback(async (coins: number) => {
     if (coins <= 0) return
     try {
@@ -55,11 +55,11 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
         p_world: 'learning',
       })
     } catch {
-      // silențios — va sync la reconectare
+      // silent — will sync on reconnect
     }
   }, [userId])
 
-  // Sync la final sesiune
+  // Sync at session end
   useEffect(() => {
     if (sessionDone) {
       syncCoins(totalCoinsThisSession)
@@ -67,7 +67,7 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
     }
   }, [sessionDone, totalCoinsThisSession, syncCoins, userId])
 
-  // Sync la unmount (ieșire din joc)
+  // Sync on unmount (exit from game)
   useEffect(() => {
     return () => {
       syncPendingToSupabase(userId)
@@ -95,7 +95,7 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <span className="text-4xl" style={{ animation: 'bounce-soft 1s infinite' }}>📚</span>
-          <p className="font-nunito text-sm text-[var(--gray)]">Se încarcă...</p>
+          <p className="font-nunito text-sm text-[var(--gray)]">Loading...</p>
         </div>
       </div>
     )
@@ -151,15 +151,15 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
                   ? seriesInfo.color
                   : 'var(--gray-light, #e0e0e0)',
             }}
-            aria-label={`Nivel ${lvl}${lvl === level ? ' activ' : ''}`}
+            aria-label={`Level ${lvl}${lvl === level ? ' active' : ''}`}
           />
         ))}
         <span className="font-nunito text-xs text-[var(--gray)] ml-1">
-          Nivel {level}
+          Level {level}
         </span>
       </div>
 
-      {/* Litera țintă + imagine */}
+      {/* Target letter + image */}
       <div className="flex-1 flex flex-col items-center justify-center py-4">
         <LetterDisplay
           letter={targetLetter}
@@ -168,7 +168,7 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
         />
       </div>
 
-      {/* Grid alegeri */}
+      {/* Choice grid */}
       <div
         className={`grid gap-3 mb-4 ${
           choices.length === 2
@@ -236,7 +236,7 @@ function SessionSummary({ totalCoins, masteredCount, totalLetters, seriesInfo, o
         className="flex flex-col items-center gap-5 rounded-3xl bg-white px-8 py-10 shadow-lg border border-black/5 text-center max-w-sm w-full"
         style={{ animation: 'slide-up 0.4s ease' }}
       >
-        {/* Fanfară 2 secunde — emoji animat */}
+        {/* Fanfare 2 seconds — animated emoji */}
         <span
           className="text-6xl"
           style={{ animation: 'pop 0.5s ease, bounce-soft 2s 0.5s ease infinite' }}
@@ -246,7 +246,7 @@ function SessionSummary({ totalCoins, masteredCount, totalLetters, seriesInfo, o
 
         <div>
           <h2 className="font-fredoka text-2xl font-semibold" style={{ color: seriesInfo.color }}>
-            Sesiune completă!
+            Session complete!
           </h2>
           <p className="font-nunito text-base text-[var(--gray)] mt-1">
             {seriesInfo.title}
@@ -260,18 +260,18 @@ function SessionSummary({ totalCoins, masteredCount, totalLetters, seriesInfo, o
             <span className="font-fredoka text-2xl font-semibold text-[var(--sun-dark)]">
               +{totalCoins}
             </span>
-            <span className="font-nunito text-xs text-[var(--gray)]">coins câștigate</span>
+            <span className="font-nunito text-xs text-[var(--gray)]">coins earned</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <span className="text-3xl">⭐</span>
             <span className="font-fredoka text-2xl font-semibold text-[var(--mint-dark)]">
               {masteredCount}/{totalLetters}
             </span>
-            <span className="font-nunito text-xs text-[var(--gray)]">litere stăpânite</span>
+            <span className="font-nunito text-xs text-[var(--gray)]">letters mastered</span>
           </div>
         </div>
 
-        {/* Butoane */}
+        {/* Buttons */}
         <div className="flex flex-col gap-3 w-full">
           <button
             onClick={onContinue}
@@ -281,14 +281,14 @@ function SessionSummary({ totalCoins, masteredCount, totalLetters, seriesInfo, o
               background: `linear-gradient(90deg, ${seriesInfo.color}, ${seriesInfo.color}cc)`,
             }}
           >
-            Mai joacă! 🎮
+            Play more! 🎮
           </button>
           <a
             href="/play/learning"
             className="rounded-full border-2 border-[var(--gray-light,#e0e0e0)] py-3 font-nunito text-base font-semibold text-[var(--gray)] active:scale-95 transition-transform text-center"
             style={{ touchAction: 'manipulation' }}
           >
-            Înapoi la hartă 🗺️
+            Back to map 🗺️
           </a>
         </div>
       </div>

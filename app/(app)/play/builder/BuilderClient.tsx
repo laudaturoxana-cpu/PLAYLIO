@@ -48,8 +48,8 @@ export default function BuilderClient({
   }
 
   function handleItemTap(uid: string) {
-    if (selectedItem) return  // în modul de plasare, ignorăm tap pe iteme
-    // Confirmă ștergere cu un click simplu (fără modal — copiii nu citesc)
+    if (selectedItem) return  // in placement mode, ignore taps on items
+    // Confirm removal with a single click (no modal — children don't read)
     removeItem(uid)
   }
 
@@ -75,17 +75,17 @@ export default function BuilderClient({
           href="/worlds"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform text-lg"
           style={{ touchAction: 'manipulation' }}
-          aria-label="Înapoi"
+          aria-label="Back"
         >
           ←
         </Link>
         <div className="text-center">
           <h1 className="font-fredoka text-lg font-semibold text-[var(--sky-dark)]">
-            🏗️ Camera lui {profileName}
+            🏗️ {profileName}'s Room
           </h1>
           {rareCount > 0 && (
             <p className="font-nunito text-xs text-[var(--sun-dark)]">
-              ✨ {rareCount} obiecte rare!
+              ✨ {rareCount} rare items!
             </p>
           )}
         </div>
@@ -103,7 +103,7 @@ export default function BuilderClient({
               className="font-nunito text-[10px] text-[var(--sky)] underline"
               style={{ touchAction: 'manipulation' }}
             >
-              Salvează
+              Save
             </button>
           )}
         </div>
@@ -121,20 +121,20 @@ export default function BuilderClient({
         </div>
       )}
 
-      {/* Item selectat indicator */}
+      {/* Selected item indicator */}
       {selectedItem && (
         <div
           className="flex items-center justify-between rounded-2xl bg-[var(--sky)] px-4 py-2"
           style={{ animation: 'slide-up 0.2s ease' }}
         >
           <p className="font-nunito text-sm font-semibold text-white">
-            Atinge camera unde vrei să pui {selectedItem.emoji}
+            Tap the room where you want to place {selectedItem.emoji}
           </p>
           <button
             onClick={() => setSelectedItem(null)}
             className="ml-2 text-white/80 font-bold text-lg"
             style={{ touchAction: 'manipulation', minWidth: '32px', minHeight: '32px' }}
-            aria-label="Anulează"
+            aria-label="Cancel"
           >
             ✕
           </button>
@@ -151,10 +151,10 @@ export default function BuilderClient({
         gridRows={gridRows}
       />
 
-      {/* Hint remove */}
+      {/* Remove hint */}
       {!selectedItem && room.placedItems.length > 0 && (
         <p className="font-nunito text-xs text-[var(--gray)] text-center">
-          Atinge un obiect din cameră pentru a-l elimina (50% coins înapoi)
+          Tap an item in the room to remove it (50% coins refund)
         </p>
       )}
 

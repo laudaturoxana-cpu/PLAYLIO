@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 interface ChildSettings {
-  dyslexiaMode: boolean       // Font OpenDyslexic
-  highContrast: boolean       // Contrast înalt
-  extendedTime: boolean       // Timp dublu la răspunsuri
-  reducedMotion: boolean      // Respectă prefers-reduced-motion (display only)
-  textToSpeech: boolean       // Lio citește instrucțiunile cu voce
-  soundEnabled: boolean       // Sunete joc activate
+  dyslexiaMode: boolean       // OpenDyslexic font
+  highContrast: boolean       // High contrast
+  extendedTime: boolean       // Double time for answers
+  reducedMotion: boolean      // Respects prefers-reduced-motion (display only)
+  textToSpeech: boolean       // Lio reads instructions aloud
+  soundEnabled: boolean       // Game sounds enabled
 }
 
 const DEFAULT_SETTINGS: ChildSettings = {
@@ -37,7 +37,7 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
       const raw = localStorage.getItem(storageKey)
       if (raw) setSettings(JSON.parse(raw) as ChildSettings)
     } catch {
-      // silențios
+      // silent
     }
   }, [storageKey])
 
@@ -56,7 +56,7 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
     } catch {
-      // silențios
+      // silent
     }
   }
 
@@ -67,47 +67,47 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
     items: { key: keyof ChildSettings; label: string; note?: string; readOnly?: boolean }[]
   }[] = [
     {
-      title: 'Accesibilitate',
+      title: 'Accessibility',
       emoji: '♿',
-      description: 'Opțiuni pentru copii cu nevoi speciale',
+      description: 'Options for children with special needs',
       items: [
         {
           key: 'dyslexiaMode',
-          label: 'Mod dislexie',
-          note: 'Activează fontul OpenDyslexic — mai ușor de citit pentru copiii cu dislexie',
+          label: 'Dyslexia mode',
+          note: 'Enables OpenDyslexic font — easier to read for children with dyslexia',
         },
         {
           key: 'highContrast',
-          label: 'Contrast înalt',
-          note: 'Culori mai puternice pentru copiii cu deficiențe de vedere',
+          label: 'High contrast',
+          note: 'Stronger colors for children with visual impairments',
         },
         {
           key: 'extendedTime',
-          label: 'Timp extins',
-          note: 'Răspunsurile au timp dublu — recomandat pentru copiii care au nevoie de mai mult timp',
+          label: 'Extended time',
+          note: 'Double time for answers — recommended for children who need more time',
         },
         {
           key: 'reducedMotion',
-          label: 'Animații reduse',
-          note: 'Setat automat din preferințele sistemului de operare (prefers-reduced-motion)',
+          label: 'Reduced motion',
+          note: 'Automatically set from operating system preferences (prefers-reduced-motion)',
           readOnly: true,
         },
       ],
     },
     {
-      title: 'Experiență de joc',
+      title: 'Game experience',
       emoji: '🎮',
-      description: 'Personalizează experiența copilului',
+      description: 'Customize your child\'s experience',
       items: [
         {
           key: 'textToSpeech',
-          label: 'Vocea lui Lio',
-          note: 'Lio citește instrucțiunile cu voce — recomandat pentru copiii de 3-5 ani',
+          label: 'Lio\'s voice',
+          note: 'Lio reads instructions aloud — recommended for children aged 3-5',
         },
         {
           key: 'soundEnabled',
-          label: 'Sunete joc',
-          note: 'Efectele sonore: ding! la corect, whomp moale la greșit',
+          label: 'Game sounds',
+          note: 'Sound effects: ding! for correct, soft whomp for wrong',
         },
       ],
     },
@@ -128,23 +128,23 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
             href="/parents/dashboard"
             className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform text-lg"
             style={{ touchAction: 'manipulation' }}
-            aria-label="Înapoi"
+            aria-label="Back"
           >
             ←
           </Link>
           <div className="text-center">
             <h1 className="font-fredoka text-xl font-semibold text-[var(--sky-dark)]">
-              ⚙️ Setări
+              ⚙️ Settings
             </h1>
             <p className="font-inter text-xs text-[var(--gray)]">{childName}</p>
           </div>
           <div className="w-10" />
         </div>
 
-        {/* Grupuri de setări */}
+        {/* Settings groups */}
         {settingsGroups.map(group => (
           <div key={group.title} className="rounded-3xl bg-white border border-black/5 shadow-sm mb-4 overflow-hidden">
-            {/* Header grup */}
+            {/* Group header */}
             <div className="px-5 py-4 border-b border-black/05">
               <div className="flex items-center gap-2">
                 <span className="text-xl">{group.emoji}</span>
@@ -208,39 +208,39 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
           </div>
         ))}
 
-        {/* Notă dislexie */}
+        {/* Dyslexia note */}
         {settings.dyslexiaMode && (
           <div
             className="rounded-2xl bg-[var(--purple)]/08 border border-[var(--purple)]/20 p-4 mb-4"
             style={{ animation: 'slide-up 0.3s ease' }}
           >
             <p className="font-inter text-xs text-[var(--purple)] font-semibold mb-1">
-              📖 Mod dislexie activ
+              📖 Dyslexia mode active
             </p>
             <p className="font-inter text-xs text-[var(--dark)]">
-              Fontul OpenDyslexic va fi aplicat în toată aplicația pentru {childName}.
-              Asigurați-vă că fontul e instalat sau că aveți conexiune internet activă.
+              OpenDyslexic font will be applied throughout the app for {childName}.
+              Make sure the font is installed or you have an active internet connection.
             </p>
           </div>
         )}
 
-        {/* Notă timp extins */}
+        {/* Extended time note */}
         {settings.extendedTime && (
           <div
             className="rounded-2xl bg-[var(--mint)]/20 border border-[var(--mint-dark)]/25 p-4 mb-4"
             style={{ animation: 'slide-up 0.3s ease' }}
           >
             <p className="font-inter text-xs text-[var(--mint-dark)] font-semibold mb-1">
-              ⏱️ Timp extins activ
+              ⏱️ Extended time active
             </p>
             <p className="font-inter text-xs text-[var(--dark)]">
-              {childName} va avea de 2× mai mult timp pentru fiecare răspuns.
-              Nivelul adaptiv se ajustează automat.
+              {childName} will have 2× more time for each answer.
+              The adaptive level adjusts automatically.
             </p>
           </div>
         )}
 
-        {/* Buton salvare */}
+        {/* Save button */}
         <button
           onClick={handleSave}
           className="flex items-center justify-center gap-2 w-full rounded-full py-3 font-inter text-base font-semibold text-white shadow-md active:scale-95 transition-transform mb-4"
@@ -251,7 +251,7 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
               : 'linear-gradient(90deg, var(--sky), var(--sky-dark))',
           }}
         >
-          {saved ? '✅ Salvat!' : '💾 Salvează setările'}
+          {saved ? '✅ Saved!' : '💾 Save settings'}
         </button>
 
         <Link
@@ -263,7 +263,7 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
         </Link>
 
         <p className="font-inter text-xs text-[var(--gray)] text-center mt-6">
-          Setările sunt salvate local pe acest dispozitiv
+          Settings are saved locally on this device
         </p>
       </div>
     </div>

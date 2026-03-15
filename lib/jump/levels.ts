@@ -1,9 +1,9 @@
-// Jump World — definițiile nivelurilor platformer
+// Jump World — platformer level definitions
 
 export interface Platform {
-  x: number    // % din lățimea scenei
-  y: number    // % din înălțimea scenei (0 = sus, 100 = jos)
-  width: number // % din lățimea scenei
+  x: number    // % of scene width
+  y: number    // % of scene height (0 = top, 100 = bottom)
+  width: number // % of scene width
   isGround?: boolean
   isMoving?: boolean
   moveRange?: number  // px oscillation
@@ -24,15 +24,15 @@ export interface JumpLevel {
   groundColor: string
   platforms: Platform[]
   coins: Coin[]
-  starThresholds: [number, number, number]  // coins pentru 1⭐, 2⭐, 3⭐
-  timeLimit: number   // secunde
+  starThresholds: [number, number, number]  // coins for 1⭐, 2⭐, 3⭐
+  timeLimit: number   // seconds
   theme: 'forest' | 'sky' | 'cave' | 'space'
 }
 
 export const JUMP_LEVELS: JumpLevel[] = [
   {
     id: 'level_1',
-    name: 'Pădurea Săriturii',
+    name: 'Jump Forest',
     emoji: '🌿',
     bgGradient: 'linear-gradient(180deg, #B2EBF2 0%, #E8F5E9 100%)',
     groundColor: '#4CAF50',
@@ -52,7 +52,7 @@ export const JUMP_LEVELS: JumpLevel[] = [
       { id: 'c10', x: 60, y: 30 },
     ],
     platforms: [
-      { x: 0,   y: 88, width: 100, isGround: true },  // sol
+      { x: 0,   y: 88, width: 100, isGround: true },  // ground
       { x: 10,  y: 68, width: 20 },
       { x: 35,  y: 53, width: 20 },
       { x: 58,  y: 68, width: 22 },
@@ -63,7 +63,7 @@ export const JUMP_LEVELS: JumpLevel[] = [
   },
   {
     id: 'level_2',
-    name: 'Cerul Curcubeului',
+    name: 'Rainbow Sky',
     emoji: '🌈',
     bgGradient: 'linear-gradient(180deg, #CE93D8 0%, #80DEEA 100%)',
     groundColor: '#7B1FA2',
@@ -95,7 +95,7 @@ export const JUMP_LEVELS: JumpLevel[] = [
   },
   {
     id: 'level_3',
-    name: 'Galaxia Stelelor',
+    name: 'Star Galaxy',
     emoji: '🚀',
     bgGradient: 'linear-gradient(180deg, #0D0D2B 0%, #1A237E 100%)',
     groundColor: '#311B92',

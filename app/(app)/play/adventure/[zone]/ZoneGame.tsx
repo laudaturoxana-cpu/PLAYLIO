@@ -25,7 +25,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
   const handleComplete = useCallback(async (stars: number, coins: number) => {
     setShowSummary(true)
 
-    // Sync coins și misiuni completate cu Supabase
+    // Sync coins and completed quests with Supabase
     try {
       const supabase = createClient()
       const totalCoins = coins + checkNewlyCompletedQuests(stars)
@@ -39,7 +39,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
         })
       }
 
-      // Completare misiuni noi
+      // Complete new quests
       for (const quest of zone.quests) {
         if (!localCompleted.includes(quest.id) && stars >= quest.requiredStars) {
           try {
@@ -49,12 +49,12 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
             })
             setLocalCompleted(prev => [...prev, quest.id])
           } catch {
-            // misiunea putea fi deja inserată
+            // quest may have already been inserted
           }
         }
       }
     } catch {
-      // silențios
+      // silent
     }
   }, [userId, zone, localCompleted])
 
@@ -87,7 +87,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
 
   function handleSecretCollect() {
     collectSecret()
-    setSecretFeedback(`${zone.secret.rewardEmoji} Secret descoperit! +${zone.secret.rewardCoins} 🪙`)
+    setSecretFeedback(`${zone.secret.rewardEmoji} Secret found! +${zone.secret.rewardCoins} 🪙`)
     setTimeout(() => setSecretFeedback(null), 3000)
   }
 
@@ -98,17 +98,17 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
       <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center gap-4">
         <span className="text-6xl">🔒</span>
         <h2 className="font-fredoka text-2xl font-semibold text-[var(--gray)]">
-          Zonă blocată
+          Zone locked
         </h2>
         <p className="font-nunito text-sm text-[var(--gray)]">
-          Ai nevoie de nivelul {zone.requiredLevel} pentru a accesa {zone.name}.
+          You need level {zone.requiredLevel} to access {zone.name}.
         </p>
         <Link
           href="/play/adventure"
           className="rounded-full bg-[var(--mint-dark)] px-6 py-3 font-nunito text-base font-semibold text-white active:scale-95 transition-transform"
           style={{ touchAction: 'manipulation' }}
         >
-          ← Înapoi la hartă
+          ← Back to map
         </Link>
       </div>
     )
@@ -143,7 +143,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
           href="/play/adventure"
           className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/90 text-[var(--gray)] active:scale-95 transition-transform text-sm font-bold"
           style={{ touchAction: 'manipulation', border: '1px solid rgba(0,0,0,0.08)' }}
-          aria-label="Înapoi"
+          aria-label="Back"
         >
           ←
         </Link>
@@ -174,7 +174,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
         </div>
       </div>
 
-      {/* Timer (dacă e running) */}
+      {/* Timer (if running) */}
       {isRunning && (
         <div className="flex items-center justify-between mb-3">
           <div
@@ -230,10 +230,10 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
         </div>
       )}
 
-      {/* Zona de colectat */}
+      {/* Collection area */}
       <div className="flex-1 flex flex-col gap-3">
         {!isRunning ? (
-          /* Ecran start */
+          /* Start screen */
           <div className="flex-1 flex flex-col items-center justify-center gap-5">
             <span className="text-7xl" style={{ animation: 'float 2s ease-in-out infinite' }}>
               {zone.emoji}
@@ -247,14 +247,14 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
               </p>
               {savedStars > 0 && (
                 <p className="font-nunito text-xs text-[var(--gray)] mt-2">
-                  Ai deja {savedStars}/{totalStars} ⭐
+                  You already have {savedStars}/{totalStars} ⭐
                 </p>
               )}
             </div>
 
-            {/* Secret hint discret */}
+            {/* Discreet secret hint */}
             <p className="font-nunito text-xs text-[var(--gray)] opacity-60 text-center px-6">
-              💡 Psst... există un secret ascuns în această zonă!
+              💡 Psst... there's a hidden secret in this zone!
             </p>
 
             <button
@@ -267,11 +267,11 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
                 minHeight: '60px',
               }}
             >
-              {savedStars > 0 ? '▶️ Continuă' : '🗺️ Explorează!'}
+              {savedStars > 0 ? '▶️ Continue' : '🗺️ Explore!'}
             </button>
           </div>
         ) : (
-          /* Joc activ */
+          /* Active game */
           <>
             <StarCollector
               floatingItems={floatingItems}
@@ -284,7 +284,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
               zoneEmoji={zone.emoji}
             />
 
-            {/* Quest tracker compact */}
+            {/* Compact quest tracker */}
             <QuestTracker
               quests={zone.quests}
               collectedStars={collectedStars}
@@ -328,7 +328,7 @@ function ZoneSummary({ zone, collectedStars, coinsEarned, newlyCompletedQuests, 
             className="font-fredoka text-2xl font-semibold"
             style={{ color: zone.color }}
           >
-            {complete ? 'Zona completată!' : 'Bună treabă!'}
+            {complete ? 'Zone complete!' : 'Great job!'}
           </h2>
           <p className="font-nunito text-sm text-[var(--gray)] mt-1">{zone.name}</p>
         </div>
@@ -360,11 +360,11 @@ function ZoneSummary({ zone, collectedStars, coinsEarned, newlyCompletedQuests, 
           </div>
         )}
 
-        {/* Misiuni completate */}
+        {/* Completed quests */}
         {newlyCompletedQuests.length > 0 && (
           <div className="w-full rounded-2xl bg-[var(--mint-dark)]/10 p-3 text-left">
             <p className="font-nunito text-xs font-bold text-[var(--mint-dark)] mb-2">
-              🎯 Misiuni completate:
+              🎯 Quests completed:
             </p>
             {newlyCompletedQuests.map(title => (
               <p key={title} className="font-nunito text-sm text-[var(--dark)]">
@@ -374,11 +374,11 @@ function ZoneSummary({ zone, collectedStars, coinsEarned, newlyCompletedQuests, 
           </div>
         )}
 
-        {/* Album colecție hint */}
+        {/* Collection album hint */}
         {complete && (
           <div className="rounded-2xl bg-[var(--sky)]/10 px-4 py-3 text-center">
             <p className="font-nunito text-sm text-[var(--sky-dark)]">
-              {zone.postcardEmoji} Carte poștală adăugată în albumul tău!
+              {zone.postcardEmoji} Postcard added to your album!
             </p>
           </div>
         )}
@@ -392,14 +392,14 @@ function ZoneSummary({ zone, collectedStars, coinsEarned, newlyCompletedQuests, 
               background: `linear-gradient(90deg, ${zone.color}, ${zone.color}cc)`,
             }}
           >
-            {complete ? '🔄 Joacă din nou' : '▶️ Mai colectează'}
+            {complete ? '🔄 Play again' : '▶️ Collect more'}
           </button>
           <Link
             href="/play/adventure"
             className="rounded-full border-2 border-[rgba(0,0,0,0.08)] py-3 font-nunito text-base font-semibold text-[var(--gray)] active:scale-95 transition-transform text-center"
             style={{ touchAction: 'manipulation' }}
           >
-            🗺️ Hartă
+            🗺️ Map
           </Link>
         </div>
       </div>

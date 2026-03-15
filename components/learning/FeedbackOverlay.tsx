@@ -18,20 +18,20 @@ export default function FeedbackOverlay({
   onDone,
   autoAdvanceMs = 1200,
 }: FeedbackOverlayProps) {
-  // Auto-advance după animație
+  // Auto-advance after animation
   useEffect(() => {
     if (feedback === 'correct' || feedback === 'wrong') {
       const t = setTimeout(onDone, autoAdvanceMs)
       return () => clearTimeout(t)
     }
-    // level_up și mastered: copilul apasă butonul
+    // level_up and mastered: child presses the button
   }, [feedback, autoAdvanceMs, onDone])
 
   if (!feedback) return null
 
   if (feedback === 'wrong') {
     return (
-      // Shake screen — feedback vizual NU text negativ
+      // Shake screen — visual feedback NOT negative text
       <div
         className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center"
         style={{ animation: 'shake 0.4s ease' }}
@@ -95,11 +95,14 @@ export default function FeedbackOverlay({
           style={{ animation: 'pop 0.4s ease', maxWidth: '280px' }}
         >
           <span className="text-6xl">🚀</span>
-          <h2 className="font-fredoka text-2xl font-semibold text-[var(--purple)]">
-            Nivel nou!
+          <h2
+            className="font-fredoka text-2xl font-semibold"
+            style={{ color: 'var(--purple)' }}
+          >
+            Level up!
           </h2>
           <p className="font-nunito text-base text-[var(--gray)]">
-            Ești din ce în ce mai bun!
+            You're getting better and better!
           </p>
           {coins > 0 && (
             <div className="flex items-center gap-2">
@@ -110,11 +113,11 @@ export default function FeedbackOverlay({
             </div>
           )}
           <button
-            className="mt-2 rounded-full bg-[var(--purple)] px-8 py-3 font-nunito text-base font-semibold text-white shadow-md active:scale-95 transition-transform"
-            style={{ touchAction: 'manipulation' }}
+            className="mt-2 rounded-full px-8 py-3 font-nunito text-base font-semibold text-white shadow-md active:scale-95 transition-transform"
+            style={{ touchAction: 'manipulation', backgroundColor: 'var(--purple)' }}
             onClick={onDone}
           >
-            Continuă! ⭐
+            Keep going! ⭐
           </button>
         </div>
       </div>
@@ -128,12 +131,12 @@ export default function FeedbackOverlay({
         style={{ background: 'rgba(0,0,0,0.5)', animation: 'fade-in 0.2s ease' }}
         onClick={onDone}
       >
-        {/* Flash alb → fade in animație (conform spec tranzițiilor) */}
+        {/* White flash → fade in animation (per transition spec) */}
         <div
           className="flex flex-col items-center gap-4 rounded-3xl bg-white px-8 py-10 shadow-2xl text-center"
           style={{ animation: 'pop 0.5s ease', maxWidth: '300px' }}
         >
-          {/* Stea explodează din centru */}
+          {/* Star explodes from center */}
           <div className="relative">
             <span className="text-7xl" style={{ animation: 'pop 0.5s ease' }}>🏆</span>
             {['⭐', '✨', '🌟', '💫', '⭐'].map((s, i) => (
@@ -150,11 +153,14 @@ export default function FeedbackOverlay({
               </span>
             ))}
           </div>
-          <h2 className="font-fredoka text-2xl font-semibold text-[var(--coral)]">
-            Ai stăpânit litera!
+          <h2
+            className="font-fredoka text-2xl font-semibold"
+            style={{ color: 'var(--coral)' }}
+          >
+            You mastered this letter!
           </h2>
           <p className="font-nunito text-base text-[var(--gray)]">
-            Ești un adevărat erou al literelor! 🦁
+            You're a true letter hero! 🦁
           </p>
           {coins > 0 && (
             <div className="flex items-center gap-2">
@@ -165,11 +171,11 @@ export default function FeedbackOverlay({
             </div>
           )}
           <button
-            className="mt-2 rounded-full bg-[var(--coral)] px-8 py-3 font-nunito text-base font-semibold text-white shadow-md active:scale-95 transition-transform"
-            style={{ touchAction: 'manipulation' }}
+            className="mt-2 rounded-full px-8 py-3 font-nunito text-base font-semibold text-white shadow-md active:scale-95 transition-transform"
+            style={{ touchAction: 'manipulation', backgroundColor: 'var(--coral)' }}
             onClick={onDone}
           >
-            Înainte! 🚀
+            Next! 🚀
           </button>
         </div>
       </div>

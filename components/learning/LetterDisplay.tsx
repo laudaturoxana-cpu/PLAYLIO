@@ -4,7 +4,7 @@ import type { LetterData } from '@/lib/learning/phonetics'
 
 interface LetterDisplayProps {
   letter: LetterData
-  showLetter?: boolean     // uneori ascundem litera (mod auditiv)
+  showLetter?: boolean     // sometimes we hide the letter (audio mode)
   animate?: boolean
 }
 
@@ -20,12 +20,12 @@ export default function LetterDisplay({
         animation: animate ? 'pop 0.4s ease' : undefined,
       }}
     >
-      {/* Instrucțiune (text simplu, mare) */}
+      {/* Instruction (simple, large text) */}
       <p className="font-nunito text-base text-[var(--gray)] text-center">
-        Găsește litera pentru
+        Find the letter for
       </p>
 
-      {/* Obiect concret mare — Piaget: gândire concretă, nu abstractă */}
+      {/* Large concrete object — Piaget: concrete thinking, not abstract */}
       <div
         className="flex items-center justify-center rounded-3xl"
         style={{
@@ -41,7 +41,7 @@ export default function LetterDisplay({
         </span>
       </div>
 
-      {/* Cuvântul în română — mare și clar */}
+      {/* The word — large and clear */}
       <p
         className="font-fredoka text-2xl font-semibold text-center"
         style={{ color: letter.color }}
@@ -49,27 +49,27 @@ export default function LetterDisplay({
         {letter.word}
       </p>
 
-      {/* Litera (dacă e vizibilă — nivel 1 sau indicator) */}
+      {/* Letter (if visible — level 1 or indicator) */}
       {showLetter && (
         <div className="flex gap-4 items-center">
           <span
             className="font-fredoka text-5xl font-semibold"
             style={{ color: letter.color }}
-            aria-label={`Litera mare ${letter.letter}`}
+            aria-label={`Uppercase letter ${letter.letter}`}
           >
             {letter.letter}
           </span>
           <span
             className="font-fredoka text-4xl font-semibold opacity-70"
             style={{ color: letter.color }}
-            aria-label={`Litera mică ${letter.lowercase}`}
+            aria-label={`Lowercase letter ${letter.lowercase}`}
           >
             {letter.lowercase}
           </span>
         </div>
       )}
 
-      {/* Sunet fonetic — afișat ca text simplu pentru copii mici */}
+      {/* Phonetic sound — displayed as simple text for young children */}
       <p className="font-nunito text-sm text-[var(--gray)] italic">
         „{letter.sound}..."
       </p>

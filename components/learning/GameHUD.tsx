@@ -25,25 +25,25 @@ export default function GameHUD({
 
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-black/5">
-      {/* Buton ieșire */}
+      {/* Exit button */}
       <Link
         href="/play/learning"
         onClick={onExit}
         className="flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--gray-light,#f5f5f5)] text-[var(--gray)] active:scale-95 transition-transform"
         style={{ touchAction: 'manipulation', minWidth: '40px', minHeight: '40px' }}
-        aria-label="Înapoi la hartă"
+        aria-label="Back to map"
       >
         ←
       </Link>
 
-      {/* Progress bar scurtă */}
+      {/* Short progress bar */}
       <div className="flex-1 flex flex-col gap-1">
         <div className="flex justify-between items-center">
           <span className="font-nunito text-xs text-[var(--gray)]">
-            {masteredCount}/{totalLetters} litere stăpânite
+            {masteredCount}/{totalLetters} letters mastered
           </span>
           <span className="font-nunito text-xs text-[var(--gray)]">
-            {questionsAnswered} răspunsuri
+            {questionsAnswered} answers
           </span>
         </div>
         <div

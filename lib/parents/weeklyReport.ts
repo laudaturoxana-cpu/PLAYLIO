@@ -15,10 +15,10 @@ export interface WeeklyReport {
   minutesDelta: number  // + = more, - = less
 
   // Letters
-  newlyMasteredLetters: string[]        // ex: ['S', 'A', 'T']
+  newlyMasteredLetters: string[]        // e.g. ['S', 'A', 'T']
   totalMasteredLetters: string[]
-  difficultLetters: string[]            // erori frecvente
-  difficultLetterNotes: Record<string, string>  // lettera → notă pedagogică
+  difficultLetters: string[]            // frequent errors
+  difficultLetterNotes: Record<string, string>  // letter → pedagogical note
 
   // Activity
   adventureStarsThisWeek: number
@@ -31,18 +31,18 @@ export interface WeeklyReport {
   // Recommendations
   recommendations: string[]
 
-  // Performance (simulated — în producție real benchmark)
-  percentileRank: number  // ex: 78 → top 22%
+  // Performance (simulated — in production real benchmark)
+  percentileRank: number  // e.g. 78 → top 22%
 }
 
-// Note pedagogice per literă dificilă
+// Pedagogical notes per difficult letter
 const LETTER_NOTES: Record<string, string> = {
-  'B': 'o confundă cu D — fenomen normal la 5 ani. Exersați: "B are burtă în față, D are burtă în spate"',
-  'D': 'o confundă cu B — fenomen normal la 5 ani. Exersați cu degetul pe masă',
-  'P': 'o confundă cu T — sunet similar. Exersați cuvinte: Papagal vs. Tigru',
-  'N': 'sunet nazal — dificil de distins. Cântați: "nnn"',
-  'I': 'sunet scurt — atenție la durată. Exemple: iepure, inimă',
-  'default': 'continuați exercițiile zilnice de recunoaștere',
+  'B': 'confuses it with D — normal at age 5. Practice: "B has belly in front, D has belly in back"',
+  'D': 'confuses it with B — normal at age 5. Practice by tracing with finger on table',
+  'P': 'confuses it with T — similar sound. Practice words: Parrot vs. Tiger',
+  'N': 'nasal sound — hard to distinguish. Sing: "nnn"',
+  'I': 'short sound — watch the duration. Examples: igloo, ice cream',
+  'default': 'continue daily recognition exercises',
 }
 
 function getLetterNote(letter: string): string {
@@ -69,7 +69,7 @@ function estimateMinutesFromActivity(
   quests: number,
   jumpGames: number
 ): number {
-  // Estimare: 1 răspuns learning = ~12s, 1 quest = ~5min, 1 jump game = ~2min
+  // Estimate: 1 learning answer = ~12s, 1 quest = ~5min, 1 jump game = ~2min
   const learningMin = Math.round((learningAnswers * 12) / 60)
   const questMin = quests * 5
   const jumpMin = jumpGames * 2
@@ -90,18 +90,18 @@ export async function generateWeeklyReport(
   const lastWeekStart = lastWeek.start.toISOString()
   const lastWeekEnd = lastWeek.end.toISOString()
 
-  // Learning progress — toate datele
+  // Learning progress — all data
   const { data: allLearning } = await supabase
     .from('learning_progress')
     .select('item_id, attempts, correct, mastered, last_seen')
     .eq('user_id', childId)
 
-  // Litere masterite total
+  // Total mastered letters
   const totalMasteredLetters = (allLearning ?? [])
     .filter(r => r.mastered && r.item_id.startsWith('letter_'))
     .map(r => r.item_id.replace('letter_', ''))
 
-  // Litere masterite săptămâna asta (last_seen în această săptămână + mastered)
+  // Letters mastered this week (last_seen this week + mastered)
   const newlyMasteredLetters = (allLearning ?? [])
     .filter(r => {
       if (!r.mastered || !r.item_id.startsWith('letter_')) return false
@@ -110,7 +110,7 @@ export async function generateWeeklyReport(
     })
     .map(r => r.item_id.replace('letter_', ''))
 
-  // Litere cu dificultăți (rate de corectitudine < 50% + minim 5 tentative)
+  // Difficult letters (correct rate < 50% + minimum 5 attempts)
   const difficultLetters = (allLearning ?? [])
     .filter(r => {
       if (!r.item_id.startsWith('letter_')) return false
@@ -119,16 +119,16 @@ export async function generateWeeklyReport(
       return (r.correct / r.attempts) < 0.5
     })
     .map(r => r.item_id.replace('letter_', ''))
-    .slice(0, 3) // maxim 3
+    .slice(0, 3) // maximum 3
 
   const difficultLetterNotes: Record<string, string> = {}
   for (const l of difficultLetters) {
     difficultLetterNotes[l] = getLetterNote(l)
   }
 
-  // Nivel adaptiv mediu
+  // Average adaptive level
   const levelSum = (allLearning ?? []).reduce((s, r) => {
-    // Nu avem nivelul direct în Supabase, estimăm din rata de corect
+    // We don't have the level directly in Supabase, estimate from correct rate
     const rate = r.attempts > 0 ? r.correct / r.attempts : 0
     if (rate > 0.9) return s + 4
     if (rate > 0.75) return s + 3
@@ -139,7 +139,7 @@ export async function generateWeeklyReport(
     ? Math.round(levelSum / allLearning.length)
     : 1
 
-  // Quest completions săptămâna asta
+  // Quest completions this week
   const { data: questsThisWeek } = await supabase
     .from('quest_completions')
     .select('id')
@@ -149,7 +149,7 @@ export async function generateWeeklyReport(
 
   const questsCompletedThisWeek = questsThisWeek?.length ?? 0
 
-  // Jump scores săptămâna asta
+  // Jump scores this week
   const { data: jumpThisWeek } = await supabase
     .from('jump_scores')
     .select('score, stars')
@@ -159,7 +159,7 @@ export async function generateWeeklyReport(
 
   const jumpGamesThisWeek = jumpThisWeek?.length ?? 0
 
-  // Quest completions săptămâna trecută
+  // Quest completions last week
   const { data: questsLastWeek } = await supabase
     .from('quest_completions')
     .select('id')
@@ -169,7 +169,7 @@ export async function generateWeeklyReport(
 
   const questsLastWeekCount = questsLastWeek?.length ?? 0
 
-  // Jump scores săptămâna trecută
+  // Jump scores last week
   const { data: jumpLastWeek } = await supabase
     .from('jump_scores')
     .select('score')
@@ -177,7 +177,7 @@ export async function generateWeeklyReport(
     .gte('created_at', lastWeekStart)
     .lt('created_at', lastWeekEnd)
 
-  // Learning answers this week (estimare din last_seen)
+  // Learning answers this week (estimate from last_seen)
   const learningAnswersThisWeek = (allLearning ?? []).filter(r => {
     const seen = new Date(r.last_seen)
     return seen >= thisWeek.start && seen <= thisWeek.end
@@ -196,33 +196,33 @@ export async function generateWeeklyReport(
   )
   const minutesDelta = minutesThisWeek - minutesLastWeek
 
-  // Stars adventure this week
-  const adventureStarsThisWeek = questsCompletedThisWeek * 2  // aproximare
+  // Adventure stars this week
+  const adventureStarsThisWeek = questsCompletedThisWeek * 2  // approximation
 
   // Recommendations
   const recommendations: string[] = []
 
   if (difficultLetters.length > 0) {
     recommendations.push(
-      `Exersați acasă litera ${difficultLetters[0]}: ${getLetterNote(difficultLetters[0])}`
+      `Practice letter ${difficultLetters[0]} at home: ${getLetterNote(difficultLetters[0])}`
     )
   }
   if (minutesThisWeek < 10) {
-    recommendations.push('Recomandăm 10-15 minute de Playlio pe zi pentru progres optim')
+    recommendations.push('We recommend 10-15 minutes of Playlio per day for optimal progress')
   }
   if (newlyMasteredLetters.length > 0) {
     recommendations.push(
-      `Felicitați-l pentru literele noi stăpânite: ${newlyMasteredLetters.join(', ')} 🎉`
+      `Congratulate them for the newly mastered letters: ${newlyMasteredLetters.join(', ')} 🎉`
     )
   }
   if (averageAdaptiveLevel >= 3) {
-    recommendations.push('Copilul progresează bine — poate trece la litere mai dificile')
+    recommendations.push('Great progress — your child is ready for more challenging letters')
   }
   if (recommendations.length === 0) {
-    recommendations.push('Continuați rutina zilnică — constanța face diferența!')
+    recommendations.push('Keep the daily routine going — consistency makes the difference!')
   }
 
-  // Percentile (simulat — în producție real benchmark)
+  // Percentile (simulated — in production real benchmark)
   const basePercentile = 50
   const masteredBonus = totalMasteredLetters.length * 3
   const activityBonus = Math.min(minutesThisWeek * 2, 30)

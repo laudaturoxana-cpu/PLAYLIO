@@ -10,16 +10,16 @@ interface ChildData {
 }
 
 const AVATAR_PRESETS = [
-  { id: 0, name: 'Exploratorul', hairColor: '#3E2723', skinTone: '#FFAB76', outfitColor: '#4FC3F7', emoji: '🧭' },
-  { id: 1, name: 'Prințesa', hairColor: '#F9A825', skinTone: '#FFCCBC', outfitColor: '#F48FB1', emoji: '👑' },
-  { id: 2, name: 'Artistul', hairColor: '#CE93D8', skinTone: '#D4845A', outfitColor: '#CE93D8', emoji: '🎨' },
-  { id: 3, name: 'Eroul', hairColor: '#212121', skinTone: '#8D5524', outfitColor: '#66BB6A', emoji: '⚡' },
+  { id: 0, name: 'Explorer',  hairColor: '#3E2723', skinTone: '#FFAB76', outfitColor: '#4FC3F7', emoji: '🧭' },
+  { id: 1, name: 'Princess',  hairColor: '#F9A825', skinTone: '#FFCCBC', outfitColor: '#F48FB1', emoji: '👑' },
+  { id: 2, name: 'Artist',    hairColor: '#CE93D8', skinTone: '#D4845A', outfitColor: '#CE93D8', emoji: '🎨' },
+  { id: 3, name: 'Hero',      hairColor: '#212121', skinTone: '#8D5524', outfitColor: '#66BB6A', emoji: '⚡' },
 ]
 
 const LIO_MESSAGES = [
-  'Bun venit în Playlio! Hai să creăm profilul primului tău copil! 🌟',
-  'Super alegere! Acum să alegem cum arată aventurierul tău! 🎭',
-  '', // step 3 dinamic
+  'Welcome to Playlio! Let\'s create your first child\'s profile! 🌟',
+  'Great choice! Now let\'s pick what your adventurer looks like! 🎭',
+  '', // step 3 dynamic
 ]
 
 interface Props {
@@ -39,10 +39,10 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
     const supabase = createClient()
     const preset = AVATAR_PRESETS[data.avatarPreset]
 
-    // Username unic: prenume + timestamp scurt
+    // Unique username: first name + short timestamp
     const username = `${data.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now().toString(36)}`
 
-    // Creare profil copil
+    // Create child profile
     const { data: childProfile, error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -51,7 +51,7 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
         full_name: data.name.trim(),
         role: 'child',
         parent_id: parentId,
-        coins: 50, // bonus de bun venit!
+        coins: 50, // welcome bonus!
       })
       .select()
       .single()
@@ -61,7 +61,7 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
       return
     }
 
-    // Creare avatar cu preset-ul ales
+    // Create avatar with chosen preset
     await supabase.from('avatars').insert({
       user_id: childProfile.id,
       hair_color: preset.hairColor,
@@ -69,11 +69,11 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
       outfit_color: preset.outfitColor,
     })
 
-    // Adaugă tranzacția de welcome coins
+    // Add welcome coins transaction
     await supabase.from('coin_transactions').insert({
       user_id: childProfile.id,
       amount: 50,
-      reason: 'Bun venit în Playlio! 🎉',
+      reason: 'Welcome to Playlio! 🎉',
     })
 
     setSaving(false)
@@ -90,7 +90,7 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
     >
       <div className="w-full max-w-md rounded-3xl bg-white shadow-[var(--shadow-lg)] p-8 flex flex-col gap-6 animate-slide-up">
 
-        {/* Lio + Mesaj */}
+        {/* Lio + Message */}
         <div className="flex items-start gap-4">
           <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" className="flex-shrink-0" style={{ animation: 'bounce-soft 2s ease-in-out infinite' }}>
             <circle cx="32" cy="36" r="26" fill="#FFD54F" />
@@ -106,13 +106,13 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
             <p className="font-nunito text-sm font-medium text-[var(--dark)] leading-relaxed">
               {step < 2
                 ? LIO_MESSAGES[step]
-                : `🎉 Gata! ${data.name} poate începe aventura! Am pregătit și 50 coins bonus de bun venit!`}
+                : `🎉 All set! ${data.name} is ready to start the adventure! We prepared 50 bonus coins for a welcome gift!`}
             </p>
           </div>
         </div>
 
         {/* Progress dots */}
-        <div className="flex justify-center gap-2" aria-label={`Pasul ${step + 1} din 3`}>
+        <div className="flex justify-center gap-2" aria-label={`Step ${step + 1} of 3`}>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
@@ -127,17 +127,17 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
           ))}
         </div>
 
-        {/* Step 1 — Date copil */}
+        {/* Step 1 — Child info */}
         {step === 0 && (
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="child-name" className="font-nunito text-sm font-bold text-[var(--dark)]">
-                Cum îl cheamă pe copilul tău?
+                What is your child's name?
               </label>
               <input
                 id="child-name"
                 type="text"
-                placeholder="ex: Andrei"
+                placeholder="e.g. Alex"
                 autoComplete="off"
                 value={data.name}
                 onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
@@ -149,14 +149,14 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <label htmlFor="child-age" className="font-nunito text-sm font-bold text-[var(--dark)]">
-                  Câți ani are?
+                  How old are they?
                 </label>
                 <span
                   className="font-fredoka text-2xl font-semibold"
                   style={{ color: 'var(--coral)' }}
                   aria-live="polite"
                 >
-                  {data.age} ani
+                  {data.age} years
                 </span>
               </div>
               <input
@@ -171,10 +171,10 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
                 aria-valuemin={3}
                 aria-valuemax={10}
                 aria-valuenow={data.age}
-                aria-valuetext={`${data.age} ani`}
+                aria-valuetext={`${data.age} years`}
               />
               <div className="flex justify-between font-nunito text-xs text-[var(--gray)]">
-                <span>3 ani</span><span>10 ani</span>
+                <span>3 yrs</span><span>10 yrs</span>
               </div>
             </div>
 
@@ -184,16 +184,16 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
               className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-base text-white px-6 py-4 min-h-[52px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ backgroundColor: 'var(--coral)', boxShadow: 'var(--shadow-coral)' }}
             >
-              Continuă →
+              Continue →
             </button>
           </div>
         )}
 
-        {/* Step 2 — Avatar rapid */}
+        {/* Step 2 — Quick avatar */}
         {step === 1 && (
           <div className="flex flex-col gap-5">
             <p className="font-nunito text-sm text-[var(--gray)]">
-              {data.name} poate personaliza avatarul mai târziu din profilul său.
+              {data.name} can customize the avatar later from their profile.
             </p>
             <div className="grid grid-cols-2 gap-3">
               {AVATAR_PRESETS.map((preset) => (
@@ -229,29 +229,29 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
               style={{ backgroundColor: 'var(--coral)', boxShadow: 'var(--shadow-coral)' }}
             >
               {saving ? (
-                <><span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />Se salvează...</>
-              ) : 'Creează profilul lui ' + data.name}
+                <><span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />Saving...</>
+              ) : 'Create ' + data.name + '\'s profile'}
             </button>
           </div>
         )}
 
-        {/* Step 3 — Succes */}
+        {/* Step 3 — Success */}
         {step === 2 && (
           <div className="flex flex-col items-center gap-5 text-center">
             <div className="text-6xl" style={{ animation: 'wiggle 0.6s ease-in-out 2' }} aria-hidden="true">🎉</div>
             <div>
               <p className="font-fredoka text-2xl font-semibold text-[var(--dark)] mb-1">
-                {data.name} e gata de aventură!
+                {data.name} is ready for adventure!
               </p>
               <p className="font-nunito text-sm text-[var(--gray)]">
-                50 coins bonus te așteaptă în portofel ✨
+                50 bonus coins are waiting in your wallet ✨
               </p>
             </div>
             <button
               onClick={onComplete}
               className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95 shimmer-bg"
             >
-              Hai să explorăm! 🚀
+              Let's explore! 🚀
             </button>
           </div>
         )}

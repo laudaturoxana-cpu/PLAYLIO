@@ -32,46 +32,46 @@ export interface Zone {
   description: string
   color: string
   bgGradient: string      // gradient CSS
-  items: ZoneItem[]       // obiectele care apar în mini-joc
+  items: ZoneItem[]       // items that appear in the mini-game
   totalStars: number
-  requiredLevel: number   // nivel minim deblocare
+  requiredLevel: number   // minimum level to unlock
   quests: ZoneQuest[]
   secret: ZoneSecret
-  postcardEmoji: string   // emoji pentru album colecție
+  postcardEmoji: string   // emoji for collection album
 }
 
 export const ZONES: Zone[] = [
   {
     id: 'zone_sunny_forest',
     slug: 'sunny-forest',
-    name: 'Pădurea Însorită',
+    name: 'Sunny Forest',
     emoji: '🌳',
-    description: 'O pădure magică plină de fluturi și flori fermecate',
+    description: 'A magical forest full of butterflies and enchanted flowers',
     color: 'var(--mint-dark)',
     bgGradient: 'linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%)',
     totalStars: 5,
     requiredLevel: 1,
     items: [
-      { id: 'butterfly', emoji: '🦋', label: 'Fluture', points: 1 },
-      { id: 'flower',    emoji: '🌸', label: 'Floare',  points: 1 },
-      { id: 'mushroom',  emoji: '🍄', label: 'Ciupercă',points: 1 },
-      { id: 'leaf',      emoji: '🍃', label: 'Frunză',  points: 1 },
-      { id: 'acorn',     emoji: '🌰', label: 'Ghindă',  points: 1 },
-      { id: 'star_rare', emoji: '⭐', label: 'Stea rară',points: 2 },
+      { id: 'butterfly', emoji: '🦋', label: 'Butterfly', points: 1 },
+      { id: 'flower',    emoji: '🌸', label: 'Flower',    points: 1 },
+      { id: 'mushroom',  emoji: '🍄', label: 'Mushroom',  points: 1 },
+      { id: 'leaf',      emoji: '🍃', label: 'Leaf',      points: 1 },
+      { id: 'acorn',     emoji: '🌰', label: 'Acorn',     points: 1 },
+      { id: 'star_rare', emoji: '⭐', label: 'Rare Star', points: 2 },
     ],
     quests: [
       {
         id: 'q_forest_1',
-        title: 'Colecționarul de fluturi',
-        description: 'Adună 3 stele în Pădurea Însorită',
+        title: 'Butterfly Collector',
+        description: 'Collect 3 stars in the Sunny Forest',
         requiredStars: 3,
         rewardCoins: 10,
         rewardEmoji: '🦋',
       },
       {
         id: 'q_forest_2',
-        title: 'Exploratorul pădurii',
-        description: 'Adună toate 5 stelele!',
+        title: 'Forest Explorer',
+        description: 'Collect all 5 stars!',
         requiredStars: 5,
         rewardCoins: 20,
         rewardEmoji: '🌟',
@@ -80,7 +80,7 @@ export const ZONES: Zone[] = [
     secret: {
       id: 'secret_bunny',
       trigger: 'idle_10s',
-      description: 'Un iepuraș invizibil apare dacă stai nemișcat 10 secunde',
+      description: 'An invisible bunny appears if you stay still for 10 seconds',
       rewardEmoji: '🐰',
       rewardCoins: 15,
     },
@@ -89,33 +89,33 @@ export const ZONES: Zone[] = [
   {
     id: 'zone_crystal_cave',
     slug: 'crystal-cave',
-    name: 'Peștera de Cristal',
+    name: 'Crystal Cave',
     emoji: '💎',
-    description: 'Adânc în munte, cristalele strălucesc ca stelele',
+    description: 'Deep in the mountain, crystals shine like stars',
     color: 'var(--sky-dark)',
     bgGradient: 'linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%)',
     totalStars: 5,
     requiredLevel: 2,
     items: [
-      { id: 'crystal_blue',   emoji: '💎', label: 'Cristal',    points: 1 },
-      { id: 'crystal_pink',   emoji: '🔮', label: 'Orb magic',  points: 1 },
-      { id: 'gem',            emoji: '💍', label: 'Piatră prețioasă', points: 1 },
-      { id: 'crystal_yellow', emoji: '✨', label: 'Scânteie',   points: 1 },
-      { id: 'diamond',        emoji: '🌟', label: 'Diamant',    points: 2 },
+      { id: 'crystal_blue',   emoji: '💎', label: 'Crystal',   points: 1 },
+      { id: 'crystal_pink',   emoji: '🔮', label: 'Magic Orb', points: 1 },
+      { id: 'gem',            emoji: '💍', label: 'Gemstone',  points: 1 },
+      { id: 'crystal_yellow', emoji: '✨', label: 'Sparkle',   points: 1 },
+      { id: 'diamond',        emoji: '🌟', label: 'Diamond',   points: 2 },
     ],
     quests: [
       {
         id: 'q_cave_1',
-        title: 'Vânătorul de cristale',
-        description: 'Adună 3 cristale strălucitoare',
+        title: 'Crystal Hunter',
+        description: 'Collect 3 shiny crystals',
         requiredStars: 3,
         rewardCoins: 12,
         rewardEmoji: '💎',
       },
       {
         id: 'q_cave_2',
-        title: 'Maestrul peșterii',
-        description: 'Descoperă toate comorile!',
+        title: 'Cave Master',
+        description: 'Discover all the treasures!',
         requiredStars: 5,
         rewardCoins: 25,
         rewardEmoji: '👑',
@@ -124,7 +124,7 @@ export const ZONES: Zone[] = [
     secret: {
       id: 'secret_echo',
       trigger: 'tap_5x',
-      description: 'Peretele face ecou dacă îl atingi de 5 ori',
+      description: 'The wall echoes if you tap it 5 times',
       rewardEmoji: '🔊',
       rewardCoins: 12,
     },
@@ -133,33 +133,33 @@ export const ZONES: Zone[] = [
   {
     id: 'zone_magic_garden',
     slug: 'magic-garden',
-    name: 'Grădina Magică',
+    name: 'Magic Garden',
     emoji: '🌺',
-    description: 'Flori care vorbesc și plante care dansează',
+    description: 'Talking flowers and dancing plants',
     color: 'var(--coral)',
     bgGradient: 'linear-gradient(180deg, #FCE4EC 0%, #F8BBD0 100%)',
     totalStars: 5,
     requiredLevel: 3,
     items: [
-      { id: 'rose',      emoji: '🌹', label: 'Trandafir',  points: 1 },
-      { id: 'tulip',     emoji: '🌷', label: 'Lalea',      points: 1 },
-      { id: 'sunflower', emoji: '🌻', label: 'Floarea-soarelui', points: 1 },
-      { id: 'fairy',     emoji: '🧚', label: 'Zânuță',     points: 2 },
-      { id: 'rainbow',   emoji: '🌈', label: 'Curcubeu',   points: 2 },
+      { id: 'rose',      emoji: '🌹', label: 'Rose',      points: 1 },
+      { id: 'tulip',     emoji: '🌷', label: 'Tulip',     points: 1 },
+      { id: 'sunflower', emoji: '🌻', label: 'Sunflower', points: 1 },
+      { id: 'fairy',     emoji: '🧚', label: 'Fairy',     points: 2 },
+      { id: 'rainbow',   emoji: '🌈', label: 'Rainbow',   points: 2 },
     ],
     quests: [
       {
         id: 'q_garden_1',
-        title: 'Grădinarul mic',
-        description: 'Adună 3 flori magice',
+        title: 'Little Gardener',
+        description: 'Collect 3 magic flowers',
         requiredStars: 3,
         rewardCoins: 15,
         rewardEmoji: '🌺',
       },
       {
         id: 'q_garden_2',
-        title: 'Prietenul zânuțelor',
-        description: 'Completează grădina magică!',
+        title: 'Friend of Fairies',
+        description: 'Complete the magic garden!',
         requiredStars: 5,
         rewardCoins: 30,
         rewardEmoji: '🧚',
@@ -168,7 +168,7 @@ export const ZONES: Zone[] = [
     secret: {
       id: 'secret_rainbow',
       trigger: 'tap_5x',
-      description: 'Un curcubeu apare dacă atingi norul de 5 ori',
+      description: 'A rainbow appears if you tap the cloud 5 times',
       rewardEmoji: '🌈',
       rewardCoins: 20,
     },
@@ -177,33 +177,33 @@ export const ZONES: Zone[] = [
   {
     id: 'zone_cloud_kingdom',
     slug: 'cloud-kingdom',
-    name: 'Regatul Norilor',
+    name: 'Cloud Kingdom',
     emoji: '☁️',
-    description: 'Sus în ceruri, unde norii sunt din vată de zahăr',
+    description: 'High in the sky where clouds are made of cotton candy',
     color: 'var(--purple)',
     bgGradient: 'linear-gradient(180deg, #EDE7F6 0%, #D1C4E9 100%)',
     totalStars: 5,
     requiredLevel: 5,
     items: [
-      { id: 'cloud',     emoji: '⛅', label: 'Norișor',   points: 1 },
-      { id: 'lightning', emoji: '⚡', label: 'Fulger',    points: 1 },
-      { id: 'snowflake', emoji: '❄️', label: 'Fulg',      points: 1 },
-      { id: 'moon_star', emoji: '🌙', label: 'Lunuță',    points: 2 },
-      { id: 'rainbow2',  emoji: '🌈', label: 'Curcubeu',  points: 2 },
+      { id: 'cloud',     emoji: '⛅', label: 'Cloud',        points: 1 },
+      { id: 'lightning', emoji: '⚡', label: 'Lightning',    points: 1 },
+      { id: 'snowflake', emoji: '❄️', label: 'Snowflake',    points: 1 },
+      { id: 'moon_star', emoji: '🌙', label: 'Little Moon',  points: 2 },
+      { id: 'rainbow2',  emoji: '🌈', label: 'Rainbow',      points: 2 },
     ],
     quests: [
       {
         id: 'q_cloud_1',
-        title: 'Călătorul norilor',
-        description: 'Adună 3 comori din cer',
+        title: 'Cloud Traveler',
+        description: 'Collect 3 sky treasures',
         requiredStars: 3,
         rewardCoins: 18,
         rewardEmoji: '☁️',
       },
       {
         id: 'q_cloud_2',
-        title: 'Regele norilor',
-        description: 'Cucerește regatul ceresc!',
+        title: 'Cloud King',
+        description: 'Conquer the sky kingdom!',
         requiredStars: 5,
         rewardCoins: 35,
         rewardEmoji: '👑',
@@ -212,7 +212,7 @@ export const ZONES: Zone[] = [
     secret: {
       id: 'secret_shooting_star',
       trigger: 'idle_10s',
-      description: 'O stea căzătoare trece dacă privești cerul 10 secunde',
+      description: 'A shooting star passes if you watch the sky for 10 seconds',
       rewardEmoji: '🌠',
       rewardCoins: 25,
     },
@@ -221,33 +221,33 @@ export const ZONES: Zone[] = [
   {
     id: 'zone_dragon_peak',
     slug: 'dragon-peak',
-    name: 'Vârful Dragonului',
+    name: 'Dragon Peak',
     emoji: '🐉',
-    description: 'Cel mai înalt vârf unde trăiește un dragon prietenos',
+    description: 'The highest peak where a friendly dragon lives',
     color: '#F57F17',
     bgGradient: 'linear-gradient(180deg, #FFF8E1 0%, #FFECB3 100%)',
     totalStars: 7,
     requiredLevel: 8,
     items: [
-      { id: 'fire',       emoji: '🔥', label: 'Flacără',   points: 1 },
-      { id: 'gem_dragon', emoji: '💎', label: 'Cristal',   points: 1 },
-      { id: 'egg',        emoji: '🥚', label: 'Ou dragon', points: 2 },
-      { id: 'treasure',   emoji: '💰', label: 'Comoară',   points: 2 },
-      { id: 'dragon_gem', emoji: '🐉', label: 'Dragon mic',points: 3 },
+      { id: 'fire',       emoji: '🔥', label: 'Flame',      points: 1 },
+      { id: 'gem_dragon', emoji: '💎', label: 'Crystal',    points: 1 },
+      { id: 'egg',        emoji: '🥚', label: 'Dragon Egg', points: 2 },
+      { id: 'treasure',   emoji: '💰', label: 'Treasure',   points: 2 },
+      { id: 'dragon_gem', emoji: '🐉', label: 'Baby Dragon',points: 3 },
     ],
     quests: [
       {
         id: 'q_dragon_1',
-        title: 'Temerarul munților',
-        description: 'Adună 5 comori ale dragonului',
+        title: 'Mountain Daredevil',
+        description: 'Collect 5 dragon treasures',
         requiredStars: 5,
         rewardCoins: 25,
         rewardEmoji: '🐉',
       },
       {
         id: 'q_dragon_2',
-        title: 'Legendarul aventurier',
-        description: 'Completează vârful legendar!',
+        title: 'Legendary Adventurer',
+        description: 'Complete the legendary peak!',
         requiredStars: 7,
         rewardCoins: 50,
         rewardEmoji: '🏆',
@@ -256,7 +256,7 @@ export const ZONES: Zone[] = [
     secret: {
       id: 'secret_dragon_roar',
       trigger: 'tap_5x',
-      description: 'Dragonul răcnește dacă îi atingi coada de 5 ori',
+      description: 'The dragon roars if you tap its tail 5 times',
       rewardEmoji: '🔥',
       rewardCoins: 30,
     },
@@ -274,14 +274,14 @@ export function isZoneUnlocked(zone: Zone, playerLevel: number): boolean {
   return playerLevel >= zone.requiredLevel
 }
 
-// Near-miss: dacă playerul are progres parțial, Lio îl motivează
+// Near-miss: if the player has partial progress, Lio motivates them
 export function getNearMissMessage(collectedStars: number, totalStars: number): string | null {
   const remaining = totalStars - collectedStars
   if (collectedStars === 0 || remaining <= 0) return null
-  if (remaining === 1) return `Ești la un pas! Mai ai O ${remaining === 1 ? 'stea' : 'stele'}! 🌟`
-  if (remaining === 2) return `Aproape! Mai ai ${remaining} stele! 💪`
+  if (remaining === 1) return `So close! Just ONE star left! 🌟`
+  if (remaining === 2) return `Almost there! ${remaining} stars left! 💪`
   if (collectedStars > 0 && collectedStars >= Math.floor(totalStars / 2)) {
-    return `Ești la jumătate! Continuă! ⭐`
+    return `Halfway there! Keep going! ⭐`
   }
   return null
 }

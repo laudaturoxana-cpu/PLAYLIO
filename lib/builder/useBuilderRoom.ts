@@ -122,13 +122,13 @@ export function useBuilderRoom(userId: string, initialCoins: number) {
     // Prima decorare: Lio face tur și comentează
     if (isFirstDecoration) {
       setIsFirstDecoration(false)
-      setLioComment(`WOW! Camera ta arată SUPERB! Ai pus ${item.name}! 🏠✨`)
+      setLioComment(`WOW! Your room looks AMAZING! You placed ${item.name}! 🏠✨`)
       setTimeout(() => setLioComment(null), 3500)
     } else {
       const comments = [
-        `${item.name} arată perfect acolo! 🌟`,
-        `Minunat! Camera ta devine mai frumoasă! ✨`,
-        `Bravo! Ești un decorator talentat! 🎨`,
+        `${item.name} looks perfect there! 🌟`,
+        `Wonderful! Your room is getting more beautiful! ✨`,
+        `Great job! You\'re a talented decorator! 🎨`,
       ]
       setLioComment(comments[Math.floor(Math.random() * comments.length)])
       setTimeout(() => setLioComment(null), 2500)
@@ -161,7 +161,7 @@ export function useBuilderRoom(userId: string, initialCoins: number) {
       return next
     })
     setIsDirty(true)
-    setLioComment('Cameră redecorat! Arată fantastic! 🌈')
+    setLioComment('Room redecorated! Looks fantastic! 🌈')
     setTimeout(() => setLioComment(null), 2500)
   }, [coins, userId])
 
