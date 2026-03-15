@@ -24,7 +24,12 @@ export default async function ParentsDashboardPage({
     .single()
 
   if (!parentProfile) redirect('/login?error=no_profile')
-  if (parentProfile.role !== 'parent') redirect('/worlds')
+  // Treat null role as parent (profiles created by Supabase trigger may have role=null)
+  if (parentProfile.role && parentProfile.role !== 'parent') redirect('/worlds')
+  // Auto-fix null role
+  if (!parentProfile.role) {
+    await supabase.from('profiles').update({ role: 'parent' }).eq('id', user.id)
+  }
 
   const { data: children } = await supabase
     .from('profiles')
