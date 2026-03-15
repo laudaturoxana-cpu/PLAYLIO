@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { generateMathQuestion, MATH_TOPIC_COLORS, MATH_TOPIC_EMOJIS, type MathQuestion } from '@/lib/learning/math'
 import { useSound } from '@/lib/sound/useSound'
+import { useLio } from '@/lib/ai/useLio'
 import { createClient } from '@/lib/supabase/client'
 
 interface NumberGameProps {
@@ -22,11 +23,15 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
   const [totalCoins, setTotalCoins] = useState(0)
   const [streak, setStreak] = useState(0)
   const [sessionDone, setSessionDone] = useState(false)
+  const [lioMessage, setLioMessage] = useState<string | null>(null)
   const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
+  const { ask: askLio } = useLio({ childName: profileName, age, world: 'numbers' })
 
   useEffect(() => {
     setQuestion(generateMathQuestion(age))
-  }, [age])
+    // Welcome message on mount
+    askLio('session_start').then(msg => { if (msg) setLioMessage(msg) })
+  }, [age]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const syncCoins = useCallback(async (coins: number) => {
     if (coins <= 0) return
@@ -48,18 +53,30 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
     setChosen(choice)
 
     const isCorrect = choice === question.correctAnswer
+    const newStreak = isCorrect ? streak + 1 : 0
 
     if (isCorrect) {
       setFeedback('correct')
       playCorrect()
       playCoin()
-      setStreak(s => s + 1)
+      setStreak(newStreak)
       const earned = streak >= 2 ? question.coinsReward * 2 : question.coinsReward
       setTotalCoins(c => c + earned)
+
+      // Ask Lio for AI message (streak or correct)
+      const event = newStreak >= 3 ? 'streak' : 'correct'
+      askLio(event, {
+        context: `answered ${question.question}`,
+        streak: newStreak,
+      }).then(msg => { if (msg) setLioMessage(msg) })
     } else {
       setFeedback('wrong')
       playWrong()
       setStreak(0)
+
+      askLio('wrong', {
+        context: `tried ${question.question}, correct was ${question.correctAnswer}`,
+      }).then(msg => { if (msg) setLioMessage(msg) })
     }
 
     setTimeout(() => {
@@ -69,6 +86,7 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
       setFeedback(null)
 
       if (next >= QUESTIONS_PER_SESSION) {
+        askLio('session_end', { score: totalCoins }).then(msg => { if (msg) setLioMessage(msg) })
         setSessionDone(true)
         return
       }
@@ -193,15 +211,19 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
         />
       </div>
 
-      {/* Lio guide */}
+      {/* Lio guide — shows AI message if available, otherwise static hint */}
       <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm border border-black/5 mb-4">
         <span className="text-2xl flex-shrink-0" style={{ animation: 'bounce-soft 2s infinite' }}>🦁</span>
         <div>
           <p className="font-nunito text-sm font-bold" style={{ color: topicColor }}>
-            {question.topic === 'counting' && 'Count carefully! 👀'}
-            {question.topic === 'addition' && 'Add them together! ➕'}
-            {question.topic === 'subtraction' && 'Subtract! Take away ➖'}
-            {question.topic === 'comparison' && 'Which is bigger? 🤔'}
+            {lioMessage ?? (
+              <>
+                {question.topic === 'counting' && 'Count carefully! 👀'}
+                {question.topic === 'addition' && 'Add them together! ➕'}
+                {question.topic === 'subtraction' && 'Subtract! Take away ➖'}
+                {question.topic === 'comparison' && 'Which is bigger? 🤔'}
+              </>
+            )}
           </p>
           <p className="font-nunito text-sm" style={{ color: 'var(--dark)' }}>
             {question.question}

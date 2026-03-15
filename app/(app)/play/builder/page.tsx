@@ -12,7 +12,7 @@ export default async function BuilderWorldPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, coins')
+    .select('full_name, coins, age')
     .eq('id', user.id)
     .single()
 
@@ -33,6 +33,7 @@ export default async function BuilderWorldPage() {
     <BuilderClient
       userId={user.id}
       profileName={profile?.full_name ?? 'Builder'}
+      childAge={profile?.age ?? 6}
       initialCoins={profile?.coins ?? 0}
       ownedItemIds={ownedItemIds}
       unlockedRoomIds={builderState?.unlocked_rooms ?? ['bedroom']}

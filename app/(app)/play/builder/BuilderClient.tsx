@@ -9,6 +9,7 @@ import ItemDrawer from '@/components/builder/ItemDrawer'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import BuilderLetterChallenge from '@/components/builder/BuilderLetterChallenge'
 import { createClient } from '@/lib/supabase/client'
+import { useLio } from '@/lib/ai/useLio'
 
 const BUILDER_TUTORIAL = [
   {
@@ -31,6 +32,7 @@ const BUILDER_TUTORIAL = [
 interface BuilderClientProps {
   userId: string
   profileName: string
+  childAge: number
   initialCoins: number
   ownedItemIds: string[]
   unlockedRoomIds: string[]
@@ -39,6 +41,7 @@ interface BuilderClientProps {
 export default function BuilderClient({
   userId,
   profileName,
+  childAge,
   initialCoins,
   ownedItemIds,
   unlockedRoomIds: initialUnlocked,
@@ -95,6 +98,7 @@ export default function BuilderClient({
       room={selectedRoom}
       userId={userId}
       profileName={profileName}
+      childAge={childAge}
       coins={coins}
       onCoinsChange={setCoins}
       ownedItemIds={ownedItemIds}
@@ -231,6 +235,7 @@ function RoomBuilder({
   room,
   userId,
   profileName,
+  childAge,
   coins: initialCoins,
   onCoinsChange,
   ownedItemIds,
@@ -239,6 +244,7 @@ function RoomBuilder({
   room: Room
   userId: string
   profileName: string
+  childAge: number
   coins: number
   onCoinsChange: (fn: (c: number) => number) => void
   ownedItemIds: string[]
@@ -259,6 +265,9 @@ function RoomBuilder({
     gridCols,
     gridRows,
   } = useBuilderRoom(userId, room.id, initialCoins)
+
+  const { ask: askLio } = useLio({ childName: profileName, age: childAge, world: 'builder' })
+  const [aiLioMessage, setAiLioMessage] = useState<string | null>(null)
 
   // Challenge state
   const [pendingItem, setPendingItem] = useState<BuilderItem | null>(null)
@@ -293,7 +302,12 @@ function RoomBuilder({
       return
     }
     const success = placeItem(selectedItem, col, row)
-    if (success) setSelectedItem(null)
+    if (success) {
+      setSelectedItem(null)
+      // Ask Lio for AI comment on item placement
+      askLio('item_placed', { context: `placed ${selectedItem.name} in ${room.name}` })
+        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+    }
   }
 
   function handleItemTap(uid: string) {
@@ -376,8 +390,8 @@ function RoomBuilder({
         </div>
       )}
 
-      {/* Lio comment */}
-      {lioComment && (
+      {/* Lio comment — AI message takes priority over static hook message */}
+      {(aiLioMessage || lioComment) && (
         <div
           className="rounded-2xl px-4 py-2 text-center border"
           style={{
@@ -387,7 +401,7 @@ function RoomBuilder({
           }}
         >
           <p className="font-nunito text-sm font-semibold" style={{ color: room.color }}>
-            🦁 {lioComment}
+            🦁 {aiLioMessage ?? lioComment}
           </p>
         </div>
       )}
