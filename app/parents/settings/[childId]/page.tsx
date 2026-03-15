@@ -18,7 +18,7 @@ export default async function ChildSettingsPage({ params }: PageProps) {
 
   const { data: childProfile } = await supabase
     .from('profiles')
-    .select('id, full_name, parent_id, level, xp')
+    .select('id, full_name, parent_id, level, xp, age')
     .eq('id', childId)
     .single()
 
@@ -28,7 +28,8 @@ export default async function ChildSettingsPage({ params }: PageProps) {
   return (
     <SettingsClient
       childId={childId}
-      childName={childProfile.full_name ?? 'Copil'}
+      childName={childProfile.full_name ?? 'Child'}
+      childAge={childProfile.age ?? 6}
     />
   )
 }

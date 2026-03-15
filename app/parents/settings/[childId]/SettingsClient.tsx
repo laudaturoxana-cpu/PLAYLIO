@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 
 interface ChildSettings {
   dyslexiaMode: boolean       // OpenDyslexic font
@@ -24,11 +25,14 @@ const DEFAULT_SETTINGS: ChildSettings = {
 interface SettingsClientProps {
   childId: string
   childName: string
+  childAge: number
 }
 
-export default function SettingsClient({ childId, childName }: SettingsClientProps) {
+export default function SettingsClient({ childId, childName, childAge: initialAge }: SettingsClientProps) {
   const [settings, setSettings] = useState<ChildSettings>(DEFAULT_SETTINGS)
   const [saved, setSaved] = useState(false)
+  const [age, setAge] = useState(initialAge)
+  const [ageSaved, setAgeSaved] = useState(false)
 
   const storageKey = `child_settings_${childId}`
 
@@ -55,6 +59,17 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
       localStorage.setItem(storageKey, JSON.stringify(settings))
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
+    } catch {
+      // silent
+    }
+  }
+
+  async function handleSaveAge() {
+    try {
+      const supabase = createClient()
+      await supabase.from('profiles').update({ age }).eq('id', childId)
+      setAgeSaved(true)
+      setTimeout(() => setAgeSaved(false), 2500)
     } catch {
       // silent
     }
@@ -139,6 +154,55 @@ export default function SettingsClient({ childId, childName }: SettingsClientPro
             <p className="font-inter text-xs text-[var(--gray)]">{childName}</p>
           </div>
           <div className="w-10" />
+        </div>
+
+        {/* Child age */}
+        <div className="rounded-3xl bg-white border border-black/5 shadow-sm mb-4 overflow-hidden">
+          <div className="px-5 py-4 border-b border-black/5">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🎂</span>
+              <div>
+                <p className="font-inter text-sm font-semibold text-[var(--dark)]">Child's age</p>
+                <p className="font-inter text-xs text-[var(--gray)]">Lio adapts messages to your child's age</p>
+              </div>
+            </div>
+          </div>
+          <div className="px-5 py-5 flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="font-inter text-sm text-[var(--gray)]">How old is {childName}?</span>
+              <span className="font-fredoka text-2xl font-semibold" style={{ color: 'var(--coral)' }}>
+                {age} years
+              </span>
+            </div>
+            <input
+              type="range"
+              min={3}
+              max={10}
+              value={age}
+              onChange={(e) => { setAge(Number(e.target.value)); setAgeSaved(false) }}
+              className="w-full h-3 rounded-full appearance-none cursor-pointer"
+              style={{ accentColor: 'var(--coral)' }}
+              aria-valuemin={3}
+              aria-valuemax={10}
+              aria-valuenow={age}
+              aria-valuetext={`${age} years`}
+            />
+            <div className="flex justify-between font-inter text-xs text-[var(--gray)]">
+              <span>3 yrs</span><span>10 yrs</span>
+            </div>
+            <button
+              onClick={handleSaveAge}
+              className="flex items-center justify-center gap-2 w-full rounded-full py-2.5 font-inter text-sm font-semibold text-white shadow-sm active:scale-95 transition-transform"
+              style={{
+                touchAction: 'manipulation',
+                background: ageSaved
+                  ? 'linear-gradient(90deg, var(--mint-dark), var(--sky))'
+                  : 'linear-gradient(90deg, var(--coral), var(--coral-dark, #e64a19))',
+              }}
+            >
+              {ageSaved ? '✅ Saved!' : '💾 Save age'}
+            </button>
+          </div>
         </div>
 
         {/* Settings groups */}
