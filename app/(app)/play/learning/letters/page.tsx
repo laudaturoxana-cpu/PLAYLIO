@@ -19,7 +19,7 @@ export default async function LettersPage({ searchParams }: PageProps) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, coins')
+    .select('id, coins, full_name, age')
     .eq('id', user.id)
     .single()
 
@@ -28,6 +28,8 @@ export default async function LettersPage({ searchParams }: PageProps) {
       userId={user.id}
       initialCoins={profile?.coins ?? 0}
       series={series as 1 | 2 | 3}
+      childName={profile?.full_name ?? 'Explorer'}
+      childAge={profile?.age ?? 6}
     />
   )
 }

@@ -21,7 +21,7 @@ export default async function ZonePage({ params }: PageProps) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('level, coins')
+    .select('level, coins, full_name, age')
     .eq('id', user.id)
     .single()
 
@@ -43,6 +43,8 @@ export default async function ZonePage({ params }: PageProps) {
       userId={user.id}
       playerLevel={playerLevel}
       completedQuestIds={completedQuestIds}
+      childName={profile?.full_name ?? 'Explorer'}
+      childAge={profile?.age ?? 6}
     />
   )
 }

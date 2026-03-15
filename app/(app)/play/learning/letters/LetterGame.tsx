@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { getLettersBySeries, SERIES_INFO, type SeriesId } from '@/lib/learning/phonetics'
 import { useAdaptiveGame, countMastered } from '@/lib/learning/useAdaptiveGame'
 import { syncPendingToSupabase } from '@/lib/learning/offlineSync'
@@ -12,6 +12,7 @@ import FeedbackOverlay from '@/components/learning/FeedbackOverlay'
 import GameHUD from '@/components/learning/GameHUD'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import { useSound } from '@/lib/sound/useSound'
+import { useLio } from '@/lib/ai/useLio'
 import type { LetterData } from '@/lib/learning/phonetics'
 
 const LETTERS_TUTORIAL = [
@@ -36,15 +37,20 @@ interface LetterGameProps {
   userId: string
   initialCoins: number
   series: SeriesId
+  childName: string
+  childAge: number
 }
 
 // Number of questions per session (attention window for ages 3-5 = 5 minutes)
 const QUESTIONS_PER_SESSION = 10
 
-export default function LetterGame({ userId, initialCoins, series }: LetterGameProps) {
+export default function LetterGame({ userId, initialCoins, series, childName, childAge }: LetterGameProps) {
   const targetLetters = getLettersBySeries(series)
   const seriesInfo = SERIES_INFO[series]
   const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
+  const { ask: askLio } = useLio({ childName, age: childAge, world: 'letters' })
+  const [aiLioMessage, setAiLioMessage] = useState<string | null>(null)
+  const streakRef = useRef(0)
 
   const {
     currentQuestion,
@@ -100,6 +106,26 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
     if (feedback === 'correct') { playCorrect(); playCoin() }
     else if (feedback === 'wrong') playWrong()
     else if (feedback === 'level_up' || feedback === 'mastered') playLevelUp()
+  }, [feedback]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Ask Lio AI for personalized message on feedback
+  useEffect(() => {
+    if (!feedback || !currentQuestion) return
+    const letter = currentQuestion.targetLetter.letter
+    if (feedback === 'correct') {
+      streakRef.current += 1
+      const evt = streakRef.current >= 3 ? 'streak' : 'correct'
+      askLio(evt, { context: `letter ${letter}`, streak: streakRef.current >= 3 ? streakRef.current : undefined })
+        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+    } else if (feedback === 'wrong') {
+      streakRef.current = 0
+      askLio('wrong', { context: `letter ${letter}` })
+        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+    } else if (feedback === 'level_up' || feedback === 'mastered') {
+      streakRef.current = 0
+      askLio('level_up', { context: `mastered letter ${letter}` })
+        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+    }
   }, [feedback]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleAnswer(letter: LetterData) {
@@ -239,7 +265,7 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
 
       {/* Lio Guide */}
       <LioGuide
-        message={lioMessage}
+        message={aiLioMessage ?? lioMessage}
         situation={lioSituation}
         className="mb-4"
       />

@@ -10,6 +10,7 @@ import StarCollector from '@/components/adventure/StarCollector'
 import QuestTracker from '@/components/adventure/QuestTracker'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import { useSound } from '@/lib/sound/useSound'
+import { useLio } from '@/lib/ai/useLio'
 
 const ADVENTURE_TUTORIAL = [
   {
@@ -34,14 +35,18 @@ interface ZoneGameProps {
   userId: string
   playerLevel: number
   completedQuestIds: string[]
+  childName: string
+  childAge: number
 }
 
-export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds }: ZoneGameProps) {
+export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds, childName, childAge }: ZoneGameProps) {
   const [savedStars] = useState(() => loadSavedStars(zone.id))
   const [localCompleted, setLocalCompleted] = useState<string[]>(completedQuestIds)
   const [showSummary, setShowSummary] = useState(false)
   const [secretFeedback, setSecretFeedback] = useState<string | null>(null)
   const { playStarCollect, playCoin, playLevelUp } = useSound()
+  const { ask: askLio } = useLio({ childName, age: childAge, world: 'adventure' })
+  const [lioMessage, setLioMessage] = useState<string | null>(null)
 
   const handleComplete = useCallback(async (stars: number, coins: number) => {
     setShowSummary(true)
@@ -105,6 +110,25 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
     collectSecret,
     handleCloudTap,
   } = useAdventureGame({ zone, savedStars, onComplete: handleComplete })
+
+  // Lio AI messages on key events
+  useEffect(() => {
+    if (!isRunning) return
+    askLio('session_start', { context: zone.name })
+      .then(msg => { if (msg) { setLioMessage(msg); setTimeout(() => setLioMessage(null), 3000) } })
+  }, [isRunning]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!secretCollected) return
+    askLio('level_up', { context: `found secret in ${zone.name}` })
+      .then(msg => { if (msg) { setLioMessage(msg); setTimeout(() => setLioMessage(null), 3000) } })
+  }, [secretCollected]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isComplete) return
+    askLio('session_end', { score: coinsThisSession, context: `${collectedStars} stars in ${zone.name}` })
+      .then(msg => { if (msg) { setLioMessage(msg); setTimeout(() => setLioMessage(null), 4000) } })
+  }, [isComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleCollectItem(id: string) {
     collectItem(id)
@@ -260,6 +284,18 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
         >
           <p className="font-nunito text-sm font-bold text-[var(--sun-dark)]">
             {secretFeedback}
+          </p>
+        </div>
+      )}
+
+      {/* Lio AI message */}
+      {lioMessage && (
+        <div
+          className="mb-2 text-center rounded-2xl bg-white/90 px-3 py-2 shadow-sm border border-black/5"
+          style={{ animation: 'slide-up 0.3s ease' }}
+        >
+          <p className="font-nunito text-sm font-semibold" style={{ color: zone.color }}>
+            🦁 {lioMessage}
           </p>
         </div>
       )}
