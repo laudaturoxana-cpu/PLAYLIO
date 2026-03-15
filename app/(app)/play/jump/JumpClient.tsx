@@ -323,7 +323,7 @@ function JumpGame({
   const isEnd = isComplete || isDead
 
   return (
-    <div className="game-container min-h-screen flex flex-col px-4 py-4 gap-3">
+    <div className="game-container min-h-screen flex flex-col px-4 py-5 gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button

@@ -162,7 +162,7 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
 
   return (
     <div
-      className="game-container min-h-screen flex flex-col px-4 py-4"
+      className="game-container min-h-screen flex flex-col px-4 py-5 gap-4"
       style={{
         background: 'linear-gradient(180deg, rgba(255,112,67,0.05) 0%, rgba(255,213,79,0.04) 100%)',
       }}

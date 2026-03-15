@@ -125,7 +125,7 @@ function RoomSelector({
   onUnlockRoom: (room: Room) => void
 }) {
   return (
-    <div className="min-h-screen px-4 py-6" style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <div className="game-container min-h-screen px-4 py-6">
       <HowToPlayOverlay
         storageKey="howtoplay_builder"
         worldColor="#29B6F6"
@@ -330,7 +330,7 @@ function RoomBuilder({
   const rareCount = roomState.placedItems.filter(p => ITEM_MAP.get(p.itemId)?.isRare).length
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-4 gap-3" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div className="game-container min-h-screen flex flex-col px-4 py-5 gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button

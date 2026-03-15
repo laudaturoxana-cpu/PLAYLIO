@@ -15,7 +15,7 @@ export default function WorldMap({ playerLevel, profileName, savedStarsMap }: Wo
   const collectedAll = ZONES.reduce((s, z) => s + (savedStarsMap[z.id] ?? 0), 0)
 
   return (
-    <div className="min-h-screen px-4 py-6" style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <div className="game-container min-h-screen px-4 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <Link

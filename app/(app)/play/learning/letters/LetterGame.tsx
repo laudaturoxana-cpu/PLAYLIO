@@ -174,7 +174,7 @@ export default function LetterGame({ userId, initialCoins, series, childName, ch
 
   return (
     <div
-      className="game-container min-h-screen flex flex-col px-4 py-4"
+      className="game-container min-h-screen flex flex-col px-4 py-5 gap-4"
       style={{
         background: 'linear-gradient(180deg, rgba(79,195,247,0.06) 0%, rgba(255,213,79,0.04) 100%)',
         backgroundColor: 'var(--white)',
