@@ -19,6 +19,7 @@ export interface Database {
           coins: number
           level: number
           xp: number
+          age: number | null
           created_at: string
           updated_at: string
         }
@@ -31,6 +32,7 @@ export interface Database {
           coins?: number
           level?: number
           xp?: number
+          age?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -42,6 +44,7 @@ export interface Database {
           coins?: number
           level?: number
           xp?: number
+          age?: number | null
           updated_at?: string
         }
         Relationships: []

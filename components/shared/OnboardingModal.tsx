@@ -52,6 +52,7 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
         role: 'child',
         parent_id: parentId,
         coins: 50, // welcome bonus!
+        age: data.age,
       })
       .select()
       .single()

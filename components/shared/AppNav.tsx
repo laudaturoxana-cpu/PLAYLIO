@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
-  { href: '/worlds',         emoji: '🏠', label: 'Home',      color: '#29B6F6' },
-  { href: '/play/learning',  emoji: '📚', label: 'Letters',   color: '#EF5350' },
-  { href: '/play/adventure', emoji: '🗺️', label: 'Adventure', color: '#66BB6A' },
-  { href: '/play/builder',   emoji: '🏗️', label: 'Builder',   color: '#29B6F6' },
-  { href: '/play/jump',      emoji: '🎮', label: 'Jump',      color: '#FFA726' },
+  { href: '/worlds',                emoji: '🏠', label: 'Home',     color: '#29B6F6' },
+  { href: '/play/learning',         emoji: '📚', label: 'Letters',  color: '#EF5350' },
+  { href: '/play/learning/numbers', emoji: '🔢', label: 'Numbers',  color: '#FF7043' },
+  { href: '/play/adventure',        emoji: '🗺️', label: 'Adventure',color: '#66BB6A' },
+  { href: '/play/builder',          emoji: '🏗️', label: 'Builder',  color: '#29B6F6' },
+  { href: '/play/jump',             emoji: '🎮', label: 'Jump',     color: '#FFA726' },
 ]
 
 export default function AppNav() {

@@ -37,6 +37,17 @@ const WORLDS = [
     textColor: '#01579B',
   },
   {
+    label: 'Numbers World',
+    sublabel: 'Math & Counting',
+    emoji: '🔢',
+    href: '/play/learning/numbers',
+    gradient: 'linear-gradient(135deg, #FF7043, #FF5722)',
+    shadow: 'rgba(255,87,34,0.35)',
+    bg: 'rgba(255,112,67,0.10)',
+    border: 'rgba(255,87,34,0.25)',
+    textColor: '#BF360C',
+  },
+  {
     label: 'Jump World',
     sublabel: 'Platforms & Jumps',
     emoji: '🎮',
@@ -162,9 +173,9 @@ export default async function WorldsPage() {
           </p>
         </div>
 
-        {/* World cards — 2 cols on mobile/tablet, 4 cols on desktop */}
+        {/* World cards — 2 cols on mobile, 3 on tablet, 5 on desktop */}
         <div
-          className="grid grid-cols-2 lg:grid-cols-4 mb-8"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mb-8"
           style={{ gap: 'clamp(12px, 2vw, 24px)' }}
         >
           {WORLDS.map((world) => (

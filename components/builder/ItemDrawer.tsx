@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { BUILDER_ITEMS, type BuilderItem, type ItemCategory } from '@/lib/builder/items'
+import { getItemsForRoom, type BuilderItem, type ItemCategory } from '@/lib/builder/items'
 
 interface ItemDrawerProps {
+  roomId: string
   coins: number
   selectedItem: BuilderItem | null
   onSelect: (item: BuilderItem | null) => void
@@ -11,12 +12,13 @@ interface ItemDrawerProps {
 }
 
 const CATEGORIES: { id: ItemCategory; label: string; emoji: string }[] = [
-  { id: 'furniture',   label: 'Furniture',   emoji: '🛏️' },
-  { id: 'decoration',  label: 'Decorations', emoji: '🌸' },
-  { id: 'wallpaper',   label: 'Wallpaper',   emoji: '🖼️' },
+  { id: 'furniture',  label: 'Furniture',  emoji: '🛋️' },
+  { id: 'decoration', label: 'Decor',      emoji: '🌸' },
+  { id: 'wallpaper',  label: 'Wallpaper',  emoji: '🖼️' },
 ]
 
 export default function ItemDrawer({
+  roomId,
   coins,
   selectedItem,
   onSelect,
@@ -24,7 +26,8 @@ export default function ItemDrawer({
 }: ItemDrawerProps) {
   const [activeCategory, setActiveCategory] = useState<ItemCategory>('furniture')
 
-  const items = BUILDER_ITEMS.filter(i => i.category === activeCategory)
+  const allRoomItems = getItemsForRoom(roomId)
+  const items = allRoomItems.filter(i => i.category === activeCategory)
 
   function handleSelect(item: BuilderItem) {
     if (selectedItem?.id === item.id) {
@@ -36,7 +39,7 @@ export default function ItemDrawer({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Tabs categorii */}
+      {/* Category tabs */}
       <div className="flex gap-2">
         {CATEGORIES.map(cat => (
           <button
@@ -55,8 +58,8 @@ export default function ItemDrawer({
         ))}
       </div>
 
-      {/* Grid iteme */}
-      <div className="grid grid-cols-4 gap-2">
+      {/* Item grid */}
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
         {items.map(item => {
           const owned = ownedItemIds.includes(item.id) || item.price === 0
           const canAfford = coins >= item.price
@@ -70,9 +73,7 @@ export default function ItemDrawer({
               className="flex flex-col items-center gap-1 rounded-2xl p-2 transition-all active:scale-95"
               style={{
                 touchAction: 'manipulation',
-                backgroundColor: isSelected
-                  ? 'var(--sky)'
-                  : 'rgba(0,0,0,0.04)',
+                backgroundColor: isSelected ? 'var(--sky)' : 'rgba(0,0,0,0.04)',
                 border: isSelected
                   ? '2px solid var(--sky)'
                   : item.isRare
@@ -116,6 +117,11 @@ export default function ItemDrawer({
             </button>
           )
         })}
+        {items.length === 0 && (
+          <p className="col-span-4 font-nunito text-xs text-center py-4" style={{ color: 'var(--gray)' }}>
+            No items in this category for this room yet!
+          </p>
+        )}
       </div>
     </div>
   )

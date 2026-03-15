@@ -43,6 +43,18 @@ export default function JumpClient({ userId, profileName, initialCoins, bestScor
 
 // ─── Level Select ─────────────────────────────────────────────────────────────
 
+const WORLD_COLORS: Record<1 | 2 | 3, string> = {
+  1: '#4CAF50',
+  2: '#7B1FA2',
+  3: '#1A237E',
+}
+
+const WORLD_EMOJIS: Record<1 | 2 | 3, string> = {
+  1: '🌿',
+  2: '🌈',
+  3: '🚀',
+}
+
 function LevelSelect({
   profileName,
   bestScores,
@@ -52,6 +64,36 @@ function LevelSelect({
   bestScores: Record<string, { score: number; stars: number }>
   onSelect: (level: JumpLevel) => void
 }) {
+  // Group levels by world
+  const worlds = [1, 2, 3] as const
+  const levelsByWorld = worlds.map(w => JUMP_LEVELS.filter(l => l.world === w))
+
+  // Unlock logic helpers
+  function getWorldFirstLevel(world: 1 | 2 | 3): JumpLevel | undefined {
+    return levelsByWorld[world - 1][0]
+  }
+
+  function isWorldUnlocked(world: 1 | 2 | 3): boolean {
+    if (world === 1) return true
+    // World N unlocks when the first (non-boss) level of the previous world has ≥1 star
+    const prevFirstLevel = getWorldFirstLevel((world - 1) as 1 | 2 | 3)
+    if (!prevFirstLevel) return false
+    return (bestScores[prevFirstLevel.id]?.stars ?? 0) >= 1
+  }
+
+  function isLevelUnlocked(level: JumpLevel, worldLevels: JumpLevel[]): boolean {
+    const worldUnlocked = isWorldUnlocked(level.world)
+    if (!worldUnlocked) return false
+
+    const idxInWorld = worldLevels.indexOf(level)
+    if (idxInWorld === 0) return true
+
+    // Level 2 in world requires level 1 (first of world) has ≥1 star
+    // Boss level requires level 2 of world has ≥1 star
+    const prevLevel = worldLevels[idxInWorld - 1]
+    return (bestScores[prevLevel.id]?.stars ?? 0) >= 1
+  }
+
   return (
     <div className="min-h-screen px-4 py-6" style={{ maxWidth: '640px', margin: '0 auto' }}>
       <HowToPlayOverlay
@@ -89,52 +131,98 @@ function LevelSelect({
         </p>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {JUMP_LEVELS.map((level, idx) => {
-          const best = bestScores[level.id]
-          const prevDone = idx === 0 || (bestScores[JUMP_LEVELS[idx - 1].id]?.stars ?? 0) >= 1
+      <div className="flex flex-col gap-5">
+        {worlds.map(worldNum => {
+          const worldLevels = levelsByWorld[worldNum - 1]
+          const worldUnlocked = isWorldUnlocked(worldNum)
+          const worldColor = WORLD_COLORS[worldNum]
+          const worldEmoji = WORLD_EMOJIS[worldNum]
+          const worldName = worldLevels[0]?.worldName ?? `World ${worldNum}`
 
           return (
-            <button
-              key={level.id}
-              onClick={() => prevDone && onSelect(level)}
-              disabled={!prevDone}
-              className="flex items-center gap-4 rounded-3xl bg-white border border-black/5 shadow-sm p-4 text-left active:scale-95 transition-transform disabled:opacity-50"
-              style={{ touchAction: 'manipulation' }}
-            >
+            <div key={worldNum}>
+              {/* World header */}
               <div
-                className="flex items-center justify-center w-14 h-14 rounded-2xl text-3xl flex-shrink-0"
-                style={{ background: level.bgGradient }}
+                className="flex items-center gap-2 mb-2 px-1"
+                style={{ opacity: worldUnlocked ? 1 : 0.4 }}
               >
-                {level.emoji}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-fredoka text-base font-semibold text-[var(--dark)]">
-                  {level.name}
+                <span className="text-lg">{worldEmoji}</span>
+                <p
+                  className="font-fredoka text-base font-semibold"
+                  style={{ color: worldUnlocked ? worldColor : 'var(--gray)' }}
+                >
+                  {worldName}
                 </p>
-                <div className="flex items-center gap-1 mt-1">
-                  {[1, 2, 3].map(s => (
-                    <span
-                      key={s}
-                      className="text-sm"
+                {!worldUnlocked && <span className="text-base">🔒</span>}
+              </div>
+
+              {/* Levels in world */}
+              <div className="flex flex-col gap-3">
+                {worldLevels.map(level => {
+                  const best = bestScores[level.id]
+                  const unlocked = isLevelUnlocked(level, worldLevels)
+
+                  return (
+                    <button
+                      key={level.id}
+                      onClick={() => unlocked && onSelect(level)}
+                      disabled={!unlocked}
+                      className="flex items-center gap-4 rounded-3xl bg-white border shadow-sm p-4 text-left active:scale-95 transition-transform disabled:opacity-50"
                       style={{
-                        opacity: (best?.stars ?? 0) >= s ? 1 : 0.25,
-                        filter: (best?.stars ?? 0) >= s ? 'none' : 'grayscale(1)',
+                        touchAction: 'manipulation',
+                        borderColor: level.isBoss ? `${worldColor}44` : 'rgba(0,0,0,0.05)',
+                        background: level.isBoss
+                          ? `linear-gradient(135deg, white 60%, ${worldColor}0a 100%)`
+                          : 'white',
                       }}
                     >
-                      ⭐
-                    </span>
-                  ))}
-                  {best && (
-                    <span className="font-nunito text-xs text-[var(--gray)] ml-1">
-                      Best: {best.score} 🪙
-                    </span>
-                  )}
-                </div>
+                      <div
+                        className="flex items-center justify-center w-14 h-14 rounded-2xl text-3xl flex-shrink-0"
+                        style={{ background: level.bgGradient }}
+                      >
+                        {level.emoji}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-fredoka text-base font-semibold text-[var(--dark)]">
+                            {level.name}
+                          </p>
+                          {level.isBoss && (
+                            <span
+                              className="font-nunito text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              style={{ backgroundColor: `${worldColor}22`, color: worldColor }}
+                            >
+                              BOSS
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 mt-1">
+                          {[1, 2, 3].map(s => (
+                            <span
+                              key={s}
+                              className="text-sm"
+                              style={{
+                                opacity: (best?.stars ?? 0) >= s ? 1 : 0.25,
+                                filter: (best?.stars ?? 0) >= s ? 'none' : 'grayscale(1)',
+                              }}
+                            >
+                              ⭐
+                            </span>
+                          ))}
+                          {best && (
+                            <span className="font-nunito text-xs text-[var(--gray)] ml-1">
+                              Best: {best.score} 🪙
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {!unlocked && <span className="text-xl">🔒</span>}
+                      {unlocked && !best && <span className="font-nunito text-xs text-[var(--sky)]">New!</span>}
+                    </button>
+                  )
+                })}
               </div>
-              {!prevDone && <span className="text-xl">🔒</span>}
-              {prevDone && !best && <span className="font-nunito text-xs text-[var(--sky)]">New!</span>}
-            </button>
+            </div>
           )
         })}
       </div>

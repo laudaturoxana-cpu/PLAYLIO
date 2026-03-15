@@ -205,6 +205,46 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
         })}
       </div>
 
+      {/* Numbers & Math section */}
+      <div className="mt-6 rounded-3xl border bg-white border-black/5 shadow-sm p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔢</span>
+            <div>
+              <p className="font-fredoka text-base font-semibold" style={{ color: '#FF7043' }}>
+                Numbers & Math
+              </p>
+              <p className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>
+                Count, add and subtract!
+              </p>
+            </div>
+          </div>
+          <span className="text-xl" aria-label="Available">🟢</span>
+        </div>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','➕','➖','🔢'].map((emoji, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-center rounded-xl font-fredoka text-lg font-semibold"
+              style={{ width: '40px', height: '40px', backgroundColor: '#FF704310', border: '2px solid #FF704344', fontSize: '1.2rem' }}
+            >
+              {emoji}
+            </div>
+          ))}
+        </div>
+        <Link
+          href="/play/learning/numbers"
+          className="flex items-center justify-center gap-2 w-full rounded-2xl py-3 font-nunito text-base font-semibold text-white active:scale-95 transition-transform shadow-sm"
+          style={{
+            touchAction: 'manipulation',
+            background: 'linear-gradient(90deg, #FF7043, #FF5722)',
+          }}
+          aria-label="Start Numbers & Math"
+        >
+          <span>▶️ Play Math</span>
+        </Link>
+      </div>
+
       {/* Space for bottom nav */}
       <div className="h-6" />
     </div>

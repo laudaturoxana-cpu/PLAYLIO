@@ -5,10 +5,10 @@ import { ITEM_MAP, DEFAULT_WALLPAPER, type BuilderItem } from './items'
 import { createClient } from '@/lib/supabase/client'
 
 export interface PlacedItem {
-  uid: string        // unique instance id
+  uid: string
   itemId: string
-  col: number        // grid column (0-based)
-  row: number        // grid row (0-based)
+  col: number
+  row: number
 }
 
 export interface RoomState {
@@ -24,24 +24,24 @@ function makeUid() {
   return `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 }
 
-function loadFromLocalStorage(userId: string): RoomState | null {
+function loadFromLocalStorage(userId: string, roomId: string): RoomState | null {
   try {
-    const raw = localStorage.getItem(`builder_room_${userId}`)
+    const raw = localStorage.getItem(`builder_room_${userId}_${roomId}`)
     return raw ? (JSON.parse(raw) as RoomState) : null
   } catch {
     return null
   }
 }
 
-function saveToLocalStorage(userId: string, state: RoomState) {
+function saveToLocalStorage(userId: string, roomId: string, state: RoomState) {
   try {
-    localStorage.setItem(`builder_room_${userId}`, JSON.stringify(state))
+    localStorage.setItem(`builder_room_${userId}_${roomId}`, JSON.stringify(state))
   } catch {
-    // silențios
+    // silent
   }
 }
 
-export function useBuilderRoom(userId: string, initialCoins: number) {
+export function useBuilderRoom(userId: string, roomId: string, initialCoins: number) {
   const [room, setRoom] = useState<RoomState>({
     wallpaperId: DEFAULT_WALLPAPER,
     placedItems: [],
@@ -56,46 +56,55 @@ export function useBuilderRoom(userId: string, initialCoins: number) {
   const roomRef = useRef(room)
   roomRef.current = room
 
-  // Încarcă din localStorage la mount
   useEffect(() => {
-    const saved = loadFromLocalStorage(userId)
+    const saved = loadFromLocalStorage(userId, roomId)
     if (saved) {
       setRoom(saved)
       if (saved.placedItems.length > 0) setIsFirstDecoration(false)
     }
     setIsLoaded(true)
-  }, [userId])
+  }, [userId, roomId])
 
-  // Auto-save la localStorage la fiecare 10s
   useEffect(() => {
     if (!isLoaded) return
     const timer = setInterval(() => {
-      saveToLocalStorage(userId, roomRef.current)
+      saveToLocalStorage(userId, roomId, roomRef.current)
     }, AUTO_SAVE_INTERVAL)
     return () => clearInterval(timer)
-  }, [userId, isLoaded])
+  }, [userId, roomId, isLoaded])
 
-  // Sync cu Supabase când dirty
   const syncToSupabase = useCallback(async () => {
     if (!isDirty) return
     try {
       const supabase = createClient()
+      // Read existing rooms_data first
+      const { data: existing } = await supabase
+        .from('builder_state')
+        .select('room_data')
+        .eq('user_id', userId)
+        .single()
+
+      const existingRooms = (existing?.room_data as Record<string, RoomState> | null) ?? {}
+      const updatedRooms = {
+        ...existingRooms,
+        [roomId]: roomRef.current,
+      }
+
       await supabase.from('builder_state').upsert({
         user_id: userId,
-        room_data: JSON.parse(JSON.stringify(roomRef.current)) as import('@/lib/supabase/types').Json,
-        unlocked_rooms: ['main'],
+        room_data: updatedRooms as unknown as import('@/lib/supabase/types').Json,
+        unlocked_rooms: Object.keys(updatedRooms),
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' })
       setIsDirty(false)
     } catch {
-      // silențios
+      // silent
     }
-  }, [isDirty, userId])
+  }, [isDirty, userId, roomId])
 
   function canPlace(item: BuilderItem, col: number, row: number): boolean {
     if (col + item.width > GRID_COLS) return false
     if (row + item.height > GRID_ROWS) return false
-    // Verifică suprapuneri
     for (const placed of room.placedItems) {
       const pi = ITEM_MAP.get(placed.itemId)
       if (!pi) continue
@@ -113,43 +122,41 @@ export function useBuilderRoom(userId: string, initialCoins: number) {
     const newPlaced: PlacedItem = { uid: makeUid(), itemId: item.id, col, row }
     setRoom(prev => {
       const next = { ...prev, placedItems: [...prev.placedItems, newPlaced] }
-      saveToLocalStorage(userId, next)
+      saveToLocalStorage(userId, roomId, next)
       return next
     })
     if (item.price > 0) setCoins(c => c - item.price)
     setIsDirty(true)
 
-    // Prima decorare: Lio face tur și comentează
     if (isFirstDecoration) {
       setIsFirstDecoration(false)
-      setLioComment(`WOW! Your room looks AMAZING! You placed ${item.name}! 🏠✨`)
+      setLioComment(`WOW! ${item.name} looks amazing here! 🏠✨`)
       setTimeout(() => setLioComment(null), 3500)
     } else {
       const comments = [
         `${item.name} looks perfect there! 🌟`,
         `Wonderful! Your room is getting more beautiful! ✨`,
-        `Great job! You\'re a talented decorator! 🎨`,
+        `Great job! You're a talented decorator! 🎨`,
       ]
       setLioComment(comments[Math.floor(Math.random() * comments.length)])
       setTimeout(() => setLioComment(null), 2500)
     }
 
     return true
-  }, [room, coins, userId, isFirstDecoration]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [room, coins, userId, roomId, isFirstDecoration]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const removeItem = useCallback((uid: string) => {
     setRoom(prev => {
       const removed = prev.placedItems.find(p => p.uid === uid)
       if (!removed) return prev
       const item = ITEM_MAP.get(removed.itemId)
-      // Rambursare 50% din preț
       if (item && item.price > 0) setCoins(c => c + Math.floor(item.price / 2))
       const next = { ...prev, placedItems: prev.placedItems.filter(p => p.uid !== uid) }
-      saveToLocalStorage(userId, next)
+      saveToLocalStorage(userId, roomId, next)
       return next
     })
     setIsDirty(true)
-  }, [userId])
+  }, [userId, roomId])
 
   const changeWallpaper = useCallback((wallpaperId: string) => {
     const item = ITEM_MAP.get(wallpaperId)
@@ -157,13 +164,13 @@ export function useBuilderRoom(userId: string, initialCoins: number) {
     if (item && item.price > 0) setCoins(c => c - item.price)
     setRoom(prev => {
       const next = { ...prev, wallpaperId }
-      saveToLocalStorage(userId, next)
+      saveToLocalStorage(userId, roomId, next)
       return next
     })
     setIsDirty(true)
     setLioComment('Room redecorated! Looks fantastic! 🌈')
     setTimeout(() => setLioComment(null), 2500)
-  }, [coins, userId])
+  }, [coins, userId, roomId])
 
   return {
     room,
