@@ -81,9 +81,8 @@ export default async function WorldsPage() {
   const profile = await getActiveChildProfile(user.id)
   const isPlayingAsChild = profile.activeChildId !== null
 
-  // If parent hasn't selected a child yet, redirect to dashboard
+  // If confirmed parent with no active child → redirect to dashboard
   if (isParent && !isPlayingAsChild) {
-    // Check if they have children
     const { data: children } = await supabase
       .from('profiles')
       .select('id')
@@ -91,12 +90,13 @@ export default async function WorldsPage() {
       .eq('role', 'child')
       .limit(1)
 
-    if (!children || children.length === 0) {
-      redirect('/parents/dashboard?onboarding=true')
-    } else {
-      redirect('/parents/dashboard')
-    }
+    redirect(!children || children.length === 0
+      ? '/parents/dashboard?onboarding=true'
+      : '/parents/dashboard'
+    )
   }
+  // If role is null/unknown (trigger-created profile without role), stay on worlds
+  // — they'll see the Parent button and can navigate manually
 
   const name = profile.full_name ?? 'Explorer'
   const coins = profile.coins
@@ -183,24 +183,18 @@ export default async function WorldsPage() {
               </span>
             </div>
 
-            {/* Parent dashboard button */}
-            {isParent && (
-              <Link
-                href="/parents/dashboard"
-                className="flex items-center justify-center rounded-2xl bg-white border border-black/8 shadow-sm active:scale-95 transition-transform"
-                style={{
-                  width: 'clamp(40px, 5vw, 48px)',
-                  height: 'clamp(40px, 5vw, 48px)',
-                  fontSize: 'clamp(18px, 2vw, 22px)',
-                  touchAction: 'manipulation',
-                  flexShrink: 0,
-                }}
-                aria-label="Parent dashboard"
-                title="Parent dashboard"
-              >
-                👨‍👧
-              </Link>
-            )}
+            {/* Parent dashboard button — always visible */}
+            <Link
+              href="/parents/dashboard"
+              className="flex items-center gap-1.5 rounded-2xl bg-white border border-black/8 shadow-sm active:scale-95 transition-transform px-3 py-2"
+              style={{ touchAction: 'manipulation', flexShrink: 0 }}
+              aria-label="Parent dashboard"
+            >
+              <span style={{ fontSize: 'clamp(16px, 2vw, 20px)' }}>👨‍👧</span>
+              <span className="font-inter font-semibold" style={{ fontSize: 'clamp(11px, 1.2vw, 13px)', color: '#757575' }}>
+                Parent
+              </span>
+            </Link>
           </div>
         </div>
 
