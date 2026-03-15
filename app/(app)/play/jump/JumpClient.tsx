@@ -95,7 +95,7 @@ function LevelSelect({
   }
 
   return (
-    <div className="min-h-screen px-4 py-6" style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div className="game-container min-h-screen px-4 py-6">
       <HowToPlayOverlay
         storageKey="howtoplay_jump"
         worldColor="#F57F17"
@@ -323,7 +323,7 @@ function JumpGame({
   const isEnd = isComplete || isDead
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-4 gap-3" style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div className="game-container min-h-screen flex flex-col px-4 py-4 gap-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button

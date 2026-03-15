@@ -26,7 +26,7 @@ export default function AppNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-black/5 px-2"
+      className="app-bottom-nav fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-black/5 px-2"
       style={{
         backgroundColor: 'white',
         height: '64px',
@@ -53,6 +53,7 @@ export default function AppNav() {
             aria-current={active ? 'page' : undefined}
           >
             <span
+              className="app-nav-emoji"
               style={{
                 fontSize: active ? '1.6rem' : '1.4rem',
                 transition: 'font-size 0.15s ease',
@@ -62,7 +63,7 @@ export default function AppNav() {
               {item.emoji}
             </span>
             <span
-              className="font-nunito font-semibold"
+              className="app-nav-label font-nunito font-semibold"
               style={{
                 fontSize: '9px',
                 color: active ? item.color : 'var(--gray)',

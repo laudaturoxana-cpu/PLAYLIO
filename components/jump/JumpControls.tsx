@@ -26,11 +26,11 @@ export default function JumpControls({
         onMouseLeave={onLeftEnd}
         className="flex items-center justify-center rounded-2xl bg-white/90 border border-black/08 shadow-sm active:bg-[var(--sky)]/20 transition-colors"
         style={{
-          width: '72px',
-          height: '72px',
+          width: 'clamp(64px, 10vw, 96px)',
+          height: 'clamp(64px, 10vw, 96px)',
           touchAction: 'manipulation',
           WebkitTapHighlightColor: 'transparent',
-          fontSize: '2rem',
+          fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
           userSelect: 'none',
         }}
         aria-label="Move left"
@@ -44,11 +44,11 @@ export default function JumpControls({
         onClick={onJump}
         className="flex items-center justify-center rounded-full bg-[var(--sky)] shadow-md active:scale-90 transition-transform"
         style={{
-          width: '90px',
-          height: '90px',
+          width: 'clamp(80px, 13vw, 120px)',
+          height: 'clamp(80px, 13vw, 120px)',
           touchAction: 'manipulation',
           WebkitTapHighlightColor: 'transparent',
-          fontSize: '2.5rem',
+          fontSize: 'clamp(2rem, 4vw, 3rem)',
           userSelect: 'none',
           boxShadow: '0 4px 16px rgba(79,195,247,0.5)',
         }}
@@ -66,11 +66,11 @@ export default function JumpControls({
         onMouseLeave={onRightEnd}
         className="flex items-center justify-center rounded-2xl bg-white/90 border border-black/08 shadow-sm active:bg-[var(--sky)]/20 transition-colors"
         style={{
-          width: '72px',
-          height: '72px',
+          width: 'clamp(64px, 10vw, 96px)',
+          height: 'clamp(64px, 10vw, 96px)',
           touchAction: 'manipulation',
           WebkitTapHighlightColor: 'transparent',
-          fontSize: '2rem',
+          fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
           userSelect: 'none',
         }}
         aria-label="Move right"

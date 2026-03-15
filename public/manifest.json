@@ -4,7 +4,7 @@
   "description": "O lume colorată și sigură unde copiii 3-10 ani explorează, construiesc, învață și se joacă",
   "start_url": "/worlds",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#4FC3F7",
   "lang": "ro",

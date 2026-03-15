@@ -18,8 +18,7 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--white)' }}>
-      {/* pb-20 leaves room for the fixed bottom nav bar + safe-area */}
-      <main className="pb-20">{children}</main>
+      <main className="app-main-content">{children}</main>
       <AppNav />
     </div>
   )

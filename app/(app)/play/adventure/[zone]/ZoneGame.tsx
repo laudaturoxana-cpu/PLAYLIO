@@ -186,8 +186,8 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds,
 
   return (
     <div
-      className="min-h-screen flex flex-col px-4 py-4"
-      style={{ background: zone.bgGradient, minHeight: '100dvh', maxWidth: '640px', margin: '0 auto' }}
+      className="game-container min-h-screen flex flex-col px-4 py-4"
+      style={{ background: zone.bgGradient, minHeight: '100dvh' }}
     >
       <HowToPlayOverlay
         storageKey="howtoplay_adventure"

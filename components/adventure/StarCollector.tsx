@@ -35,7 +35,7 @@ export default function StarCollector({
     <div
       className="relative w-full rounded-3xl overflow-hidden"
       style={{
-        height: '320px',
+        height: 'clamp(240px, 40vh, 480px)',
         background: bgGradient,
         border: '2px solid rgba(0,0,0,0.06)',
       }}
