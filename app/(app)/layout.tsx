@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import AppNav from '@/components/shared/AppNav'
 
 export default async function AppLayout({
   children,
@@ -17,8 +18,9 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--white)' }}>
-      {/* AppNav + AppHeader — Sprint 8 */}
-      <main>{children}</main>
+      {/* pb-16 leaves room for the fixed bottom nav bar */}
+      <main className="pb-16">{children}</main>
+      <AppNav />
     </div>
   )
 }

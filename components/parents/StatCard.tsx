@@ -13,7 +13,7 @@ export default function StatCard({
   label,
   value,
   delta,
-  deltaLabel = 'față de săpt. trecută',
+  deltaLabel = 'vs last week',
   color = 'var(--sky)',
   small = false,
 }: StatCardProps) {

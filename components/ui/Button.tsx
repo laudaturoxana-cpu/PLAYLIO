@@ -90,7 +90,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               className="inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
               aria-hidden="true"
             />
-            <span>Se încarcă...</span>
+            <span>Loading...</span>
           </>
         ) : (
           children

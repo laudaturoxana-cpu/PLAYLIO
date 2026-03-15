@@ -8,6 +8,26 @@ import { useAdventureGame, loadSavedStars } from '@/lib/adventure/useAdventureGa
 import { createClient } from '@/lib/supabase/client'
 import StarCollector from '@/components/adventure/StarCollector'
 import QuestTracker from '@/components/adventure/QuestTracker'
+import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
+import { useSound } from '@/lib/sound/useSound'
+
+const ADVENTURE_TUTORIAL = [
+  {
+    emoji: '🗺️',
+    title: 'Explore the zone!',
+    description: 'Tap the floating emojis to collect stars! Collect as many as you can before time runs out!',
+  },
+  {
+    emoji: '⭐',
+    title: 'Collect stars & coins!',
+    description: 'Each emoji you tap gives you a star ⭐ and coins 🪙. Stars unlock quests and new zones!',
+  },
+  {
+    emoji: '🔍',
+    title: 'Find the secret!',
+    description: 'There\'s a hidden secret in every zone. Look carefully — it might be behind a cloud!',
+  },
+]
 
 interface ZoneGameProps {
   zone: Zone
@@ -21,6 +41,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
   const [localCompleted, setLocalCompleted] = useState<string[]>(completedQuestIds)
   const [showSummary, setShowSummary] = useState(false)
   const [secretFeedback, setSecretFeedback] = useState<string | null>(null)
+  const { playStarCollect, playCoin, playLevelUp } = useSound()
 
   const handleComplete = useCallback(async (stars: number, coins: number) => {
     setShowSummary(true)
@@ -85,8 +106,15 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
     handleCloudTap,
   } = useAdventureGame({ zone, savedStars, onComplete: handleComplete })
 
+  function handleCollectItem(id: string) {
+    collectItem(id)
+    playStarCollect()
+    playCoin()
+  }
+
   function handleSecretCollect() {
     collectSecret()
+    playLevelUp()
     setSecretFeedback(`${zone.secret.rewardEmoji} Secret found! +${zone.secret.rewardCoins} 🪙`)
     setTimeout(() => setSecretFeedback(null), 3000)
   }
@@ -134,9 +162,15 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
 
   return (
     <div
-      className="min-h-screen flex flex-col px-4 py-4 max-w-sm mx-auto"
-      style={{ background: zone.bgGradient, minHeight: '100dvh' }}
+      className="min-h-screen flex flex-col px-4 py-4"
+      style={{ background: zone.bgGradient, minHeight: '100dvh', maxWidth: '640px', margin: '0 auto' }}
     >
+      <HowToPlayOverlay
+        storageKey="howtoplay_adventure"
+        worldColor={zone.color}
+        steps={ADVENTURE_TUTORIAL}
+      />
+
       {/* HUD top */}
       <div className="flex items-center justify-between gap-3 mb-3 bg-white/80 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-sm border border-black/5">
         <Link
@@ -275,7 +309,7 @@ export default function ZoneGame({ zone, userId, playerLevel, completedQuestIds 
           <>
             <StarCollector
               floatingItems={floatingItems}
-              onCollect={collectItem}
+              onCollect={handleCollectItem}
               bgGradient={zone.bgGradient}
               secretVisible={secretVisible && !secretCollected}
               secretEmoji={zone.secret.rewardEmoji}

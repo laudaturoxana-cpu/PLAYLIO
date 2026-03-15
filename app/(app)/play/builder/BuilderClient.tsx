@@ -1,10 +1,31 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { useBuilderRoom } from '@/lib/builder/useBuilderRoom'
 import { ITEM_MAP, type BuilderItem } from '@/lib/builder/items'
 import RoomCanvas from '@/components/builder/RoomCanvas'
 import ItemDrawer from '@/components/builder/ItemDrawer'
+import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
+import BuilderLetterChallenge from '@/components/builder/BuilderLetterChallenge'
+
+const BUILDER_TUTORIAL = [
+  {
+    emoji: '🛋️',
+    title: 'Decorate your room!',
+    description: 'Pick an item from the drawer below, then tap the room to place it where you want!',
+  },
+  {
+    emoji: '🪙',
+    title: 'Spend your coins!',
+    description: 'Each item costs coins. You earn coins by learning letters and exploring adventures!',
+  },
+  {
+    emoji: '✨',
+    title: 'Find rare items!',
+    description: 'Some items have a golden ✨ Rare badge — they\'re special! Can you collect them all?',
+  },
+]
 
 interface BuilderClientProps {
   userId: string
@@ -35,6 +56,31 @@ export default function BuilderClient({
     gridCols,
     gridRows,
   } = useBuilderRoom(userId, initialCoins)
+
+  // Challenge state: show letter quiz when selecting a furniture/decoration item
+  const [pendingItem, setPendingItem] = useState<BuilderItem | null>(null)
+  const [bonusCoins, setBonusCoins] = useState(0)
+
+  function handleItemSelect(item: BuilderItem | null) {
+    if (item && item.category !== 'wallpaper') {
+      setPendingItem(item)   // show challenge first
+    } else {
+      setSelectedItem(item)
+    }
+  }
+
+  function handleChallengeCorrect() {
+    if (!pendingItem) return
+    setBonusCoins(b => b + 5)
+    setSelectedItem(pendingItem)
+    setPendingItem(null)
+  }
+
+  function handleChallengeSkip() {
+    if (!pendingItem) return
+    setSelectedItem(pendingItem)
+    setPendingItem(null)
+  }
 
   function handleCellTap(col: number, row: number) {
     if (!selectedItem) return
@@ -68,7 +114,13 @@ export default function BuilderClient({
   const rareCount = room.placedItems.filter(p => ITEM_MAP.get(p.itemId)?.isRare).length
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-4 max-w-sm mx-auto gap-3">
+    <div className="min-h-screen flex flex-col px-4 py-4 gap-3" style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <HowToPlayOverlay
+        storageKey="howtoplay_builder"
+        worldColor="#29B6F6"
+        steps={BUILDER_TUTORIAL}
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link
@@ -108,6 +160,27 @@ export default function BuilderClient({
           )}
         </div>
       </div>
+
+      {/* Letter challenge — shown before placing item */}
+      {pendingItem && (
+        <BuilderLetterChallenge
+          item={pendingItem}
+          onCorrect={handleChallengeCorrect}
+          onSkip={handleChallengeSkip}
+        />
+      )}
+
+      {/* Bonus coins earned banner */}
+      {bonusCoins > 0 && (
+        <div
+          className="rounded-2xl px-4 py-2 text-center"
+          style={{ backgroundColor: 'rgba(255,213,79,0.18)', animation: 'slide-up 0.3s ease' }}
+        >
+          <p className="font-nunito text-sm font-semibold" style={{ color: '#F57F17' }}>
+            🎉 +{bonusCoins} bonus coins from challenges!
+          </p>
+        </div>
+      )}
 
       {/* Lio comment */}
       {lioComment && (
@@ -163,7 +236,7 @@ export default function BuilderClient({
         <ItemDrawer
           coins={coins}
           selectedItem={selectedItem}
-          onSelect={(item: BuilderItem | null) => setSelectedItem(item)}
+          onSelect={(item: BuilderItem | null) => handleItemSelect(item)}
           ownedItemIds={ownedItemIds}
         />
       </div>

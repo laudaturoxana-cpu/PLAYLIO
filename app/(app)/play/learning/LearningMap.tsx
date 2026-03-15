@@ -52,7 +52,7 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
   }
 
   return (
-    <div className="min-h-screen px-4 py-6 max-w-sm mx-auto">
+    <div className="min-h-screen px-4 py-6" style={{ maxWidth: '720px', margin: '0 auto' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <Link

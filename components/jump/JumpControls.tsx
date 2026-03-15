@@ -33,7 +33,7 @@ export default function JumpControls({
           fontSize: '2rem',
           userSelect: 'none',
         }}
-        aria-label="Mișcă stânga"
+        aria-label="Move left"
       >
         ◀
       </button>
@@ -52,7 +52,7 @@ export default function JumpControls({
           userSelect: 'none',
           boxShadow: '0 4px 16px rgba(79,195,247,0.5)',
         }}
-        aria-label="Sari"
+        aria-label="Jump"
       >
         🦘
       </button>
@@ -73,7 +73,7 @@ export default function JumpControls({
           fontSize: '2rem',
           userSelect: 'none',
         }}
-        aria-label="Mișcă dreapta"
+        aria-label="Move right"
       >
         ▶
       </button>

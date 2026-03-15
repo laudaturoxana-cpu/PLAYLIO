@@ -176,7 +176,7 @@ export default function RoomCanvas({
             className="font-nunito text-sm font-semibold opacity-60 text-center px-6"
             style={{ color: isDarkWall ? 'white' : 'var(--gray)' }}
           >
-            Atinge un obiect din drawer și plasează-l în cameră! 🏠
+            Tap an item from the drawer below and place it in your room! 🏠
           </p>
         </div>
       )}

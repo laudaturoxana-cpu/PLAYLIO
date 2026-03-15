@@ -15,7 +15,7 @@ export default function WorldMap({ playerLevel, profileName, savedStarsMap }: Wo
   const collectedAll = ZONES.reduce((s, z) => s + (savedStarsMap[z.id] ?? 0), 0)
 
   return (
-    <div className="min-h-screen px-4 py-6 max-w-sm mx-auto">
+    <div className="min-h-screen px-4 py-6" style={{ maxWidth: '900px', margin: '0 auto' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <Link
@@ -70,7 +70,7 @@ export default function WorldMap({ playerLevel, profileName, savedStarsMap }: Wo
       </div>
 
       {/* Zone list */}
-      <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {ZONES.map((zone, idx) => (
           <ZoneCard
             key={zone.id}

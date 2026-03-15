@@ -7,6 +7,8 @@ import { useJumpGame } from '@/lib/jump/useJumpGame'
 import { createClient } from '@/lib/supabase/client'
 import JumpCanvas from '@/components/jump/JumpCanvas'
 import JumpControls from '@/components/jump/JumpControls'
+import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
+import { useSound } from '@/lib/sound/useSound'
 
 interface JumpClientProps {
   userId: string
@@ -51,7 +53,17 @@ function LevelSelect({
   onSelect: (level: JumpLevel) => void
 }) {
   return (
-    <div className="min-h-screen px-4 py-6 max-w-sm mx-auto">
+    <div className="min-h-screen px-4 py-6" style={{ maxWidth: '640px', margin: '0 auto' }}>
+      <HowToPlayOverlay
+        storageKey="howtoplay_jump"
+        worldColor="#F57F17"
+        steps={[
+          { emoji: '🎮', title: 'Jump!', description: 'Tap LEFT and RIGHT to move, tap JUMP to leap over obstacles and reach platforms!' },
+          { emoji: '🪙', title: 'Collect coins!', description: 'Jump onto coins to collect them. The more coins you get, the more stars you earn!' },
+          { emoji: '⭐', title: 'Earn stars!', description: 'Each level has a coin goal. Reach it to earn 1, 2 or 3 stars. Beat your best score!' },
+        ]}
+      />
+
       <div className="flex items-center justify-between mb-5">
         <Link
           href="/worlds"
@@ -161,6 +173,21 @@ function JumpGame({
   } = useJumpGame(level)
 
   const [savedResult, setSavedResult] = useState(false)
+  const [prevScore, setPrevScore] = useState(0)
+  const { playCoin, playLevelUp } = useSound()
+
+  // Play coin sound when score increases
+  useEffect(() => {
+    if (score > prevScore) {
+      playCoin()
+      setPrevScore(score)
+    }
+  }, [score]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Play fanfare when game completes with stars
+  useEffect(() => {
+    if (isComplete && stars > 0) playLevelUp()
+  }, [isComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keyboard support (desktop/tablet with keyboard)
   useEffect(() => {
@@ -208,7 +235,7 @@ function JumpGame({
   const isEnd = isComplete || isDead
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-4 max-w-sm mx-auto gap-3">
+    <div className="min-h-screen flex flex-col px-4 py-4 gap-3" style={{ maxWidth: '640px', margin: '0 auto' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <button

@@ -10,7 +10,27 @@ import LetterDisplay from '@/components/learning/LetterDisplay'
 import ChoiceButton from '@/components/learning/ChoiceButton'
 import FeedbackOverlay from '@/components/learning/FeedbackOverlay'
 import GameHUD from '@/components/learning/GameHUD'
+import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
+import { useSound } from '@/lib/sound/useSound'
 import type { LetterData } from '@/lib/learning/phonetics'
+
+const LETTERS_TUTORIAL = [
+  {
+    emoji: '👀',
+    title: 'Look at the picture!',
+    description: 'Lio shows you a picture. Listen to the word and find the first letter!',
+  },
+  {
+    emoji: '🔤',
+    title: 'Tap the right letter!',
+    description: 'Tap the letter that starts the word. You earn a coin for every correct answer! 🪙',
+  },
+  {
+    emoji: '⭐',
+    title: 'Master letters to level up!',
+    description: 'Get a letter right many times and it becomes yours forever! Collect them all!',
+  },
+]
 
 interface LetterGameProps {
   userId: string
@@ -24,6 +44,7 @@ const QUESTIONS_PER_SESSION = 10
 export default function LetterGame({ userId, initialCoins, series }: LetterGameProps) {
   const targetLetters = getLettersBySeries(series)
   const seriesInfo = SERIES_INFO[series]
+  const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
 
   const {
     currentQuestion,
@@ -74,6 +95,13 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
     }
   }, [userId])
 
+  // Play sound when feedback arrives
+  useEffect(() => {
+    if (feedback === 'correct') { playCorrect(); playCoin() }
+    else if (feedback === 'wrong') playWrong()
+    else if (feedback === 'level_up' || feedback === 'mastered') playLevelUp()
+  }, [feedback]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function handleAnswer(letter: LetterData) {
     setChosenLetter(letter)
     answer(letter)
@@ -120,12 +148,20 @@ export default function LetterGame({ userId, initialCoins, series }: LetterGameP
 
   return (
     <div
-      className="min-h-screen flex flex-col px-4 py-4 max-w-sm mx-auto"
+      className="min-h-screen flex flex-col px-4 py-4"
       style={{
+        maxWidth: '560px',
+        margin: '0 auto',
         background: 'linear-gradient(180deg, rgba(79,195,247,0.06) 0%, rgba(255,213,79,0.04) 100%)',
         backgroundColor: 'var(--white)',
       }}
     >
+      <HowToPlayOverlay
+        storageKey="howtoplay_letters"
+        worldColor={seriesInfo.color}
+        steps={LETTERS_TUTORIAL}
+      />
+
       {/* HUD */}
       <GameHUD
         questionsAnswered={questionsAnswered}

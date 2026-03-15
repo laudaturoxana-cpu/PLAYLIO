@@ -22,7 +22,7 @@ function Loader({
   size = 'md',
   variant = 'spinner',
   color = 'var(--coral)',
-  label = 'Se încarcă...',
+  label = 'Loading...',
   className,
 }: LoaderProps) {
   if (variant === 'dots') {
@@ -110,7 +110,7 @@ function Loader({
 }
 
 /* Full-screen loader overlay */
-function PageLoader({ message = 'Se încarcă Playlio...' }: { message?: string }) {
+function PageLoader({ message = 'Loading Playlio...' }: { message?: string }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm"

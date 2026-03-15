@@ -87,13 +87,27 @@ export default function StarCollector({
             justifyContent: 'center',
             flexDirection: 'column',
           }}
-          aria-label={`Colectează ${fi.item.label}`}
+          aria-label={`Collect ${fi.item.label}`}
         >
           <span
             className="text-4xl leading-none"
             style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
           >
             {fi.item.emoji}
+          </span>
+          {/* Educational: show first letter of item name */}
+          <span
+            className="font-fredoka font-semibold leading-none"
+            style={{
+              fontSize: '13px',
+              color: 'white',
+              background: 'rgba(0,0,0,0.45)',
+              borderRadius: '999px',
+              padding: '1px 6px',
+              marginTop: '2px',
+            }}
+          >
+            {fi.item.label[0].toUpperCase()}
           </span>
           {fi.item.points > 1 && (
             <span
@@ -125,7 +139,7 @@ export default function StarCollector({
             justifyContent: 'center',
             zIndex: 20,
           }}
-          aria-label="Secret! Atinge-mă!"
+          aria-label="Secret! Tap me!"
         >
           <span
             className="text-4xl"
@@ -140,7 +154,7 @@ export default function StarCollector({
       {visible.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <p className="font-nunito text-sm text-[var(--gray)] opacity-70">
-            Obiectele apar în curând... ✨
+            Items coming soon... ✨
           </p>
         </div>
       )}
