@@ -55,6 +55,7 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
       {modalOpen && (
         <OnboardingModal
           parentId={parentProfile.id}
+          parentName={parentProfile.full_name ?? undefined}
           onComplete={handleOnboardingComplete}
         />
       )}

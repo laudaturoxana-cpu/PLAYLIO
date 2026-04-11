@@ -12,29 +12,90 @@ interface ChildData {
 }
 
 const AVATAR_PRESETS = [
-  { id: 0, name: 'Explorer',  hairColor: '#3E2723', skinTone: '#FFAB76', outfitColor: '#4FC3F7', emoji: '🧭' },
-  { id: 1, name: 'Princess',  hairColor: '#F9A825', skinTone: '#FFCCBC', outfitColor: '#F48FB1', emoji: '👑' },
-  { id: 2, name: 'Artist',    hairColor: '#CE93D8', skinTone: '#D4845A', outfitColor: '#CE93D8', emoji: '🎨' },
-  { id: 3, name: 'Hero',      hairColor: '#212121', skinTone: '#8D5524', outfitColor: '#66BB6A', emoji: '⚡' },
+  { id: 0, name: 'Explorator', hairColor: '#3E2723', skinTone: '#FFAB76', outfitColor: '#4FC3F7', emoji: '🧭' },
+  { id: 1, name: 'Prințesă',   hairColor: '#F9A825', skinTone: '#FFCCBC', outfitColor: '#F48FB1', emoji: '👑' },
+  { id: 2, name: 'Artist',     hairColor: '#CE93D8', skinTone: '#D4845A', outfitColor: '#CE93D8', emoji: '🎨' },
+  { id: 3, name: 'Erou',       hairColor: '#212121', skinTone: '#8D5524', outfitColor: '#66BB6A', emoji: '⚡' },
 ]
 
-const LIO_MESSAGES = [
-  'Welcome to Playlio! Let\'s create your first child\'s profile! 🌟',
-  'Great choice! Now let\'s pick what your adventurer looks like! 🎭',
-  '', // step 3 dynamic
+const AGE_OPTIONS = [
+  { age: 3, emoji: '🐣', color: '#FF8A65' },
+  { age: 4, emoji: '🐥', color: '#FFB300' },
+  { age: 5, emoji: '🌱', color: '#66BB6A' },
+  { age: 6, emoji: '⭐', color: '#29B6F6' },
+  { age: 7, emoji: '🌟', color: '#9C27B0' },
+  { age: 8, emoji: '🦋', color: '#E91E63' },
+  { age: 9, emoji: '🚀', color: '#FF5722' },
+  { age: 10, emoji: '🏆', color: '#F57F17' },
 ]
 
 interface Props {
   parentId: string
+  parentName?: string
   onComplete: () => void
 }
 
-export function OnboardingModal({ parentId, onComplete }: Props) {
+// ─── Lio SVG ─────────────────────────────────────────────────────────────────
+function LioSVG({ size = 80 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+      {/* Mane */}
+      <circle cx="40" cy="44" r="30" fill="#F9A825" />
+      <circle cx="40" cy="44" r="24" fill="#FFD54F" />
+      {/* Ears */}
+      <circle cx="18" cy="24" r="7" fill="#F9A825" />
+      <circle cx="62" cy="24" r="7" fill="#F9A825" />
+      <circle cx="18" cy="24" r="4" fill="#FFCA28" />
+      <circle cx="62" cy="24" r="4" fill="#FFCA28" />
+      {/* Face */}
+      <circle cx="40" cy="46" r="18" fill="#FFD54F" />
+      {/* Eyes */}
+      <circle cx="33" cy="42" r="4" fill="#212121" />
+      <circle cx="47" cy="42" r="4" fill="#212121" />
+      <circle cx="34.2" cy="40.8" r="1.5" fill="white" />
+      <circle cx="48.2" cy="40.8" r="1.5" fill="white" />
+      {/* Nose */}
+      <ellipse cx="40" cy="49" rx="3" ry="2" fill="#E65100" />
+      {/* Smile */}
+      <path d="M 33 54 Q 40 61 47 54" stroke="#212121" strokeWidth="2" fill="none" strokeLinecap="round" />
+      {/* Whiskers */}
+      <line x1="22" y1="50" x2="34" y2="51" stroke="#212121" strokeWidth="1" opacity="0.4" />
+      <line x1="22" y1="54" x2="34" y2="53" stroke="#212121" strokeWidth="1" opacity="0.4" />
+      <line x1="46" y1="51" x2="58" y2="50" stroke="#212121" strokeWidth="1" opacity="0.4" />
+      <line x1="46" y1="53" x2="58" y2="54" stroke="#212121" strokeWidth="1" opacity="0.4" />
+    </svg>
+  )
+}
+
+// ─── Progress dots ────────────────────────────────────────────────────────────
+function ProgressDots({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="flex justify-center gap-2" aria-label={`Pasul ${current + 1} din ${total}`}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-full transition-all duration-300"
+          style={{
+            width: i === current ? 24 : 8,
+            height: 8,
+            backgroundColor: i === current ? '#FF7043' : i < current ? '#FFAB91' : '#E0E0E0',
+          }}
+          aria-hidden="true"
+        />
+      ))}
+    </div>
+  )
+}
+
+export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
   const [createdChildId, setCreatedChildId] = useState<string | null>(null)
   const [data, setData] = useState<ChildData>({ name: '', age: 6, avatarPreset: 0 })
+
+  const firstName = parentName?.split(' ')[0] ?? 'Părinte'
+  const TOTAL_STEPS = 5
 
   async function handleFinish() {
     if (!data.name.trim()) return
@@ -42,11 +103,8 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
 
     const supabase = createClient()
     const preset = AVATAR_PRESETS[data.avatarPreset]
+    const username = `${data.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_${Date.now().toString(36)}`
 
-    // Unique username: first name + short timestamp
-    const username = `${data.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now().toString(36)}`
-
-    // Create child profile
     const { data: childProfile, error: profileError } = await supabase
       .from('profiles')
       .insert({
@@ -55,7 +113,7 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
         full_name: data.name.trim(),
         role: 'child',
         parent_id: parentId,
-        coins: 50, // welcome bonus!
+        coins: 50,
         age: data.age,
       })
       .select()
@@ -66,10 +124,8 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
       return
     }
 
-    // Store child ID so "Let's explore" can set active child
     setCreatedChildId(childProfile.id)
 
-    // Create avatar with chosen preset
     await supabase.from('avatars').insert({
       user_id: childProfile.id,
       hair_color: preset.hairColor,
@@ -77,199 +133,357 @@ export function OnboardingModal({ parentId, onComplete }: Props) {
       outfit_color: preset.outfitColor,
     })
 
-    // Add welcome coins transaction
     await supabase.from('coin_transactions').insert({
       user_id: childProfile.id,
       amount: 50,
-      reason: 'Welcome to Playlio! 🎉',
+      reason: 'Bun venit în Playlio! 🎉',
     })
 
     setSaving(false)
-    setStep(2)
+    setStep(4)
   }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(33,33,33,0.5)', backdropFilter: 'blur(4px)' }}
+      style={{ backgroundColor: 'rgba(33,33,33,0.55)', backdropFilter: 'blur(6px)' }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-title"
     >
-      <div className="w-full max-w-md rounded-3xl bg-white shadow-[var(--shadow-lg)] p-8 flex flex-col gap-6 animate-slide-up">
+      <div
+        className="w-full max-w-sm rounded-3xl bg-white shadow-[var(--shadow-lg)] flex flex-col overflow-hidden"
+        style={{ maxHeight: '92dvh' }}
+      >
+        {/* ── Colorful top stripe ── */}
+        <div
+          style={{
+            height: 6,
+            background: 'linear-gradient(90deg, #FF7043, #FFD54F, #66BB6A, #29B6F6, #CE93D8)',
+          }}
+        />
 
-        {/* Lio + Message */}
-        <div className="flex items-start gap-4">
-          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" className="flex-shrink-0" style={{ animation: 'bounce-soft 2s ease-in-out infinite' }}>
-            <circle cx="32" cy="36" r="26" fill="#FFD54F" />
-            <circle cx="24" cy="32" r="4" fill="#212121" />
-            <circle cx="40" cy="32" r="4" fill="#212121" />
-            <circle cx="25" cy="30" r="1.5" fill="white" />
-            <circle cx="41" cy="30" r="1.5" fill="white" />
-            <path d="M 22 42 Q 32 50 42 42" stroke="#212121" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            <circle cx="20" cy="12" r="5" fill="var(--sky)" />
-            <circle cx="44" cy="10" r="4" fill="var(--coral)" />
-          </svg>
-          <div className="flex-1 rounded-2xl rounded-tl-none bg-[var(--light)] px-4 py-3">
-            <p className="font-nunito text-sm font-medium text-[var(--dark)] leading-relaxed">
-              {step < 2
-                ? LIO_MESSAGES[step]
-                : `🎉 All set! ${data.name} is ready to start the adventure! We prepared 50 bonus coins for a welcome gift!`}
-            </p>
-          </div>
-        </div>
+        <div className="flex flex-col gap-5 p-7 overflow-y-auto">
+          <ProgressDots current={step} total={TOTAL_STEPS} />
 
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2" aria-label={`Step ${step + 1} of 3`}>
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="rounded-full transition-all duration-300"
-              style={{
-                width: i === step ? 24 : 8,
-                height: 8,
-                backgroundColor: i === step ? 'var(--coral)' : 'var(--light)',
-              }}
-              aria-hidden="true"
-            />
-          ))}
-        </div>
-
-        {/* Step 1 — Child info */}
-        {step === 0 && (
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="child-name" className="font-nunito text-sm font-bold text-[var(--dark)]">
-                What is your child's name?
-              </label>
-              <input
-                id="child-name"
-                type="text"
-                placeholder="e.g. Alex"
-                autoComplete="off"
-                value={data.name}
-                onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
-                className="w-full rounded-2xl border border-black/10 bg-white font-nunito text-base text-[var(--dark)] min-h-[48px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--sky)] transition-all"
-                aria-required="true"
-              />
+          {/* ─── STEP 0: Welcome ─────────────────────────────────────────── */}
+          {step === 0 && (
+            <div className="flex flex-col items-center gap-5 text-center">
+              <div style={{ animation: 'bounce-soft 2s ease-in-out infinite' }}>
+                <LioSVG size={100} />
+              </div>
+              <div>
+                <h1
+                  id="onboarding-title"
+                  className="font-fredoka font-semibold"
+                  style={{ fontSize: '1.75rem', color: '#212121', lineHeight: 1.2 }}
+                >
+                  Bun venit, {firstName}! 👋
+                </h1>
+                <p className="font-nunito mt-2 leading-relaxed" style={{ fontSize: '1rem', color: '#757575' }}>
+                  Sunt <strong style={{ color: '#FF7043' }}>Lio</strong>, ghidul tău din Playlio!
+                  Hai să creăm profilul copilului tău ca să personalizăm aventura pentru el. 🌟
+                </p>
+              </div>
+              <div
+                className="w-full rounded-2xl px-4 py-3 flex items-start gap-3 text-left"
+                style={{ background: 'rgba(255,213,79,0.12)', border: '1.5px solid rgba(255,193,7,0.3)' }}
+              >
+                <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>⏱️</span>
+                <p className="font-nunito text-sm" style={{ color: '#5D4037' }}>
+                  Durează doar <strong>un minut</strong> să configurezi profilul!
+                </p>
+              </div>
+              <button
+                onClick={() => setStep(1)}
+                className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95"
+                style={{ backgroundColor: '#FF7043', boxShadow: '0 6px 20px rgba(255,112,67,0.40)' }}
+              >
+                Să începem! 🚀
+              </button>
             </div>
+          )}
 
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <label htmlFor="child-age" className="font-nunito text-sm font-bold text-[var(--dark)]">
-                  How old are they?
+          {/* ─── STEP 1: Child's name ─────────────────────────────────────── */}
+          {step === 1 && (
+            <div className="flex flex-col gap-5">
+              {/* Lio message */}
+              <div className="flex items-start gap-3">
+                <div style={{ flexShrink: 0 }}>
+                  <LioSVG size={52} />
+                </div>
+                <div
+                  className="flex-1 rounded-2xl rounded-tl-none px-4 py-3"
+                  style={{ background: '#F5F5F5' }}
+                >
+                  <p className="font-nunito text-sm font-medium" style={{ color: '#212121', lineHeight: 1.5 }}>
+                    Cum îl/o cheamă pe copilul tău? 😊
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="child-name" className="font-nunito text-sm font-bold" style={{ color: '#212121' }}>
+                  Prenumele copilului
                 </label>
-                <span
-                  className="font-fredoka text-2xl font-semibold"
-                  style={{ color: 'var(--coral)' }}
-                  aria-live="polite"
-                >
-                  {data.age} years
-                </span>
-              </div>
-              <input
-                id="child-age"
-                type="range"
-                min={3}
-                max={10}
-                value={data.age}
-                onChange={(e) => setData((d) => ({ ...d, age: Number(e.target.value) }))}
-                className="w-full h-3 rounded-full appearance-none cursor-pointer"
-                style={{ accentColor: 'var(--coral)' }}
-                aria-valuemin={3}
-                aria-valuemax={10}
-                aria-valuenow={data.age}
-                aria-valuetext={`${data.age} years`}
-              />
-              <div className="flex justify-between font-nunito text-xs text-[var(--gray)]">
-                <span>3 yrs</span><span>10 yrs</span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => data.name.trim().length >= 2 && setStep(1)}
-              disabled={data.name.trim().length < 2}
-              className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-base text-white px-6 py-4 min-h-[52px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ backgroundColor: 'var(--coral)', boxShadow: 'var(--shadow-coral)' }}
-            >
-              Continue →
-            </button>
-          </div>
-        )}
-
-        {/* Step 2 — Quick avatar */}
-        {step === 1 && (
-          <div className="flex flex-col gap-5">
-            <p className="font-nunito text-sm text-[var(--gray)]">
-              {data.name} can customize the avatar later from their profile.
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {AVATAR_PRESETS.map((preset) => (
-                <button
-                  key={preset.id}
-                  onClick={() => setData((d) => ({ ...d, avatarPreset: preset.id }))}
-                  className="flex flex-col items-center gap-2 rounded-2xl p-4 border-2 transition-all duration-200 hover:scale-105 active:scale-95"
+                <input
+                  id="child-name"
+                  type="text"
+                  placeholder="ex: Ana, Matei, Sofia..."
+                  autoComplete="off"
+                  autoFocus
+                  value={data.name}
+                  onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
+                  onKeyDown={(e) => e.key === 'Enter' && data.name.trim().length >= 2 && setStep(2)}
+                  className="w-full rounded-2xl border font-nunito text-base min-h-[52px] px-4 py-3 focus:outline-none transition-all"
                   style={{
-                    borderColor: data.avatarPreset === preset.id ? 'var(--coral)' : 'var(--light)',
-                    backgroundColor: data.avatarPreset === preset.id ? 'rgba(255,112,67,0.06)' : 'var(--light)',
-                    boxShadow: data.avatarPreset === preset.id ? 'var(--shadow-coral)' : 'none',
+                    borderColor: data.name.trim().length >= 2 ? '#FF7043' : 'rgba(0,0,0,0.15)',
+                    boxShadow: data.name.trim().length >= 2 ? '0 0 0 3px rgba(255,112,67,0.12)' : 'none',
+                    color: '#212121',
+                    background: 'white',
                   }}
-                  aria-pressed={data.avatarPreset === preset.id}
-                  aria-label={`Avatar ${preset.name}`}
-                >
-                  <div
-                    className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
-                    style={{ backgroundColor: preset.outfitColor + '30' }}
-                    aria-hidden="true"
-                  >
-                    {preset.emoji}
-                  </div>
-                  <span className="font-nunito text-sm font-semibold text-[var(--dark)]">
-                    {preset.name}
-                  </span>
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={handleFinish}
-              disabled={saving}
-              className="inline-flex items-center justify-center gap-2 w-full rounded-full font-nunito font-bold text-base text-white px-6 py-4 min-h-[52px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-60"
-              style={{ backgroundColor: 'var(--coral)', boxShadow: 'var(--shadow-coral)' }}
-            >
-              {saving ? (
-                <><span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />Saving...</>
-              ) : 'Create ' + data.name + '\'s profile'}
-            </button>
-          </div>
-        )}
+                  aria-required="true"
+                />
+                {data.name.trim().length > 0 && data.name.trim().length < 2 && (
+                  <p className="font-nunito text-xs" style={{ color: '#EF5350' }}>
+                    Prenumele trebuie să aibă cel puțin 2 caractere
+                  </p>
+                )}
+              </div>
 
-        {/* Step 3 — Success */}
-        {step === 2 && (
-          <div className="flex flex-col items-center gap-5 text-center">
-            <div className="text-6xl" style={{ animation: 'wiggle 0.6s ease-in-out 2' }} aria-hidden="true">🎉</div>
-            <div>
-              <p className="font-fredoka text-2xl font-semibold text-[var(--dark)] mb-1">
-                {data.name} is ready for adventure!
-              </p>
-              <p className="font-nunito text-sm text-[var(--gray)]">
-                50 bonus coins are waiting in your wallet ✨
-              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStep(0)}
+                  className="flex items-center justify-center rounded-full font-nunito font-semibold text-base px-5 py-3 min-h-[48px] border border-black/10 transition-all active:scale-95"
+                  style={{ color: '#757575', background: 'white' }}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => data.name.trim().length >= 2 && setStep(2)}
+                  disabled={data.name.trim().length < 2}
+                  className="flex-1 inline-flex items-center justify-center rounded-full font-nunito font-bold text-base text-white px-6 py-3 min-h-[48px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={{ backgroundColor: '#FF7043', boxShadow: '0 4px 16px rgba(255,112,67,0.35)' }}
+                >
+                  Continuă →
+                </button>
+              </div>
             </div>
-            <button
-              onClick={async () => {
-                if (createdChildId) {
-                  await setActiveChild(createdChildId)
-                  router.push('/worlds')
-                } else {
-                  onComplete()
-                }
-              }}
-              className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95 shimmer-bg"
-            >
-              Let's explore! 🚀
-            </button>
-          </div>
-        )}
+          )}
+
+          {/* ─── STEP 2: Child's age ─────────────────────────────────────── */}
+          {step === 2 && (
+            <div className="flex flex-col gap-5">
+              {/* Lio message */}
+              <div className="flex items-start gap-3">
+                <div style={{ flexShrink: 0 }}>
+                  <LioSVG size={52} />
+                </div>
+                <div
+                  className="flex-1 rounded-2xl rounded-tl-none px-4 py-3"
+                  style={{ background: '#F5F5F5' }}
+                >
+                  <p className="font-nunito text-sm font-medium" style={{ color: '#212121', lineHeight: 1.5 }}>
+                    Câți ani are <strong style={{ color: '#FF7043' }}>{data.name || 'copilul tău'}</strong>?
+                    Asta mă ajută să potrivesc jocurile exact pentru vârsta lui! 🎯
+                  </p>
+                </div>
+              </div>
+
+              {/* Visual age picker */}
+              <div className="grid grid-cols-4 gap-2">
+                {AGE_OPTIONS.map(({ age, emoji, color }) => (
+                  <button
+                    key={age}
+                    onClick={() => setData((d) => ({ ...d, age }))}
+                    className="flex flex-col items-center gap-1 rounded-2xl py-3 px-1 border-2 transition-all active:scale-90 hover:scale-105"
+                    style={{
+                      borderColor: data.age === age ? color : 'rgba(0,0,0,0.08)',
+                      background: data.age === age ? `${color}18` : '#FAFAFA',
+                      boxShadow: data.age === age ? `0 4px 14px ${color}40` : 'none',
+                    }}
+                    aria-pressed={data.age === age}
+                    aria-label={`${age} ani`}
+                  >
+                    <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>{emoji}</span>
+                    <span
+                      className="font-fredoka font-semibold"
+                      style={{
+                        fontSize: '1.2rem',
+                        color: data.age === age ? color : '#424242',
+                        lineHeight: 1,
+                      }}
+                    >
+                      {age}
+                    </span>
+                    <span className="font-nunito text-[9px]" style={{ color: '#9E9E9E' }}>
+                      ani
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Selected age confirm */}
+              <div
+                className="rounded-2xl px-4 py-3 text-center"
+                style={{ background: 'rgba(255,112,67,0.08)', border: '1.5px solid rgba(255,112,67,0.2)' }}
+              >
+                <p className="font-nunito text-sm font-semibold" style={{ color: '#E64A19' }}>
+                  {data.name || 'Copilul tău'} are{' '}
+                  <span className="font-fredoka text-xl">{data.age}</span> ani{' '}
+                  {AGE_OPTIONS.find(o => o.age === data.age)?.emoji}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStep(1)}
+                  className="flex items-center justify-center rounded-full font-nunito font-semibold text-base px-5 py-3 min-h-[48px] border border-black/10 transition-all active:scale-95"
+                  style={{ color: '#757575', background: 'white' }}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => setStep(3)}
+                  className="flex-1 inline-flex items-center justify-center rounded-full font-nunito font-bold text-base text-white px-6 py-3 min-h-[48px] transition-all hover:opacity-90 active:scale-95"
+                  style={{ backgroundColor: '#FF7043', boxShadow: '0 4px 16px rgba(255,112,67,0.35)' }}
+                >
+                  Continuă →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ─── STEP 3: Avatar ──────────────────────────────────────────── */}
+          {step === 3 && (
+            <div className="flex flex-col gap-5">
+              {/* Lio message */}
+              <div className="flex items-start gap-3">
+                <div style={{ flexShrink: 0 }}>
+                  <LioSVG size={52} />
+                </div>
+                <div
+                  className="flex-1 rounded-2xl rounded-tl-none px-4 py-3"
+                  style={{ background: '#F5F5F5' }}
+                >
+                  <p className="font-nunito text-sm font-medium" style={{ color: '#212121', lineHeight: 1.5 }}>
+                    Super! Acum alege un personaj pentru{' '}
+                    <strong style={{ color: '#FF7043' }}>{data.name}</strong>!
+                    Poate fi schimbat mai târziu. 🎭
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {AVATAR_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => setData((d) => ({ ...d, avatarPreset: preset.id }))}
+                    className="flex flex-col items-center gap-2 rounded-2xl p-4 border-2 transition-all duration-200 hover:scale-105 active:scale-95"
+                    style={{
+                      borderColor: data.avatarPreset === preset.id ? preset.outfitColor : 'rgba(0,0,0,0.08)',
+                      backgroundColor: data.avatarPreset === preset.id ? `${preset.outfitColor}18` : '#FAFAFA',
+                      boxShadow: data.avatarPreset === preset.id ? `0 4px 16px ${preset.outfitColor}50` : 'none',
+                    }}
+                    aria-pressed={data.avatarPreset === preset.id}
+                    aria-label={`Personaj ${preset.name}`}
+                  >
+                    <div
+                      className="w-14 h-14 rounded-full flex items-center justify-center"
+                      style={{
+                        background: `${preset.outfitColor}25`,
+                        fontSize: '2rem',
+                      }}
+                      aria-hidden="true"
+                    >
+                      {preset.emoji}
+                    </div>
+                    <span className="font-nunito text-sm font-semibold" style={{ color: '#212121' }}>
+                      {preset.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStep(2)}
+                  className="flex items-center justify-center rounded-full font-nunito font-semibold text-base px-5 py-3 min-h-[48px] border border-black/10 transition-all active:scale-95"
+                  style={{ color: '#757575', background: 'white' }}
+                >
+                  ←
+                </button>
+                <button
+                  onClick={handleFinish}
+                  disabled={saving}
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-full font-nunito font-bold text-base text-white px-6 py-3 min-h-[48px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-60"
+                  style={{ backgroundColor: '#FF7043', boxShadow: '0 4px 16px rgba(255,112,67,0.35)' }}
+                >
+                  {saving ? (
+                    <>
+                      <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                      Se salvează...
+                    </>
+                  ) : (
+                    `Creează profilul lui ${data.name} 🎉`
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ─── STEP 4: Success ─────────────────────────────────────────── */}
+          {step === 4 && (
+            <div className="flex flex-col items-center gap-5 text-center">
+              <div style={{ animation: 'wiggle 0.6s ease-in-out 2' }} aria-hidden="true">
+                <LioSVG size={90} />
+              </div>
+              <div>
+                <div className="text-4xl mb-3" aria-hidden="true">🎉</div>
+                <h2
+                  className="font-fredoka font-semibold"
+                  style={{ fontSize: '1.6rem', color: '#212121', lineHeight: 1.2 }}
+                >
+                  {data.name} e gata de aventură!
+                </h2>
+                <p className="font-nunito mt-2 leading-relaxed" style={{ fontSize: '0.9rem', color: '#757575' }}>
+                  Am personalizat toate jocurile pentru vârsta de{' '}
+                  <strong style={{ color: '#FF7043' }}>{data.age} ani</strong>.
+                  Un cadou de bun venit de{' '}
+                  <strong style={{ color: '#F57F17' }}>50 de monede</strong>{' '}
+                  🪙 te așteaptă!
+                </p>
+              </div>
+              <div
+                className="w-full rounded-2xl px-4 py-3 flex items-center gap-3"
+                style={{ background: 'rgba(102,187,106,0.10)', border: '1.5px solid rgba(102,187,106,0.25)' }}
+              >
+                <span style={{ fontSize: '1.3rem' }}>✅</span>
+                <div className="text-left">
+                  <p className="font-nunito text-sm font-semibold" style={{ color: '#2E7D32' }}>
+                    Profil creat pentru {data.name}, {data.age} ani
+                  </p>
+                  <p className="font-nunito text-xs" style={{ color: '#757575' }}>
+                    Personaj: {AVATAR_PRESETS[data.avatarPreset].emoji} {AVATAR_PRESETS[data.avatarPreset].name}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={async () => {
+                  if (createdChildId) {
+                    await setActiveChild(createdChildId)
+                    router.push('/worlds')
+                  } else {
+                    onComplete()
+                  }
+                }}
+                className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95 shimmer-bg"
+              >
+                Să explorăm! 🚀
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
