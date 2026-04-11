@@ -188,7 +188,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                 </h1>
                 <p className="font-nunito mt-2 leading-relaxed" style={{ fontSize: '1rem', color: '#757575' }}>
                   Sunt <strong style={{ color: '#FF7043' }}>Lio</strong>, ghidul tău din Playlio!
-                  Hai să creăm profilul copilului tău ca să personalizăm aventura pentru el. 🌟
+                  Hai să creăm profilul copilului tău — voi adapta toate jocurile la nivelul potrivit. 🌟
                 </p>
               </div>
               <div
@@ -223,7 +223,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                   style={{ background: '#F5F5F5' }}
                 >
                   <p className="font-nunito text-sm font-medium" style={{ color: '#212121', lineHeight: 1.5 }}>
-                    Cum îl/o cheamă pe copilul tău? 😊
+                    Cum se numește copilul tău? 😊
                   </p>
                 </div>
               </div>
@@ -291,7 +291,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                 >
                   <p className="font-nunito text-sm font-medium" style={{ color: '#212121', lineHeight: 1.5 }}>
                     Câți ani are <strong style={{ color: '#FF7043' }}>{data.name || 'copilul tău'}</strong>?
-                    Asta mă ajută să potrivesc jocurile exact pentru vârsta lui! 🎯
+                    Vârsta mă ajută să adaptez jocurile la nivelul potrivit! 🎯
                   </p>
                 </div>
               </div>
@@ -540,7 +540,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                   ) : (
                     data.lang === 'en'
                       ? `Create ${data.name}'s profile 🎉`
-                      : `Creează profilul lui ${data.name} 🎉`
+                      : `Creează profilul pentru ${data.name} 🎉`
                   )}
                 </button>
               </div>
@@ -565,7 +565,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                 </h2>
                 <p className="font-nunito mt-2 leading-relaxed" style={{ fontSize: '0.9rem', color: '#757575' }}>
                   {data.lang === 'en'
-                    ? <>All games personalized for age <strong style={{ color: '#FF7043' }}>{data.age}</strong>. Welcome gift of <strong style={{ color: '#F57F17' }}>50 coins</strong> 🪙 waiting!</>
+                    ? <>I&apos;ve tailored all games for a <strong style={{ color: '#FF7043' }}>{data.age}-year-old</strong>. A welcome gift of <strong style={{ color: '#F57F17' }}>50 coins</strong> 🪙 is waiting!</>
                     : <>Am personalizat jocurile pentru <strong style={{ color: '#FF7043' }}>{data.age} ani</strong>. Un cadou de <strong style={{ color: '#F57F17' }}>50 monede</strong> 🪙 te așteaptă!</>}
                 </p>
               </div>

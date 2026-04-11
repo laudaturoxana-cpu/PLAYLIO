@@ -134,7 +134,7 @@ function SceneSelector({
             🏗️ Builder World
           </h1>
           <p className="font-nunito text-xs" style={{ color: '#757575' }}>
-            Lumea lui {profileName}
+            Lumea ta, {profileName}
           </p>
         </div>
         <div className="flex items-center gap-1 rounded-full px-3 py-1.5" style={{ backgroundColor: '#FFF8E1' }}>

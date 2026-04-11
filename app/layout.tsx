@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Fredoka, Nunito, Inter } from 'next/font/google'
+import { cookies } from 'next/headers'
 import ServiceWorkerRegister from '@/components/shared/ServiceWorkerRegister'
 import './globals.css'
 
@@ -92,13 +93,16 @@ export const viewport: Viewport = {
   maximumScale: 5,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const lang = cookieStore.get('playlio_lang')?.value === 'en' ? 'en' : 'ro'
+
   return (
-    <html lang="en" className={`${fredoka.variable} ${nunito.variable} ${inter.variable}`}>
+    <html lang={lang} className={`${fredoka.variable} ${nunito.variable} ${inter.variable}`}>
       <body className="font-nunito antialiased">
         <ServiceWorkerRegister />
         {children}

@@ -11,10 +11,10 @@ import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import { useSound } from '@/lib/sound/useSound'
 
 const TUTORIAL_STEPS = [
-  { emoji: '🦁', title: 'Lio aleargă singur!',    description: 'Nu trebuie să îl miști. El aleargă automat spre destinație!' },
-  { emoji: '🦘', title: 'Tap = SARI!',            description: 'Atinge ecranul sau apasă butonul SARI ca să sari peste obstacole.' },
-  { emoji: '❤️',  title: 'Ai 3 inimi!',            description: 'Fiecare obstacol lovit îți ia o inimă. Ajunge cu inimi = mai multe stele!' },
-  { emoji: '🧱',  title: 'Deblochezi blocuri!',    description: 'Fiecare nivel completat îți deschide un bloc nou în Builder World!' },
+  { emoji: '🦁', title: 'Lio aleargă singur!',    description: 'Nu trebuie să îl miști — aleargă automat spre destinație!' },
+  { emoji: '🦘', title: 'Atinge ecranul = SARI!', description: 'Apasă oriunde pe ecran sau pe butonul SARI ca să sari peste obstacole.' },
+  { emoji: '❤️',  title: 'Ai 3 inimi!',            description: 'Fiecare obstacol lovit îți ia o inimă. Cu mai multe inimi la final obții mai multe stele!' },
+  { emoji: '🧱',  title: 'Deblochezi blocuri!',    description: 'Fiecare nivel terminat îți deschide un bloc nou în Builder World!' },
 ]
 
 function loadCharsFromStorage(): CharacterId[] {

@@ -877,7 +877,7 @@ export const CONTINENTS: Continent[] = [
         color: '#1B5E20',
         postcardEmoji: '🍁',
         age3to5: {
-          lioIntro: 'Bonjour! Hi! Canada vorbeşte două limbi! 🍁🇨🇦',
+          lioIntro: 'Bonjour! Hi! Canada vorbește două limbi! 🍁🇨🇦',
           miniGames: [
             {
               type: 'flag_quiz',
