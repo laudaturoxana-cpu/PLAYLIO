@@ -25,6 +25,8 @@ export default function AppNav() {
     return pathname.startsWith(href)
   }
 
+  const accountActive = pathname.startsWith('/parents')
+
   return (
     <nav className="app-nav" aria-label="Main navigation">
       {/* Playlio logo — visible only in desktop sidebar */}
@@ -68,6 +70,31 @@ export default function AppNav() {
           </Link>
         )
       })}
+
+      {/* Account / Parents — pushed to bottom on desktop via margin-top auto */}
+      <Link
+        href="/parents/dashboard"
+        className="app-nav-item app-nav-account active:scale-90"
+        style={{ backgroundColor: accountActive ? 'rgba(117,117,117,0.1)' : 'transparent' }}
+        aria-label="Cont și setări"
+        aria-current={accountActive ? 'page' : undefined}
+      >
+        <span
+          className="app-nav-emoji"
+          style={{
+            fontSize: accountActive ? '1.6rem' : '1.4rem',
+            transition: 'font-size 0.15s ease',
+          }}
+        >
+          👤
+        </span>
+        <span
+          className="app-nav-label"
+          style={{ color: accountActive ? '#757575' : 'var(--gray)' }}
+        >
+          Cont
+        </span>
+      </Link>
     </nav>
   )
 }

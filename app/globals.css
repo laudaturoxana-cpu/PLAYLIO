@@ -479,6 +479,13 @@ body, p, span, a, button, input, li, label {
     flex-shrink: 0;
   }
 
+  /* Account link — pushed to bottom on desktop */
+  .app-nav-account {
+    margin-top: auto !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 14px !important;
+  }
+
   /* ─── Builder two-column layout on desktop ─── */
   .builder-page {
     height: calc(100dvh - 8px);

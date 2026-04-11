@@ -342,7 +342,6 @@ function JumpGame({
   const { playCoin, playLevelUp } = useSound()
 
   // Coin sound
-  const prevScore = useState(0)
   useEffect(() => {
     if (score > 0) playCoin()
   }, [score]) // eslint-disable-line react-hooks/exhaustive-deps
