@@ -341,57 +341,60 @@ function JumpGame({
   const [showCharUnlock, setShowCharUnlock] = useState<string | null>(null)
   const { playCoin, playLevelUp } = useSound()
 
-  // Coin sound
+  // Coin sound — playCoin is stable from useSound, score triggers the play
   useEffect(() => {
     if (score > 0) playCoin()
-  }, [score]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [score, playCoin])
 
-  // Win fanfare + unlock saves
+  // Win fanfare + unlock saves — runs once when isComplete flips to true
   useEffect(() => {
-    if (isComplete && stars > 0) {
-      playLevelUp()
-      // Builder block unlock
-      if (level.builderBlockUnlock) {
-        saveBuilderUnlock(level.builderBlockUnlock)
-        setShowBUnlock(true)
-      }
-      // Character unlock on 3 stars
-      if (stars === 3 && level.characterUnlock) {
-        const chars = loadCharsFromStorage()
-        if (!chars.includes(level.characterUnlock)) {
-          const updated = [...chars, level.characterUnlock]
-          try { localStorage.setItem('jump_chars', JSON.stringify(updated)) } catch { /* silent */ }
-          onCharUnlock(level.characterUnlock)
-          const cd = CHARACTERS.find(c => c.id === level.characterUnlock)
-          if (cd) setShowCharUnlock(`${cd.emoji} ${cd.name} deblocat!`)
-        }
+    if (!isComplete || stars === 0) return
+    playLevelUp()
+    if (level.builderBlockUnlock) {
+      saveBuilderUnlock(level.builderBlockUnlock)
+      setShowBUnlock(true)
+    }
+    if (stars === 3 && level.characterUnlock) {
+      const chars = loadCharsFromStorage()
+      if (!chars.includes(level.characterUnlock)) {
+        const updated = [...chars, level.characterUnlock]
+        try { localStorage.setItem('jump_chars', JSON.stringify(updated)) } catch { /* silent */ }
+        onCharUnlock(level.characterUnlock)
+        const cd = CHARACTERS.find(c => c.id === level.characterUnlock)
+        if (cd) setShowCharUnlock(`${cd.emoji} ${cd.name} deblocat!`)
       }
     }
-  }, [isComplete]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isComplete, stars, level, playLevelUp, onCharUnlock])
 
-  // Save to Supabase
+  // Save score to Supabase — async with proper error handling
   useEffect(() => {
-    if ((isComplete || isDead) && !savedResult && score > 0) {
-      setSavedResult(true)
-      const supabase = createClient()
-      supabase.from('jump_scores').insert({
-        user_id: userId,
-        level_id: level.id,
-        score,
-        stars,
-        time_ms: Math.round(distance / level.runSpeed * 16),
-      }).then(() => {
+    if (!(isComplete || isDead) || savedResult || score === 0) return
+    setSavedResult(true)
+
+    const save = async () => {
+      try {
+        const supabase = createClient()
+        await supabase.from('jump_scores').insert({
+          user_id: userId,
+          level_id: level.id,
+          score,
+          stars,
+          time_ms: Math.round(distance / level.runSpeed * 16),
+        })
         if (stars > 0) {
-          supabase.rpc('add_coins', {
+          await supabase.rpc('add_coins', {
             p_user_id: userId,
             p_amount: score + stars * 5,
             p_reason: `jump_${level.id}`,
             p_world: 'jump',
           })
         }
-      })
+      } catch {
+        // non-critical — score save failure is silent
+      }
     }
-  }, [isComplete, isDead]) // eslint-disable-line react-hooks/exhaustive-deps
+    save()
+  }, [isComplete, isDead, savedResult, score, stars, userId, level, distance])
 
   // Keyboard support
   useEffect(() => {

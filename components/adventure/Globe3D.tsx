@@ -4,6 +4,7 @@ import { useRef, useState, useMemo, useEffect } from 'react'
 import { Canvas, useFrame, type ThreeEvent } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { CONTINENTS, type Continent, type Country } from '@/lib/adventure/zones'
 
 // ─── Lat/Lng for each continent center ───────────────────────────
@@ -99,11 +100,11 @@ function ContinentPatch({
   const ll = CONTINENT_LATLON[continent.id]
   if (!ll) return null
 
-  // pos + quaternion are stable (constant data) — compute once
+  // pos + quaternion depend on ll (derived from constant map, stable per continent)
   const { pos, quat } = useMemo(() => {
     const p = latLngToVec3(ll.lat, ll.lng, 2.02)
     return { pos: p, quat: surfaceQuaternion(p) }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ll])
 
   const size = 0.38 + (isHovered ? 0.04 : 0) + (isSelected ? 0.06 : 0)
 
@@ -143,7 +144,7 @@ function CountryPin({
 
   const pos = useMemo(
     () => latLngToVec3(ll.lat, ll.lng, 2.06),
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    [ll],
   )
 
   return (
@@ -165,7 +166,7 @@ function ContinentLabel({ continent, isSelected }: { continent: Continent; isSel
 
   const pos = useMemo(
     () => latLngToVec3(ll.lat, ll.lng, 2.55),
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    [ll],
   )
 
   return (
@@ -202,7 +203,7 @@ function GlobeScene({
   onSelectCountry: (c: Country) => void
 }) {
   const globeRef      = useRef<THREE.Group>(null)
-  const controlsRef   = useRef<any>(null)          // OrbitControls instance
+  const controlsRef   = useRef<OrbitControlsImpl>(null)
   const interactingRef = useRef(false)             // no re-render on drag
 
   const [hoveredContinentId,  setHoveredContinentId]  = useState<string | null>(null)

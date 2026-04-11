@@ -10,7 +10,6 @@ interface AccountClientProps {
 }
 
 export default function AccountClient({ parentName, email }: AccountClientProps) {
-  const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword]         = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -40,7 +39,6 @@ export default function AccountClient({ parentName, email }: AccountClientProps)
       setStatus('error')
     } else {
       setStatus('success')
-      setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
       setTimeout(() => setStatus('idle'), 3000)

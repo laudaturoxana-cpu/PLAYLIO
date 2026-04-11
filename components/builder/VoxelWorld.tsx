@@ -72,7 +72,6 @@ function voxelMaterialArray(blockId: string): THREE.MeshLambertMaterial[] {
 
 interface VoxelMeshProps {
   voxel: VoxelBlock
-  selected: boolean
   onFaceClick: (voxel: VoxelBlock, normal: THREE.Vector3) => void
   onRemove: (uid: string) => void
   hasSelectedBlock: boolean
@@ -314,7 +313,6 @@ function VoxelScene({
         >
           <VoxelMesh
             voxel={voxel}
-            selected={false}
             hasSelectedBlock={hasSelected}
             onFaceClick={handleFaceClick}
             onRemove={onRemoveVoxel}
