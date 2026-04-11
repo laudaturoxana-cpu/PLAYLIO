@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useCallback, useEffect } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
-import { OrbitControls, Sky, Grid, Html } from '@react-three/drei'
+import { OrbitControls, Grid } from '@react-three/drei'
 import * as THREE from 'three'
 import { BLOCK_MAP, type Block, type BuildScene } from '@/lib/builder/items'
 import { type VoxelBlock } from '@/lib/builder/useVoxelScene'
@@ -56,10 +56,16 @@ function getBlockMaterials(blockId: string): BlockMaterials {
 // BoxGeometry with 6 face groups for top/side/bottom materials
 const VOXEL_GEOM = new THREE.BoxGeometry(0.96, 0.96, 0.96)
 
+// Cache the material arrays too so useMemo returns stable references
+const materialArrayCache = new Map<string, THREE.MeshLambertMaterial[]>()
+
 function voxelMaterialArray(blockId: string): THREE.MeshLambertMaterial[] {
+  if (materialArrayCache.has(blockId)) return materialArrayCache.get(blockId)!
   const m = getBlockMaterials(blockId)
   // Order: +X, -X, +Y (top), -Y (bottom), +Z, -Z
-  return [m.side, m.side, m.top, m.bottom, m.side, m.side]
+  const arr = [m.side, m.side, m.top, m.bottom, m.side, m.side]
+  materialArrayCache.set(blockId, arr)
+  return arr
 }
 
 // ─── Single voxel block mesh ─────────────────────────────────────
