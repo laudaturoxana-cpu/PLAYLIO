@@ -303,12 +303,9 @@ function SceneBuilder({
   }
 
   return (
-    <div
-      className="game-container min-h-screen px-3 py-4"
-      style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-    >
+    <div className="builder-page game-container px-3 py-3 flex flex-col gap-3">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0">
         <button
           onClick={onBack}
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 active:scale-95 transition-transform text-lg"
@@ -319,10 +316,10 @@ function SceneBuilder({
         </button>
         <div className="text-center">
           <h1 className="font-fredoka text-lg font-semibold" style={{ color: '#29B6F6' }}>
-            {buildScene.emoji} {profileName}&apos;s {buildScene.name}
+            {buildScene.emoji} {buildScene.name} — {profileName}
           </h1>
           <p className="font-nunito text-xs" style={{ color: '#757575' }}>
-            {blockCount} blocuri plasate
+            {blockCount} {blockCount === 1 ? 'bloc plasat' : 'blocuri plasate'}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
@@ -348,7 +345,7 @@ function SceneBuilder({
       {/* Lio mesaj */}
       {(aiLioMessage || lioComment) && (
         <div
-          className="rounded-2xl px-4 py-2 text-center"
+          className="rounded-2xl px-4 py-2 text-center flex-shrink-0"
           style={{
             backgroundColor: 'rgba(41,182,246,0.1)',
             border: '1px solid rgba(41,182,246,0.25)',
@@ -362,13 +359,7 @@ function SceneBuilder({
       )}
 
       {/* Two-column on desktop: canvas left, palette right */}
-      <div
-        className="builder-layout flex flex-col gap-3"
-        style={{
-          flex: 1,
-          /* On lg screens: row layout via inline media would need CSS — handled via globals */
-        }}
-      >
+      <div className="builder-layout flex flex-col gap-3">
         {/* Canvas */}
         <div className="builder-canvas flex flex-col gap-2">
           <BlockCanvas
@@ -379,9 +370,10 @@ function SceneBuilder({
             onBlockTap={handleBlockTap}
             gridCols={gridCols}
             gridRows={gridRows}
+            fillHeight
           />
           {!selectedBlock && scene.placedBlocks.length > 0 && (
-            <p className="font-nunito text-[10px] text-center" style={{ color: '#BDBDBD' }}>
+            <p className="font-nunito text-[10px] text-center flex-shrink-0" style={{ color: '#BDBDBD' }}>
               Tap pe un bloc din canvas pentru a-l șterge
             </p>
           )}

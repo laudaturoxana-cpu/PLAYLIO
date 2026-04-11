@@ -480,20 +480,29 @@ body, p, span, a, button, input, li, label {
   }
 
   /* ─── Builder two-column layout on desktop ─── */
+  .builder-page {
+    height: calc(100dvh - 8px);
+    overflow: hidden;
+  }
+
   .builder-layout {
     flex-direction: row !important;
-    align-items: flex-start;
+    align-items: stretch !important;
+    flex: 1;
+    min-height: 0;
   }
+
   .builder-canvas {
     flex: 1;
     min-width: 0;
+    min-height: 0;
   }
+
   .builder-palette {
-    width: 240px;
+    width: 290px;
     flex-shrink: 0;
-    position: sticky;
-    top: 16px;
-    max-height: calc(100vh - 32px);
     overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
   }
 }

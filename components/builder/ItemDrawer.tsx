@@ -29,11 +29,8 @@ export default function BlockPalette({ childAge, selectedBlock, onSelect }: Bloc
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Tab-uri categorii — scroll orizontal pe mobil */}
-      <div
-        className="flex gap-1.5 overflow-x-auto pb-1"
-        style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
-      >
+      {/* Tab-uri categorii — wrap pe 2 rânduri */}
+      <div className="flex flex-wrap gap-1.5">
         {CATEGORIES.map(cat => (
           <button
             key={cat.id}

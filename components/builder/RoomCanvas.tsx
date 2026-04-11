@@ -13,6 +13,7 @@ interface BlockCanvasProps {
   onBlockTap: (uid: string) => void
   gridCols: number
   gridRows: number
+  fillHeight?: boolean
 }
 
 export default function BlockCanvas({
@@ -23,6 +24,7 @@ export default function BlockCanvas({
   onBlockTap,
   gridCols,
   gridRows,
+  fillHeight = false,
 }: BlockCanvasProps) {
   const [hoveredCell, setHoveredCell] = useState<{ col: number; row: number } | null>(null)
 
@@ -57,11 +59,13 @@ export default function BlockCanvas({
 
   return (
     <div
-      className="relative w-full rounded-2xl overflow-hidden shadow-lg"
+      className="relative rounded-2xl overflow-hidden shadow-lg"
       style={{
         background: buildScene.skyGradient,
-        aspectRatio: `${gridCols} / ${gridRows}`,
         border: '2px solid rgba(0,0,0,0.12)',
+        ...(fillHeight
+          ? { width: '100%', height: '100%' }
+          : { width: '100%', aspectRatio: `${gridCols} / ${gridRows}` }),
       }}
     >
       {/* Bara de sol (ground strip) */}
