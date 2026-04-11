@@ -50,10 +50,10 @@ export default function AccountClient({ parentName, email }: AccountClientProps)
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link
-          href="/parents/dashboard"
+          href="/worlds"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-lg active:scale-95 transition-transform"
           style={{ color: '#757575', touchAction: 'manipulation' }}
-          aria-label="Înapoi la dashboard"
+          aria-label="Înapoi"
         >
           ←
         </Link>

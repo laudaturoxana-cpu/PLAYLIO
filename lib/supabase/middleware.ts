@@ -33,7 +33,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Rute protejate — necesită autentificare
-  const protectedPaths = ['/play', '/avatar', '/worlds', '/profile', '/rewards']
+  const protectedPaths = ['/play', '/avatar', '/worlds', '/profile', '/rewards', '/account']
   const isProtectedPath = protectedPaths.some((p) => pathname.startsWith(p))
 
   // Zona părinților — necesită rol parent
