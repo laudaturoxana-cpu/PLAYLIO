@@ -35,7 +35,7 @@ export default function AccountClient({ parentName, email }: AccountClientProps)
     const { error } = await supabase.auth.updateUser({ password: newPassword })
 
     if (error) {
-      setErrorMsg(error.message)
+      setErrorMsg(error.message || 'Ceva nu a funcționat. Încearcă din nou.')
       setStatus('error')
     } else {
       setStatus('success')

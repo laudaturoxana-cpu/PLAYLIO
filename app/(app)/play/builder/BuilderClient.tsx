@@ -13,15 +13,29 @@ import { createClient } from '@/lib/supabase/client'
 import { useLio } from '@/lib/ai/useLio'
 
 // VoxelWorld uses WebGL — client-only, no SSR
-const VoxelWorld = dynamic(() => import('@/components/builder/VoxelWorld'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full flex items-center justify-center rounded-2xl"
-         style={{ minHeight: 320, background: 'rgba(0,0,0,0.04)' }}>
-      <span className="text-4xl" style={{ animation: 'bounce-soft 1s infinite' }}>🏗️</span>
-    </div>
-  ),
-})
+const VoxelWorld = dynamic(
+  () => import('@/components/builder/VoxelWorld').catch(() => {
+    const Fallback = () => (
+      <div className="w-full flex flex-col items-center justify-center gap-3 rounded-2xl p-8"
+           style={{ minHeight: 320, background: 'rgba(41,182,246,0.06)', border: '2px dashed rgba(41,182,246,0.2)' }}>
+        <span className="text-4xl">🏗️</span>
+        <p className="font-nunito text-sm text-center" style={{ color: '#757575' }}>
+          Modul 3D nu este disponibil pe acest dispozitiv.<br />Folosește modul 2D.
+        </p>
+      </div>
+    )
+    return { default: Fallback }
+  }),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full flex items-center justify-center rounded-2xl"
+           style={{ minHeight: 320, background: 'rgba(0,0,0,0.04)' }}>
+        <span className="text-4xl" style={{ animation: 'bounce-soft 1s infinite' }}>🏗️</span>
+      </div>
+    ),
+  }
+)
 
 const BUILDER_TUTORIAL = [
   {

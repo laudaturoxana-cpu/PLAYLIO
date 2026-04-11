@@ -7,14 +7,29 @@ import Link from 'next/link'
 import { CONTINENTS, COUNTRY_MAP, type Continent, type Country } from '@/lib/adventure/zones'
 
 // Globe3D uses WebGL — must be client-only, no SSR
-const Globe3D = dynamic(() => import('@/components/adventure/Globe3D'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center" style={{ aspectRatio: '1/1', maxWidth: 420, margin: '0 auto' }}>
-      <span className="text-5xl" style={{ animation: 'bounce-soft 1s infinite' }}>🌍</span>
-    </div>
-  ),
-})
+const Globe3D = dynamic(
+  () => import('@/components/adventure/Globe3D').catch(() => {
+    // WebGL not supported — return a fallback component
+    const Fallback = () => (
+      <div className="flex flex-col items-center justify-center gap-3 rounded-3xl p-8"
+           style={{ aspectRatio: '1/1', maxWidth: 420, margin: '0 auto', background: 'rgba(56,142,60,0.08)', border: '2px dashed rgba(56,142,60,0.2)' }}>
+        <span className="text-5xl">🌍</span>
+        <p className="font-nunito text-sm text-center" style={{ color: '#757575' }}>
+          Globul 3D nu este disponibil pe acest dispozitiv.<br />Folosește lista de continente de mai jos.
+        </p>
+      </div>
+    )
+    return { default: Fallback }
+  }),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center" style={{ aspectRatio: '1/1', maxWidth: 420, margin: '0 auto' }}>
+        <span className="text-5xl" style={{ animation: 'bounce-soft 1s infinite' }}>🌍</span>
+      </div>
+    ),
+  }
+)
 
 interface AdventureClientProps {
   userId: string
@@ -165,7 +180,7 @@ export default function AdventureClient({
         </Link>
         <div className="text-center">
           <h1 className="font-fredoka text-xl font-semibold text-[#388E3C]">
-            🌍 Adventure World
+            🌍 Lumea Aventurii
           </h1>
           <p className="font-nunito text-xs text-[#757575]">
             {visitedCount}/{totalCountries} țări explorate

@@ -14,7 +14,7 @@ const TUTORIAL_STEPS = [
   { emoji: '🦁', title: 'Lio aleargă singur!',    description: 'Nu trebuie să îl miști — aleargă automat spre destinație!' },
   { emoji: '🦘', title: 'Atinge ecranul = SARI!', description: 'Apasă oriunde pe ecran sau pe butonul SARI ca să sari peste obstacole.' },
   { emoji: '❤️',  title: 'Ai 3 inimi!',            description: 'Fiecare obstacol lovit îți ia o inimă. Cu mai multe inimi la final obții mai multe stele!' },
-  { emoji: '🧱',  title: 'Deblochezi blocuri!',    description: 'Fiecare nivel terminat îți deschide un bloc nou în Builder World!' },
+  { emoji: '🧱',  title: 'Deblochezi blocuri!',    description: 'Fiecare nivel terminat îți deschide un bloc nou în Lumea Builder!' },
 ]
 
 function loadCharsFromStorage(): CharacterId[] {
@@ -162,7 +162,7 @@ function LevelSelect({
         >←</Link>
         <div className="text-center">
           <h1 className="font-fredoka text-xl font-semibold" style={{ color: '#F57F17' }}>
-            🏃 Jump World
+            🏃 Lumea Jump
           </h1>
           <p className="font-nunito text-xs text-[#757575]">Sari cu Lio spre destinație!</p>
         </div>
@@ -174,7 +174,7 @@ function LevelSelect({
         <span className="text-3xl flex-shrink-0" style={{ animation: 'bounce-soft 1.5s infinite' }}>🦁</span>
         <p className="font-nunito text-sm text-[#212121]">
           Salut, {profileName}! Sari peste obstacole și ajunge la destinație!
-          Completezi nivele = deblochezi blocuri pentru Builder World! 🧱
+          Completezi nivele = deblochezi blocuri pentru Lumea Builder! 🧱
         </p>
       </div>
 
@@ -545,7 +545,7 @@ function JumpGame({
                 style={{ background: 'linear-gradient(135deg, #FFF8E1, #FFF3E0)',
                   border: '2px solid #FFE082', animation: 'pop 0.4s ease' }}>
                 <p className="font-nunito text-xs font-bold text-[#F57F17] mb-1">
-                  🧱 Bloc nou deblocat în Builder World!
+                  🧱 Bloc nou deblocat în Lumea Builder!
                 </p>
                 <p className="font-nunito text-base font-semibold text-[#E65100]">
                   ✅ Blocul <strong>{level.builderBlockUnlock}</strong> e acum disponibil!

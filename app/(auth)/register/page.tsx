@@ -212,7 +212,7 @@ export default function RegisterPage() {
           />
           <span className="font-nunito text-sm text-[var(--gray)]">
             I accept the{' '}
-            <Link href="#" className="underline font-semibold text-[var(--dark)]">
+            <Link href="/terms" className="underline font-semibold text-[var(--dark)]">
               terms and conditions
             </Link>{' '}
             and confirm I am at least 18 years old

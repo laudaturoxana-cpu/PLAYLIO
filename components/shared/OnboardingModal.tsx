@@ -105,7 +105,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
     setSaving(true)
 
     const supabase = createClient()
-    const preset = AVATAR_PRESETS[data.avatarPreset]
+    const preset = AVATAR_PRESETS[data.avatarPreset] ?? AVATAR_PRESETS[0]
     const username = `${data.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_${Date.now().toString(36)}`
 
     const { data: childProfile, error: profileError } = await supabase
