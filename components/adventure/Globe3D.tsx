@@ -102,27 +102,29 @@ function ContinentPatch({
 
   // pos + quaternion depend on ll (derived from constant map, stable per continent)
   const { pos, quat } = useMemo(() => {
-    const p = latLngToVec3(ll.lat, ll.lng, 2.02)
+    const p = latLngToVec3(ll.lat, ll.lng, 2.05)
     return { pos: p, quat: surfaceQuaternion(p) }
   }, [ll])
 
-  const size = 0.38 + (isHovered ? 0.04 : 0) + (isSelected ? 0.06 : 0)
+  const size = 0.55 + (isHovered ? 0.06 : 0) + (isSelected ? 0.08 : 0)
 
   return (
     <mesh
       position={pos}
       quaternion={quat}
+      renderOrder={2}
       onClick={(e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); onSelect(continent) }}
       onPointerEnter={(e) => { e.stopPropagation(); onHover(continent.id) }}
       onPointerLeave={() => onHover(null)}
     >
-      <circleGeometry args={[size, 28]} />
+      <circleGeometry args={[size, 32]} />
       <meshBasicMaterial
         color={isSelected ? '#FFD600' : isHovered ? '#FFF176' : continent.color}
         transparent
-        opacity={isSelected ? 0.95 : isHovered ? 0.9 : 0.80}
+        opacity={isSelected ? 0.95 : isHovered ? 0.9 : 0.85}
         side={THREE.DoubleSide}
         depthWrite={false}
+        depthTest={false}
       />
     </mesh>
   )

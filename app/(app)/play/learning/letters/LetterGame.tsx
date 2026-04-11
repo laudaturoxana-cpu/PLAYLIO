@@ -320,14 +320,14 @@ function SessionSummary({ totalCoins, masteredCount, totalLetters, seriesInfo, o
             <span className="font-fredoka text-2xl font-semibold text-[var(--sun-dark)]">
               +{totalCoins}
             </span>
-            <span className="font-nunito text-xs text-[var(--gray)]">coins earned</span>
+            <span className="font-nunito text-xs text-[var(--gray)]">monede câștigate</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <span className="text-3xl">⭐</span>
             <span className="font-fredoka text-2xl font-semibold text-[var(--mint-dark)]">
               {masteredCount}/{totalLetters}
             </span>
-            <span className="font-nunito text-xs text-[var(--gray)]">letters mastered</span>
+            <span className="font-nunito text-xs text-[var(--gray)]">litere stăpânite</span>
           </div>
         </div>
 
@@ -341,14 +341,14 @@ function SessionSummary({ totalCoins, masteredCount, totalLetters, seriesInfo, o
               background: `linear-gradient(90deg, ${seriesInfo.color}, ${seriesInfo.color}cc)`,
             }}
           >
-            Play more! 🎮
+            Joacă mai mult! 🎮
           </button>
           <a
             href="/play/learning"
             className="rounded-full border-2 border-[var(--gray-light,#e0e0e0)] py-3 font-nunito text-base font-semibold text-[var(--gray)] active:scale-95 transition-transform text-center"
             style={{ touchAction: 'manipulation' }}
           >
-            Back to map 🗺️
+            Înapoi la hartă 🗺️
           </a>
         </div>
       </div>

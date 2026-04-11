@@ -22,7 +22,8 @@ export default async function ParentsLayout({
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'parent') {
+  // Only block if explicitly identified as a child profile
+  if (profile?.role === 'child') {
     redirect('/worlds')
   }
 

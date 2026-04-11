@@ -110,22 +110,22 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
           </span>
           <div>
             <h2 className="font-fredoka text-2xl font-semibold" style={{ color: '#FF7043' }}>
-              Math session done!
+              Sesiunea de matematică s-a terminat!
             </h2>
             <p className="font-nunito text-sm mt-1" style={{ color: 'var(--gray)' }}>
-              You answered {QUESTIONS_PER_SESSION} questions!
+              Ai răspuns la {QUESTIONS_PER_SESSION} întrebări!
             </p>
           </div>
           <div className="flex gap-6">
             <div className="flex flex-col items-center gap-1">
               <span className="text-3xl">🪙</span>
               <span className="font-fredoka text-2xl font-semibold" style={{ color: '#F57F17' }}>+{totalCoins}</span>
-              <span className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>coins earned</span>
+              <span className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>monede câștigate</span>
             </div>
             <div className="flex flex-col items-center gap-1">
               <span className="text-3xl">🔥</span>
               <span className="font-fredoka text-2xl font-semibold" style={{ color: '#F44336' }}>{streak}</span>
-              <span className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>best streak</span>
+              <span className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>serie maximă</span>
             </div>
           </div>
           <div className="flex flex-col gap-3 w-full">
@@ -140,14 +140,14 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
               className="rounded-full py-3 font-nunito text-base font-semibold text-white active:scale-95 transition-transform shadow-md"
               style={{ touchAction: 'manipulation', background: 'linear-gradient(90deg, #FF7043, #FF5722)' }}
             >
-              🔄 Play again!
+              🔄 Joacă din nou!
             </button>
             <Link
               href="/play/learning"
               className="rounded-full border-2 py-3 font-nunito text-base font-semibold text-center active:scale-95 transition-transform"
               style={{ touchAction: 'manipulation', borderColor: 'rgba(0,0,0,0.1)', color: 'var(--gray)' }}
             >
-              ← Back to Learning
+              ← Înapoi la Litere
             </Link>
           </div>
         </div>
@@ -173,16 +173,16 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
           href="/play/learning"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 active:scale-95 transition-transform text-lg"
           style={{ touchAction: 'manipulation', color: 'var(--gray)' }}
-          aria-label="Back"
+          aria-label="Înapoi"
         >
           ←
         </Link>
         <div className="text-center">
           <p className="font-fredoka text-base font-semibold" style={{ color: topicColor }}>
-            {topicEmoji} Math World
+            {topicEmoji} Lumea Matematicii
           </p>
           <p className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>
-            {questionsAnswered}/{QUESTIONS_PER_SESSION} questions
+            {questionsAnswered}/{QUESTIONS_PER_SESSION} întrebări
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
@@ -192,7 +192,7 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
           </div>
           {streak >= 2 && (
             <span className="font-nunito text-[10px] font-bold" style={{ color: '#F44336' }}>
-              🔥 {streak} streak!
+              🔥 {streak} la rând!
             </span>
           )}
         </div>
@@ -216,10 +216,10 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
           <p className="font-nunito text-sm font-bold" style={{ color: topicColor }}>
             {lioMessage ?? (
               <>
-                {question.topic === 'counting' && 'Count carefully! 👀'}
-                {question.topic === 'addition' && 'Add them together! ➕'}
-                {question.topic === 'subtraction' && 'Subtract! Take away ➖'}
-                {question.topic === 'comparison' && 'Which is bigger? 🤔'}
+                {question.topic === 'counting' && 'Numără cu atenție! 👀'}
+                {question.topic === 'addition' && 'Adună-le împreună! ➕'}
+                {question.topic === 'subtraction' && 'Scade! Ia-le jos ➖'}
+                {question.topic === 'comparison' && 'Care e mai mare? 🤔'}
               </>
             )}
           </p>

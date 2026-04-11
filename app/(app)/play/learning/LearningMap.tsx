@@ -59,16 +59,16 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
           href="/worlds"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform font-nunito text-lg"
           style={{ touchAction: 'manipulation' }}
-          aria-label="Back to worlds"
+          aria-label="Înapoi la lumi"
         >
           ←
         </Link>
         <div className="text-center">
           <h1 className="font-fredoka text-xl font-semibold text-[var(--coral-dark)]">
-            📚 Letters World
+            📚 Lumea Literelor
           </h1>
           <p className="font-nunito text-xs text-[var(--gray)]">
-            {totalMastered}/{totalLetters} letters mastered
+            {totalMastered}/{totalLetters} litere stăpânite
           </p>
         </div>
         <div className="w-10" />
@@ -97,10 +97,10 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
         <span className="text-3xl flex-shrink-0">📖</span>
         <p className="font-nunito text-sm text-[var(--dark)]">
           {totalMastered === 0
-            ? `Hi, ${profileName}! Let's learn the letters together! 🌟`
+            ? `${profileName}, să învățăm literele împreună! 🌟`
             : totalMastered === totalLetters
-            ? `${profileName}, you mastered all the letters! You're fantastic! 🏆`
-            : `${profileName}, you have ${totalLetters - totalMastered} more letters to master! Keep going! 💪`}
+            ? `${profileName}, ai stăpânit toate literele! Ești fantastic! 🏆`
+            : `${profileName}, mai ai ${totalLetters - totalMastered} litere de stăpânit! Continuă! 💪`}
         </p>
       </div>
 
@@ -133,15 +133,15 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
                       {info.title}
                     </p>
                     <p className="font-nunito text-xs text-[var(--gray)]">
-                      {seriesMastered}/{letters.length} letters
+                      {seriesMastered}/{letters.length} litere
                     </p>
                   </div>
                 </div>
                 {status === 'locked' && (
-                  <span className="text-xl" aria-label="Locked">🔒</span>
+                  <span className="text-xl" aria-label="Blocat">🔒</span>
                 )}
                 {status === 'complete' && (
-                  <span className="text-xl" aria-label="Completed">✅</span>
+                  <span className="text-xl" aria-label="Completat">✅</span>
                 )}
               </div>
 
@@ -195,9 +195,9 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
                       ? 'linear-gradient(90deg, var(--mint-dark), var(--sky))'
                       : `linear-gradient(90deg, ${info.color}, ${info.color}cc)`,
                   }}
-                  aria-label={`${status === 'complete' ? 'Repeat' : 'Start'} ${info.title}`}
+                  aria-label={`${status === 'complete' ? 'Repetă' : 'Începe'} ${info.title}`}
                 >
-                  <span>{status === 'complete' ? '🔄 Replay' : '▶️ Play'}</span>
+                  <span>{status === 'complete' ? '🔄 Repetă' : '▶️ Joacă'}</span>
                 </Link>
               )}
             </div>
@@ -212,10 +212,10 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
             <span className="text-xl">🔢</span>
             <div>
               <p className="font-fredoka text-base font-semibold" style={{ color: '#FF7043' }}>
-                Numbers & Math
+                Numere și Matematică
               </p>
               <p className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>
-                Count, add and subtract!
+                Numără, adună și scade!
               </p>
             </div>
           </div>
@@ -239,9 +239,9 @@ export default function LearningMap({ userId, profileName, masteredSet }: Learni
             touchAction: 'manipulation',
             background: 'linear-gradient(90deg, #FF7043, #FF5722)',
           }}
-          aria-label="Start Numbers & Math"
+          aria-label="Începe Numere și Matematică"
         >
-          <span>▶️ Play Math</span>
+          <span>▶️ Joacă Matematica</span>
         </Link>
       </div>
 
