@@ -1,14 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useBuilderScene } from '@/lib/builder/useBuilderRoom'
+import { useVoxelScene } from '@/lib/builder/useVoxelScene'
 import { BUILD_SCENES, type Block, type BuildScene } from '@/lib/builder/items'
 import BlockCanvas from '@/components/builder/RoomCanvas'
 import BlockPalette from '@/components/builder/ItemDrawer'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import { createClient } from '@/lib/supabase/client'
 import { useLio } from '@/lib/ai/useLio'
+
+// VoxelWorld uses WebGL — client-only, no SSR
+const VoxelWorld = dynamic(() => import('@/components/builder/VoxelWorld'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full flex items-center justify-center rounded-2xl"
+         style={{ minHeight: 320, background: 'rgba(0,0,0,0.04)' }}>
+      <span className="text-4xl" style={{ animation: 'bounce-soft 1s infinite' }}>🏗️</span>
+    </div>
+  ),
+})
 
 const BUILDER_TUTORIAL = [
   {
@@ -244,55 +257,80 @@ function SceneBuilder({
   childAge: number
   onBack: () => void
 }) {
+  const [is3D, setIs3D] = useState(false)
+  const [ghostPosition, setGhostPosition] = useState<[number, number, number] | null>(null)
+
+  // ── 2D state ────────────────────────────────────────────────────
   const {
     scene,
-    selectedBlock,
-    setSelectedBlock,
-    lioComment,
-    isLoaded,
-    isDirty,
-    blockCount,
+    selectedBlock:    selectedBlock2D,
+    setSelectedBlock: setSelectedBlock2D,
+    lioComment:       lioComment2D,
+    isLoaded:         isLoaded2D,
+    isDirty:          isDirty2D,
+    blockCount:       blockCount2D,
     placeBlock,
     removeBlock,
     replaceBlock,
-    clearScene,
-    syncToSupabase,
+    clearScene:       clearScene2D,
+    syncToSupabase:   syncToSupabase2D,
     gridCols,
     gridRows,
   } = useBuilderScene(userId, buildScene.id)
+
+  // ── 3D state ────────────────────────────────────────────────────
+  const {
+    state:            voxelState,
+    selectedBlock:    selectedBlock3D,
+    setSelectedBlock: setSelectedBlock3D,
+    lioComment:       lioComment3D,
+    isLoaded:         isLoaded3D,
+    isDirty:          isDirty3D,
+    blockCount:       blockCount3D,
+    maxBlocks,
+    placeVoxel,
+    removeVoxel,
+    clearScene:       clearScene3D,
+    syncToSupabase:   syncToSupabase3D,
+    gridSize,
+  } = useVoxelScene(userId, buildScene.id)
+
+  const selectedBlock = is3D ? selectedBlock3D : selectedBlock2D
+  const lioComment    = is3D ? lioComment3D    : lioComment2D
+  const isDirty       = is3D ? isDirty3D       : isDirty2D
+  const blockCount    = is3D ? blockCount3D    : blockCount2D
+  const isLoaded      = is3D ? isLoaded3D      : isLoaded2D
 
   const { ask: askLio } = useLio({ childName: profileName, age: childAge, world: 'builder' })
   const [aiLioMessage, setAiLioMessage] = useState<string | null>(null)
 
   function handleBlockSelect(block: Block | null) {
-    setSelectedBlock(block)
+    if (is3D) setSelectedBlock3D(block)
+    else setSelectedBlock2D(block)
   }
 
+  // 2D tap handlers
   function handleCellTap(col: number, row: number) {
-    if (!selectedBlock) return
-    // Încearcă plasare directă; dacă celula e ocupată → înlocuire
+    if (!selectedBlock2D) return
     const placed = scene.placedBlocks.some(b => b.col === col && b.row === row)
     const success = placed
-      ? replaceBlock(selectedBlock, col, row)
-      : placeBlock(selectedBlock, col, row)
-
-    if (success) {
-      // Lio AI mesaj la fiecare 5 blocuri
-      if (blockCount > 0 && blockCount % 5 === 0) {
-        askLio('item_placed', { context: `a plasat ${blockCount + 1} blocuri în ${buildScene.nameEn}` })
-          .then(msg => {
-            if (msg) {
-              setAiLioMessage(msg)
-              setTimeout(() => setAiLioMessage(null), 3000)
-            }
-          })
-      }
+      ? replaceBlock(selectedBlock2D, col, row)
+      : placeBlock(selectedBlock2D, col, row)
+    if (success && blockCount2D > 0 && blockCount2D % 5 === 0) {
+      askLio('item_placed', { context: `a plasat ${blockCount2D + 1} blocuri în ${buildScene.nameEn}` })
+        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
     }
   }
 
-  function handleBlockTap(uid: string) {
-    removeBlock(uid)
-  }
+  // 3D place/remove handlers
+  const handlePlace3D = useCallback((x: number, y: number, z: number) => {
+    if (!selectedBlock3D) return
+    placeVoxel(selectedBlock3D, x, y, z)
+  }, [selectedBlock3D, placeVoxel])
+
+  const handleRemove3D = useCallback((uid: string) => {
+    removeVoxel(uid)
+  }, [removeVoxel])
 
   if (!isLoaded) {
     return (
@@ -301,6 +339,9 @@ function SceneBuilder({
       </div>
     )
   }
+
+  const syncToSupabase = is3D ? syncToSupabase3D : syncToSupabase2D
+  const clearScene     = is3D ? clearScene3D     : clearScene2D
 
   return (
     <div className="builder-page game-container px-3 py-3 flex flex-col gap-3">
@@ -320,9 +361,26 @@ function SceneBuilder({
           </h1>
           <p className="font-nunito text-xs" style={{ color: '#757575' }}>
             {blockCount} {blockCount === 1 ? 'bloc plasat' : 'blocuri plasate'}
+            {is3D && ` / ${maxBlocks} max`}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
+          {/* 2D / 3D toggle */}
+          <button
+            onClick={() => setIs3D(v => !v)}
+            className="font-fredoka text-xs font-semibold rounded-full px-3 py-1 transition-all active:scale-95"
+            style={{
+              touchAction: 'manipulation',
+              background: is3D
+                ? 'linear-gradient(135deg, #1565C0, #29B6F6)'
+                : 'linear-gradient(135deg, #29B6F6, #4FC3F7)',
+              color: 'white',
+              boxShadow: '0 2px 8px rgba(41,182,246,0.35)',
+            }}
+            aria-label={is3D ? 'Treci la modul 2D' : 'Treci la modul 3D'}
+          >
+            {is3D ? '2D' : '3D ✨'}
+          </button>
           {isDirty && (
             <button
               onClick={syncToSupabase}
@@ -358,23 +416,46 @@ function SceneBuilder({
         </div>
       )}
 
-      {/* Two-column on desktop: canvas left, palette right */}
+      {/* Canvas area + palette */}
       <div className="builder-layout flex flex-col gap-3">
         {/* Canvas */}
         <div className="builder-canvas flex flex-col gap-2">
-          <BlockCanvas
-            scene={scene}
-            buildScene={buildScene}
-            selectedBlock={selectedBlock}
-            onCellTap={handleCellTap}
-            onBlockTap={handleBlockTap}
-            gridCols={gridCols}
-            gridRows={gridRows}
-            fillHeight
-          />
-          {!selectedBlock && scene.placedBlocks.length > 0 && (
+          {is3D ? (
+            <VoxelWorld
+              blocks={voxelState.blocks}
+              selectedBlock={selectedBlock3D}
+              buildScene={buildScene}
+              gridSize={gridSize}
+              ghostPosition={ghostPosition}
+              onSetGhost={setGhostPosition}
+              onPlaceVoxel={handlePlace3D}
+              onRemoveVoxel={handleRemove3D}
+            />
+          ) : (
+            <>
+              <BlockCanvas
+                scene={scene}
+                buildScene={buildScene}
+                selectedBlock={selectedBlock2D}
+                onCellTap={handleCellTap}
+                onBlockTap={(uid) => removeBlock(uid)}
+                gridCols={gridCols}
+                gridRows={gridRows}
+                fillHeight
+              />
+              {!selectedBlock2D && scene.placedBlocks.length > 0 && (
+                <p className="font-nunito text-[10px] text-center flex-shrink-0" style={{ color: '#BDBDBD' }}>
+                  Tap pe un bloc din canvas pentru a-l șterge
+                </p>
+              )}
+            </>
+          )}
+
+          {is3D && (
             <p className="font-nunito text-[10px] text-center flex-shrink-0" style={{ color: '#BDBDBD' }}>
-              Tap pe un bloc din canvas pentru a-l șterge
+              {selectedBlock3D
+                ? 'Tap pe suprafața unui bloc sau pe pământ pentru a plasa'
+                : 'Tap pe un bloc pentru a-l șterge · Rotește cu degetul'}
             </p>
           )}
         </div>
