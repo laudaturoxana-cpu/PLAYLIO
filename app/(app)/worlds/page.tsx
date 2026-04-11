@@ -2,54 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getActiveChildProfile } from '@/lib/getActiveChildProfile'
-
-const WORLDS = [
-  {
-    label: 'Litere',
-    sublabel: 'Fonică & Citire',
-    emoji: '📚',
-    href: '/play/learning',
-    gradient: 'linear-gradient(135deg, #FF7043 0%, #D84315 100%)',
-    glow: 'rgba(255,112,67,0.40)',
-    badge: 'ABCs',
-  },
-  {
-    label: 'Aventură',
-    sublabel: 'Explorează & Stele',
-    emoji: '🗺️',
-    href: '/play/adventure',
-    gradient: 'linear-gradient(135deg, #66BB6A 0%, #2E7D32 100%)',
-    glow: 'rgba(67,160,71,0.40)',
-    badge: 'Quest',
-  },
-  {
-    label: 'Builder',
-    sublabel: 'Construiește & Creează',
-    emoji: '🏗️',
-    href: '/play/builder',
-    gradient: 'linear-gradient(135deg, #29B6F6 0%, #0277BD 100%)',
-    glow: 'rgba(2,136,209,0.40)',
-    badge: 'Build',
-  },
-  {
-    label: 'Cifre',
-    sublabel: 'Matematică & Numărare',
-    emoji: '🔢',
-    href: '/play/learning/numbers',
-    gradient: 'linear-gradient(135deg, #FF5722 0%, #BF360C 100%)',
-    glow: 'rgba(255,87,34,0.40)',
-    badge: '123',
-  },
-  {
-    label: 'Jump!',
-    sublabel: 'Sari & Aleargă',
-    emoji: '🎮',
-    href: '/play/jump',
-    gradient: 'linear-gradient(135deg, #FFD54F 0%, #F57F17 100%)',
-    glow: 'rgba(245,127,23,0.40)',
-    badge: 'Run',
-  },
-] as const
+import { getLanguage } from '@/lib/i18n/getLanguage'
+import { t } from '@/lib/i18n/translations'
 
 export default async function WorldsPage() {
   const supabase = await createClient()
@@ -83,12 +37,61 @@ export default async function WorldsPage() {
     )
   }
 
+  const lang = await getLanguage()
   const name = profile.full_name ?? 'Explorer'
   const coins = profile.coins
   const level = profile.level
   const xp = profile.xp
   const xpForNext = level * 100
   const xpPercent = Math.min(100, Math.round((xp / xpForNext) * 100))
+
+  const WORLDS = [
+    {
+      label: t(lang, 'world_letters_name'),
+      sublabel: t(lang, 'world_letters_sub'),
+      emoji: '📚',
+      href: '/play/learning',
+      gradient: 'linear-gradient(135deg, #FF7043 0%, #D84315 100%)',
+      glow: 'rgba(255,112,67,0.40)',
+      badge: 'ABCs',
+    },
+    {
+      label: t(lang, 'world_adventure_name'),
+      sublabel: t(lang, 'world_adventure_sub'),
+      emoji: '🗺️',
+      href: '/play/adventure',
+      gradient: 'linear-gradient(135deg, #66BB6A 0%, #2E7D32 100%)',
+      glow: 'rgba(67,160,71,0.40)',
+      badge: 'Quest',
+    },
+    {
+      label: t(lang, 'world_builder_name'),
+      sublabel: t(lang, 'world_builder_sub'),
+      emoji: '🏗️',
+      href: '/play/builder',
+      gradient: 'linear-gradient(135deg, #29B6F6 0%, #0277BD 100%)',
+      glow: 'rgba(2,136,209,0.40)',
+      badge: 'Build',
+    },
+    {
+      label: t(lang, 'world_numbers_name'),
+      sublabel: t(lang, 'world_numbers_sub'),
+      emoji: '🔢',
+      href: '/play/learning/numbers',
+      gradient: 'linear-gradient(135deg, #FF5722 0%, #BF360C 100%)',
+      glow: 'rgba(255,87,34,0.40)',
+      badge: '123',
+    },
+    {
+      label: t(lang, 'world_jump_name'),
+      sublabel: t(lang, 'world_jump_sub'),
+      emoji: '🎮',
+      href: '/play/jump',
+      gradient: 'linear-gradient(135deg, #FFD54F 0%, #F57F17 100%)',
+      glow: 'rgba(245,127,23,0.40)',
+      badge: 'Run',
+    },
+  ]
 
   return (
     <div
@@ -128,7 +131,7 @@ export default async function WorldsPage() {
             </div>
             <div className="flex flex-col gap-1">
               <span className="font-inter text-xs font-semibold" style={{ color: '#9E9E9E', letterSpacing: '0.05em' }}>
-                LEVEL
+                {t(lang, 'label_level')}
               </span>
               <div className="flex items-center gap-2">
                 <div
@@ -162,7 +165,7 @@ export default async function WorldsPage() {
                 className="font-fredoka font-semibold"
                 style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', color: '#F57F17' }}
               >
-                {coins.toLocaleString('ro-RO')}
+                {coins.toLocaleString(lang === 'ro' ? 'ro-RO' : 'en-US')}
               </span>
             </div>
             <Link
@@ -173,7 +176,7 @@ export default async function WorldsPage() {
             >
               <span style={{ fontSize: 'clamp(15px, 2vw, 18px)' }}>👨‍👧</span>
               <span className="font-inter font-semibold hidden sm:block" style={{ fontSize: '12px', color: '#757575' }}>
-                Părinți
+                {t(lang, 'worlds_parent_btn')}
               </span>
             </Link>
           </div>
@@ -186,24 +189,23 @@ export default async function WorldsPage() {
               className="font-fredoka font-semibold"
               style={{ fontSize: 'clamp(28px, 4.5vw, 48px)', color: '#212121', lineHeight: 1.1 }}
             >
-              Salut, {name}! 👋
+              {t(lang, 'worlds_greeting', { name })}
             </h1>
             <p
               className="font-nunito mt-2"
               style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', color: '#757575' }}
             >
-              În ce lume ne aventurăm azi?
+              {t(lang, 'worlds_subtitle')}
             </p>
             {isPlayingAsChild && (
               <div
                 className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full font-inter text-xs font-semibold"
                 style={{ background: 'rgba(79,195,247,0.12)', color: '#0277BD', border: '1px solid rgba(79,195,247,0.25)' }}
               >
-                🦁 Joci ca {name}
+                {t(lang, 'worlds_playing_as', { name })}
               </div>
             )}
           </div>
-          {/* Lio mascot — decorative */}
           <div
             className="flex-shrink-0 hidden sm:flex items-center justify-center rounded-3xl"
             style={{
@@ -227,7 +229,7 @@ export default async function WorldsPage() {
         >
           {WORLDS.map((world) => (
             <Link
-              key={world.label}
+              key={world.href}
               href={world.href}
               className="relative flex flex-col items-center justify-end rounded-3xl overflow-hidden active:scale-95 hover:scale-[1.03] transition-transform select-none"
               style={{
@@ -240,7 +242,6 @@ export default async function WorldsPage() {
               }}
               aria-label={world.label}
             >
-              {/* Badge top-right */}
               <div
                 className="absolute top-3 right-3 font-inter font-bold rounded-full px-2 py-0.5"
                 style={{
@@ -253,7 +254,6 @@ export default async function WorldsPage() {
                 {world.badge}
               </div>
 
-              {/* Emoji */}
               <div
                 style={{
                   fontSize: 'clamp(2.8rem, 7vw, 5rem)',
@@ -266,7 +266,6 @@ export default async function WorldsPage() {
                 {world.emoji}
               </div>
 
-              {/* Text overlay at bottom */}
               <div
                 className="w-full text-center"
                 style={{
@@ -306,13 +305,13 @@ export default async function WorldsPage() {
               className="font-inter font-bold mb-1"
               style={{ fontSize: 'clamp(10px, 1.1vw, 13px)', color: '#0277BD', letterSpacing: '0.05em' }}
             >
-              SFATUL ZILEI
+              {t(lang, 'worlds_tip_title')}
             </p>
             <p
               className="font-nunito leading-relaxed"
               style={{ fontSize: 'clamp(13px, 1.3vw, 16px)', color: '#212121' }}
             >
-              Joacă 10 minute pe zi în Lumea Literelor ca să avansezi rapid!
+              {t(lang, 'worlds_tip_body')}
             </p>
           </div>
         </div>

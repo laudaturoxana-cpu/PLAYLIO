@@ -2,18 +2,20 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-const NAV_ITEMS = [
-  { href: '/worlds',                emoji: '🏠', label: 'Home',      color: '#29B6F6' },
-  { href: '/play/learning',         emoji: '📚', label: 'Litere',    color: '#EF5350' },
-  { href: '/play/learning/numbers', emoji: '🔢', label: 'Cifre',     color: '#FF7043' },
-  { href: '/play/adventure',        emoji: '🗺️', label: 'Adventure', color: '#66BB6A' },
-  { href: '/play/builder',          emoji: '🏗️', label: 'Builder',   color: '#29B6F6' },
-  { href: '/play/jump',             emoji: '🎮', label: 'Jump',      color: '#FFA726' },
-]
+import { useLanguage } from '@/lib/i18n/LanguageContext'
 
 export default function AppNav() {
   const pathname = usePathname()
+  const { t } = useLanguage()
+
+  const NAV_ITEMS = [
+    { href: '/worlds',                label: t('nav_home'),      emoji: '🏠', color: '#29B6F6' },
+    { href: '/play/learning',         label: t('nav_letters'),   emoji: '📚', color: '#EF5350' },
+    { href: '/play/learning/numbers', label: t('nav_numbers'),   emoji: '🔢', color: '#FF7043' },
+    { href: '/play/adventure',        label: t('nav_adventure'), emoji: '🗺️', color: '#66BB6A' },
+    { href: '/play/builder',          label: t('nav_builder'),   emoji: '🏗️', color: '#29B6F6' },
+    { href: '/play/jump',             label: t('nav_jump'),      emoji: '🎮', color: '#FFA726' },
+  ]
 
   function isActive(href: string) {
     if (href === '/worlds') return pathname === '/worlds'
@@ -43,9 +45,7 @@ export default function AppNav() {
             key={item.href}
             href={item.href}
             className="app-nav-item active:scale-90"
-            style={{
-              backgroundColor: active ? `${item.color}1A` : 'transparent',
-            }}
+            style={{ backgroundColor: active ? `${item.color}1A` : 'transparent' }}
             aria-label={item.label}
             aria-current={active ? 'page' : undefined}
           >

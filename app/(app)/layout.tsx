@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getLanguage } from '@/lib/i18n/getLanguage'
+import { LanguageProvider } from '@/lib/i18n/LanguageContext'
 import AppNav from '@/components/shared/AppNav'
 
 export default async function AppLayout({
@@ -16,10 +18,14 @@ export default async function AppLayout({
     redirect('/login')
   }
 
+  const lang = await getLanguage()
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--white)' }}>
-      <main className="app-main-content">{children}</main>
-      <AppNav />
-    </div>
+    <LanguageProvider initialLang={lang}>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--white)' }}>
+        <main className="app-main-content">{children}</main>
+        <AppNav />
+      </div>
+    </LanguageProvider>
   )
 }

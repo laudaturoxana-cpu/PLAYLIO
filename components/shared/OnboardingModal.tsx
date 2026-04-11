@@ -4,11 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { setActiveChild } from '@/app/actions/setActiveChild'
+import { setLanguage } from '@/app/actions/setLanguage'
+import type { Lang } from '@/lib/i18n/translations'
 
 interface ChildData {
   name: string
   age: number
   avatarPreset: number
+  lang: Lang
 }
 
 const AVATAR_PRESETS = [
@@ -92,10 +95,10 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
   const [createdChildId, setCreatedChildId] = useState<string | null>(null)
-  const [data, setData] = useState<ChildData>({ name: '', age: 6, avatarPreset: 0 })
+  const [data, setData] = useState<ChildData>({ name: '', age: 6, avatarPreset: 0, lang: 'ro' })
 
   const firstName = parentName?.split(' ')[0] ?? 'Părinte'
-  const TOTAL_STEPS = 5
+  const TOTAL_STEPS = 6
 
   async function handleFinish() {
     if (!data.name.trim()) return
@@ -139,8 +142,11 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
       reason: 'Bun venit în Playlio! 🎉',
     })
 
+    // Save language preference as cookie (app will read this on next render)
+    await setLanguage(data.lang)
+
     setSaving(false)
-    setStep(4)
+    setStep(5)
   }
 
   return (
@@ -414,6 +420,113 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                   ←
                 </button>
                 <button
+                  onClick={() => setStep(4)}
+                  className="flex-1 inline-flex items-center justify-center rounded-full font-nunito font-bold text-base text-white px-6 py-3 min-h-[48px] transition-all hover:opacity-90 active:scale-95"
+                  style={{ backgroundColor: '#FF7043', boxShadow: '0 4px 16px rgba(255,112,67,0.35)' }}
+                >
+                  Continuă →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ─── STEP 4: Language ────────────────────────────────────────── */}
+          {step === 4 && (
+            <div className="flex flex-col gap-5">
+              {/* Lio message */}
+              <div className="flex items-start gap-3">
+                <div style={{ flexShrink: 0 }}>
+                  <LioSVG size={52} />
+                </div>
+                <div
+                  className="flex-1 rounded-2xl rounded-tl-none px-4 py-3"
+                  style={{ background: '#F5F5F5' }}
+                >
+                  <p className="font-nunito text-sm font-medium" style={{ color: '#212121', lineHeight: 1.5 }}>
+                    Ultima întrebare! 🌍 În ce limbă vrei să se joace{' '}
+                    <strong style={{ color: '#FF7043' }}>{data.name}</strong>?
+                  </p>
+                </div>
+              </div>
+
+              {/* Language buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Romanian */}
+                <button
+                  onClick={() => setData((d) => ({ ...d, lang: 'ro' }))}
+                  className="flex flex-col items-center gap-3 rounded-3xl p-5 border-2 transition-all active:scale-95 hover:scale-105"
+                  style={{
+                    borderColor: data.lang === 'ro' ? '#FF7043' : 'rgba(0,0,0,0.08)',
+                    background: data.lang === 'ro' ? 'rgba(255,112,67,0.08)' : '#FAFAFA',
+                    boxShadow: data.lang === 'ro' ? '0 6px 20px rgba(255,112,67,0.25)' : 'none',
+                  }}
+                  aria-pressed={data.lang === 'ro'}
+                >
+                  <span style={{ fontSize: '2.8rem', lineHeight: 1 }}>🇷🇴</span>
+                  <div className="text-center">
+                    <p
+                      className="font-fredoka font-semibold"
+                      style={{ fontSize: '1.1rem', color: data.lang === 'ro' ? '#FF7043' : '#212121' }}
+                    >
+                      Română
+                    </p>
+                    <p className="font-nunito text-xs mt-0.5" style={{ color: '#9E9E9E' }}>
+                      Romanian
+                    </p>
+                  </div>
+                  {data.lang === 'ro' && (
+                    <span
+                      className="font-nunito text-xs font-bold px-2 py-0.5 rounded-full"
+                      style={{ background: '#FF7043', color: 'white' }}
+                    >
+                      ✓ Ales
+                    </span>
+                  )}
+                </button>
+
+                {/* English */}
+                <button
+                  onClick={() => setData((d) => ({ ...d, lang: 'en' }))}
+                  className="flex flex-col items-center gap-3 rounded-3xl p-5 border-2 transition-all active:scale-95 hover:scale-105"
+                  style={{
+                    borderColor: data.lang === 'en' ? '#29B6F6' : 'rgba(0,0,0,0.08)',
+                    background: data.lang === 'en' ? 'rgba(41,182,246,0.08)' : '#FAFAFA',
+                    boxShadow: data.lang === 'en' ? '0 6px 20px rgba(41,182,246,0.25)' : 'none',
+                  }}
+                  aria-pressed={data.lang === 'en'}
+                >
+                  <span style={{ fontSize: '2.8rem', lineHeight: 1 }}>🇬🇧</span>
+                  <div className="text-center">
+                    <p
+                      className="font-fredoka font-semibold"
+                      style={{ fontSize: '1.1rem', color: data.lang === 'en' ? '#29B6F6' : '#212121' }}
+                    >
+                      English
+                    </p>
+                    <p className="font-nunito text-xs mt-0.5" style={{ color: '#9E9E9E' }}>
+                      Engleză
+                    </p>
+                  </div>
+                  {data.lang === 'en' && (
+                    <span
+                      className="font-nunito text-xs font-bold px-2 py-0.5 rounded-full"
+                      style={{ background: '#29B6F6', color: 'white' }}
+                    >
+                      ✓ Chosen
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStep(3)}
+                  className="flex items-center justify-center rounded-full font-nunito font-semibold text-base px-5 py-3 min-h-[48px] border border-black/10 transition-all active:scale-95"
+                  style={{ color: '#757575', background: 'white' }}
+                >
+                  ←
+                </button>
+                <button
                   onClick={handleFinish}
                   disabled={saving}
                   className="flex-1 inline-flex items-center justify-center gap-2 rounded-full font-nunito font-bold text-base text-white px-6 py-3 min-h-[48px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-60"
@@ -422,18 +535,20 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                   {saving ? (
                     <>
                       <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                      Se salvează...
+                      {data.lang === 'en' ? 'Saving...' : 'Se salvează...'}
                     </>
                   ) : (
-                    `Creează profilul lui ${data.name} 🎉`
+                    data.lang === 'en'
+                      ? `Create ${data.name}'s profile 🎉`
+                      : `Creează profilul lui ${data.name} 🎉`
                   )}
                 </button>
               </div>
             </div>
           )}
 
-          {/* ─── STEP 4: Success ─────────────────────────────────────────── */}
-          {step === 4 && (
+          {/* ─── STEP 5: Success ─────────────────────────────────────────── */}
+          {step === 5 && (
             <div className="flex flex-col items-center gap-5 text-center">
               <div style={{ animation: 'wiggle 0.6s ease-in-out 2' }} aria-hidden="true">
                 <LioSVG size={90} />
@@ -444,30 +559,42 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                   className="font-fredoka font-semibold"
                   style={{ fontSize: '1.6rem', color: '#212121', lineHeight: 1.2 }}
                 >
-                  {data.name} e gata de aventură!
+                  {data.lang === 'en'
+                    ? `${data.name} is ready for adventure!`
+                    : `${data.name} e gata de aventură!`}
                 </h2>
                 <p className="font-nunito mt-2 leading-relaxed" style={{ fontSize: '0.9rem', color: '#757575' }}>
-                  Am personalizat toate jocurile pentru vârsta de{' '}
-                  <strong style={{ color: '#FF7043' }}>{data.age} ani</strong>.
-                  Un cadou de bun venit de{' '}
-                  <strong style={{ color: '#F57F17' }}>50 de monede</strong>{' '}
-                  🪙 te așteaptă!
+                  {data.lang === 'en'
+                    ? <>All games personalized for age <strong style={{ color: '#FF7043' }}>{data.age}</strong>. Welcome gift of <strong style={{ color: '#F57F17' }}>50 coins</strong> 🪙 waiting!</>
+                    : <>Am personalizat jocurile pentru <strong style={{ color: '#FF7043' }}>{data.age} ani</strong>. Un cadou de <strong style={{ color: '#F57F17' }}>50 monede</strong> 🪙 te așteaptă!</>}
                 </p>
               </div>
+
+              {/* Profile summary */}
               <div
-                className="w-full rounded-2xl px-4 py-3 flex items-center gap-3"
+                className="w-full rounded-2xl px-4 py-3 flex flex-col gap-2"
                 style={{ background: 'rgba(102,187,106,0.10)', border: '1.5px solid rgba(102,187,106,0.25)' }}
               >
-                <span style={{ fontSize: '1.3rem' }}>✅</span>
-                <div className="text-left">
-                  <p className="font-nunito text-sm font-semibold" style={{ color: '#2E7D32' }}>
-                    Profil creat pentru {data.name}, {data.age} ani
+                <div className="flex items-center gap-3">
+                  <span style={{ fontSize: '1.2rem' }}>✅</span>
+                  <p className="font-nunito text-sm font-semibold text-left" style={{ color: '#2E7D32' }}>
+                    {data.name}, {data.age} {data.lang === 'en' ? 'years old' : 'ani'}
                   </p>
-                  <p className="font-nunito text-xs" style={{ color: '#757575' }}>
-                    Personaj: {AVATAR_PRESETS[data.avatarPreset].emoji} {AVATAR_PRESETS[data.avatarPreset].name}
+                </div>
+                <div className="flex items-center gap-3">
+                  <span style={{ fontSize: '1.2rem' }}>{AVATAR_PRESETS[data.avatarPreset].emoji}</span>
+                  <p className="font-nunito text-sm text-left" style={{ color: '#757575' }}>
+                    {AVATAR_PRESETS[data.avatarPreset].name}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span style={{ fontSize: '1.2rem' }}>{data.lang === 'ro' ? '🇷🇴' : '🇬🇧'}</span>
+                  <p className="font-nunito text-sm text-left" style={{ color: '#757575' }}>
+                    {data.lang === 'ro' ? 'Română' : 'English'}
                   </p>
                 </div>
               </div>
+
               <button
                 onClick={async () => {
                   if (createdChildId) {
@@ -479,7 +606,7 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                 }}
                 className="inline-flex items-center justify-center w-full rounded-full font-nunito font-bold text-lg text-white px-6 py-4 min-h-[56px] transition-all hover:opacity-90 active:scale-95 shimmer-bg"
               >
-                Să explorăm! 🚀
+                {data.lang === 'en' ? "Let's explore! 🚀" : 'Să explorăm! 🚀'}
               </button>
             </div>
           )}
