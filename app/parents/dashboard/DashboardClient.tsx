@@ -70,11 +70,16 @@ export function DashboardClient({ parentProfile, children, childStats, totalLett
             </h1>
           </div>
           <a
-            href="/auth/signout"
-            className="font-inter text-xs text-[var(--gray)] underline"
-            style={{ touchAction: 'manipulation' }}
+            href="/parents/account"
+            className="flex items-center gap-2 rounded-2xl px-3 py-2 font-inter text-sm font-semibold transition-all active:scale-95"
+            style={{
+              touchAction: 'manipulation',
+              backgroundColor: 'rgba(41,182,246,0.08)',
+              border: '1.5px solid rgba(41,182,246,0.2)',
+              color: '#0288D1',
+            }}
           >
-            Sign out
+            ⚙️ Setări
           </a>
         </div>
 

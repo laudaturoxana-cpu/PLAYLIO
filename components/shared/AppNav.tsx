@@ -73,7 +73,7 @@ export default function AppNav() {
 
       {/* Account / Parents — pushed to bottom on desktop via margin-top auto */}
       <Link
-        href="/parents/dashboard"
+        href="/parents/account"
         className="app-nav-item app-nav-account active:scale-90"
         style={{ backgroundColor: accountActive ? 'rgba(117,117,117,0.1)' : 'transparent' }}
         aria-label="Cont și setări"
