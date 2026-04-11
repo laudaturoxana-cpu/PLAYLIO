@@ -39,15 +39,45 @@ interface BlockMaterials {
 
 const materialCache = new Map<string, BlockMaterials>()
 
+function makePixelTexture(topColor: string, sideColor: string, size = 16): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = size; canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = sideColor
+  ctx.fillRect(0, 0, size, size)
+  // Pixel noise for Minecraft feel
+  const c = new THREE.Color(sideColor)
+  for (let i = 0; i < size * size * 0.18; i++) {
+    const px = Math.floor(Math.random() * size)
+    const py = Math.floor(Math.random() * size)
+    const bright = Math.random() > 0.5 ? 0.12 : -0.08
+    ctx.fillStyle = `rgb(${Math.round(Math.min(255,Math.max(0,(c.r+bright)*255))},${Math.round(Math.min(255,Math.max(0,(c.g+bright)*255)))},${Math.round(Math.min(255,Math.max(0,(c.b+bright)*255)))})`
+    ctx.fillRect(px, py, 1, 1)
+  }
+  // Darker border edge (Minecraft block edge)
+  ctx.strokeStyle = darken(sideColor, 0.22)
+  ctx.lineWidth = 1
+  ctx.strokeRect(0.5, 0.5, size - 1, size - 1)
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.magFilter = THREE.NearestFilter
+  tex.minFilter = THREE.NearestFilter
+  return tex
+}
+
 function getBlockMaterials(blockId: string): BlockMaterials {
   if (materialCache.has(blockId)) return materialCache.get(blockId)!
   const block = BLOCK_MAP.get(blockId)
   const base = block ? extractHex(block.bgStyle) : '#888888'
-  const border = block?.borderColor ?? darken(base, 0.15)
+  const topColor  = lighten(base, 0.14)
+  const sideColor = base
+  const botColor  = darken(base, 0.18)
+  const topTex  = makePixelTexture(topColor,  topColor)
+  const sideTex = makePixelTexture(sideColor, sideColor)
+  const botTex  = makePixelTexture(botColor,  botColor)
   const mats: BlockMaterials = {
-    top:    new THREE.MeshLambertMaterial({ color: lighten(base, 0.12) }),
-    side:   new THREE.MeshLambertMaterial({ color: base }),
-    bottom: new THREE.MeshLambertMaterial({ color: border }),
+    top:    new THREE.MeshLambertMaterial({ map: topTex }),
+    side:   new THREE.MeshLambertMaterial({ map: sideTex }),
+    bottom: new THREE.MeshLambertMaterial({ map: botTex }),
   }
   materialCache.set(blockId, mats)
   return mats
@@ -115,6 +145,7 @@ interface GroundProps {
 
 function Ground({ buildScene, gridSize, hasSelectedBlock, onGroundClick }: GroundProps) {
   const groundColor = extractHex(buildScene.groundColor)
+  const dirtColor   = darken(groundColor, 0.18)
 
   function handleClick(e: ThreeEvent<MouseEvent>) {
     if (!hasSelectedBlock) return
@@ -126,15 +157,20 @@ function Ground({ buildScene, gridSize, hasSelectedBlock, onGroundClick }: Groun
 
   return (
     <group>
-      {/* Ground surface */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow onClick={handleClick}>
+      {/* Clickable invisible plane at y=0 for placing blocks on ground */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.49, 0]} receiveShadow onClick={handleClick}>
         <planeGeometry args={[gridSize, gridSize]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+      {/* Ground top layer (grass/sand/snow etc) — Minecraft-style 1-unit thick */}
+      <mesh position={[0, -0.5, 0]}>
+        <boxGeometry args={[gridSize, 1, gridSize]} />
         <meshLambertMaterial color={groundColor} />
       </mesh>
-      {/* Sub-ground fill */}
+      {/* Dirt/rock sub-layer */}
       <mesh position={[0, -2, 0]}>
         <boxGeometry args={[gridSize, 3, gridSize]} />
-        <meshLambertMaterial color={darken(groundColor, 0.1)} />
+        <meshLambertMaterial color={dirtColor} />
       </mesh>
     </group>
   )
@@ -192,8 +228,12 @@ function GhostVoxel({ position, selectedBlock }: GhostVoxelProps) {
 function CameraSetup() {
   const { camera } = useThree()
   useEffect(() => {
-    camera.position.set(12, 10, 12)
+    camera.position.set(10, 12, 10)
     camera.lookAt(0, 0, 0)
+    if ('fov' in camera) {
+      (camera as THREE.PerspectiveCamera).fov = 55
+      camera.updateProjectionMatrix()
+    }
   }, [camera])
   return null
 }
@@ -294,10 +334,10 @@ function VoxelScene({
         onGroundClick={handleGroundClick}
       />
 
-      {/* Ground pointer move for ghost */}
+      {/* Ghost hover plane at y=0 */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, -0.49, 0]}
+        position={[0, -0.48, 0]}
         onPointerMove={hasSelected ? handleGroundMove : undefined}
         onPointerLeave={() => onSetGhost(null)}
       >
@@ -366,12 +406,15 @@ export default function VoxelWorld({
   onRemoveVoxel,
 }: VoxelWorldProps) {
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden" style={{ minHeight: 320 }}>
+    <div
+      className="w-full rounded-2xl overflow-hidden"
+      style={{ height: 'min(60vh, 520px)', minHeight: 340 }}
+    >
       <Canvas
         shadows
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: false }}
-        style={{ touchAction: 'none' }}
+        style={{ touchAction: 'none', width: '100%', height: '100%' }}
       >
         <VoxelScene
           blocks={blocks}

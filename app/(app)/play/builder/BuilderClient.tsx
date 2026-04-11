@@ -271,7 +271,7 @@ function SceneBuilder({
   childAge: number
   onBack: () => void
 }) {
-  const [is3D, setIs3D] = useState(false)
+  const [is3D, setIs3D] = useState(true)
   const [ghostPosition, setGhostPosition] = useState<[number, number, number] | null>(null)
 
   // ── 2D state ────────────────────────────────────────────────────
