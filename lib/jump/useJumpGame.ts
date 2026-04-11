@@ -1,277 +1,220 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import type { JumpLevel, Platform } from './levels'
+import type { JumpLevel } from './levels'
 import { calculateStars } from './levels'
 
-// Scene dimensions (px) — fixed for consistent physics
+// ─── Scene constants (exported for canvas) ───────────────────
 export const SCENE_W = 360
 export const SCENE_H = 480
+export const GROUND_Y = 400      // Y of ground surface (feet rest here)
+export const CHAR_H = 44
+export const CHAR_W = 32
+export const CHAR_SCREEN_X = 80  // fixed horizontal position of character
 
-// Character
-const CHAR_W = 32
-const CHAR_H = 36
-const GRAVITY = 0.55
-const JUMP_VEL = -13
-const MOVE_SPEED = 4
+const GRAVITY = 0.62
+const JUMP_VEL = -13.5
 const MAX_FALL = 18
 
-interface Vec2 { x: number; y: number }
-
-export interface CharState {
-  pos: Vec2
-  vel: Vec2
-  onGround: boolean
-  facing: 'left' | 'right'
-  isJumping: boolean
-}
-
-export interface MovingPlatformState {
-  x: number
-  dir: 1 | -1
-}
-
-export interface GameState {
-  char: CharState
+export interface JumpGameState {
+  charY: number          // Y of character's feet (screen px)
+  distance: number       // how far Lio has run (world px)
+  hearts: number         // remaining lives
+  invincible: boolean    // brief after a hit
   collectedCoinIds: Set<string>
-  movingPlatforms: MovingPlatformState[]
-  timeLeft: number
   isRunning: boolean
   isDead: boolean
   isComplete: boolean
-  score: number    // coins collected
+  score: number          // coins collected
   stars: number
 }
 
-export interface Controls {
-  left: boolean
-  right: boolean
-  jump: boolean
-}
-
-function platformToPixels(p: Platform): { x: number; y: number; w: number; h: number } {
-  return {
-    x: (p.x / 100) * SCENE_W,
-    y: (p.y / 100) * SCENE_H,
-    w: (p.width / 100) * SCENE_W,
-    h: p.isGround ? 20 : 14,
-  }
-}
-
-function coinToPixels(cx: number, cy: number): { x: number; y: number } {
-  return {
-    x: (cx / 100) * SCENE_W,
-    y: (cy / 100) * SCENE_H,
-  }
-}
-
-export function useJumpGame(level: JumpLevel) {
-  const [char, setChar] = useState<CharState>({
-    pos: { x: 40, y: SCENE_H - 120 },
-    vel: { x: 0, y: 0 },
-    onGround: false,
-    facing: 'right',
-    isJumping: false,
-  })
-  const [collectedCoinIds, setCollectedCoinIds] = useState<Set<string>>(new Set())
-  const [movingPlatforms, setMovingPlatforms] = useState<MovingPlatformState[]>(
-    level.platforms.map(p => ({ x: (p.x / 100) * SCENE_W, dir: 1 as 1 | -1 }))
-  )
-  const [timeLeft, setTimeLeft] = useState(level.timeLimit)
+export function useJumpGame(level: JumpLevel, maxHearts: number) {
+  const [charY, setCharY]   = useState(GROUND_Y)
+  const [distance, setDist] = useState(0)
+  const [hearts, setHearts] = useState(maxHearts)
+  const [invincible, setInvincible] = useState(false)
+  const [collectedCoinIds, setCollected] = useState<Set<string>>(new Set())
   const [isRunning, setIsRunning] = useState(false)
-  const [isDead, setIsDead] = useState(false)
+  const [isDead, setIsDead]       = useState(false)
   const [isComplete, setIsComplete] = useState(false)
 
-  const controlsRef = useRef<Controls>({ left: false, right: false, jump: false })
-  const rafRef = useRef<number | null>(null)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const charRef = useRef(char)
-  charRef.current = char
-  const movingRef = useRef(movingPlatforms)
-  movingRef.current = movingPlatforms
-  const collectedRef = useRef(collectedCoinIds)
-  collectedRef.current = collectedCoinIds
-  const runningRef = useRef(false)
+  // Physics refs (avoid stale closures in rAF loop)
+  const charYRef    = useRef(GROUND_Y)
+  const vyRef       = useRef(0)
+  const onGroundRef = useRef(true)
+  const distRef     = useRef(0)
+  const heartsRef   = useRef(maxHearts)
+  const invRef      = useRef(false)
+  const collRef     = useRef<Set<string>>(new Set())
+  const runRef      = useRef(false)
+  const rafRef      = useRef<number | null>(null)
 
   const score = collectedCoinIds.size
-  const stars = calculateStars(score, level.starThresholds)
+  const stars = calculateStars(hearts, isComplete)
 
-  function getCurrentPlatforms(): { px: { x: number; y: number; w: number; h: number }; isGround: boolean }[] {
-    return level.platforms.map((p, i) => {
-      const px = platformToPixels(p)
-      if (p.isMoving) {
-        px.x = movingRef.current[i]?.x ?? px.x
-      }
-      return { px, isGround: !!p.isGround }
-    })
-  }
-
+  // ─── Physics loop ───────────────────────────────────────────
   function physicsStep() {
-    const ctrl = controlsRef.current
-    const c = charRef.current
-    let { x, y } = c.pos
-    let { x: vx, y: vy } = c.vel
-    let onGround = false
-    let facing = c.facing
-    let isJumping = c.isJumping
+    if (!runRef.current) return
 
-    // Gravitație
-    vy = Math.min(vy + GRAVITY, MAX_FALL)
+    // 1. Auto-run forward
+    distRef.current += level.runSpeed
 
-    // Horizontal movement
-    if (ctrl.left)  { vx = -MOVE_SPEED; facing = 'left' }
-    else if (ctrl.right) { vx = MOVE_SPEED; facing = 'right' }
-    else vx = 0
-
-    x += vx
-    y += vy
-
-    // Platfome colidare
-    const platforms = getCurrentPlatforms()
-    for (const { px } of platforms) {
-      // Top collision (aterizare)
-      if (
-        vx >= -MOVE_SPEED && vx <= MOVE_SPEED && // nu intrat din lateral
-        x + CHAR_W > px.x &&
-        x < px.x + px.w &&
-        y + CHAR_H >= px.y &&
-        y + CHAR_H <= px.y + px.h + MAX_FALL + 2 &&
-        vy >= 0
-      ) {
-        y = px.y - CHAR_H
-        vy = 0
-        onGround = true
-        isJumping = false
-      }
-    }
-
-    // Salt
-    if (ctrl.jump && onGround && !isJumping) {
-      vy = JUMP_VEL
-      isJumping = true
-      onGround = false
-      controlsRef.current.jump = false
-    }
-
-    // Bounds orizontale
-    x = Math.max(0, Math.min(SCENE_W - CHAR_W, x))
-
-    // Fell out of scene = mort
-    if (y > SCENE_H + 50) {
-      runningRef.current = false
-      setIsDead(true)
+    // 2. Check WIN
+    if (distRef.current >= level.trackLength) {
+      runRef.current = false
       setIsRunning(false)
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      if (timerRef.current) clearInterval(timerRef.current)
+      setIsComplete(true)
+      setDist(distRef.current)
       return
     }
 
-    // Coin collection
-    const newCollected = new Set(collectedRef.current)
-    for (const coin of level.coins) {
-      if (newCollected.has(coin.id)) continue
-      const cp = coinToPixels(coin.x, coin.y)
-      if (
-        x < cp.x + 16 && x + CHAR_W > cp.x &&
-        y < cp.y + 16 && y + CHAR_H > cp.y
-      ) {
-        newCollected.add(coin.id)
+    // 3. Vertical physics
+    vyRef.current = Math.min(vyRef.current + GRAVITY, MAX_FALL)
+    charYRef.current = Math.min(charYRef.current + vyRef.current, GROUND_Y)
+
+    if (charYRef.current >= GROUND_Y) {
+      charYRef.current = GROUND_Y
+      vyRef.current    = 0
+      onGroundRef.current = true
+    } else {
+      onGroundRef.current = false
+    }
+
+    // 4. Obstacle collision (skip if invincible)
+    if (!invRef.current) {
+      outer: for (const obs of level.obstacles) {
+        const screenX = obs.x - distRef.current
+        if (screenX > SCENE_W + 10) continue      // not visible yet
+        if (screenX + obs.width < -10) continue   // already passed
+
+        // Character hitbox (forgiving: 6px margin each side)
+        const cL = CHAR_SCREEN_X + 6
+        const cR = CHAR_SCREEN_X + CHAR_W - 6
+        const cT = charYRef.current - CHAR_H + 8
+        const cB = charYRef.current - 2
+
+        // Obstacle hitbox (forgiving: 4px margin)
+        const oL = screenX + 4
+        const oR = screenX + obs.width - 4
+        const oT = GROUND_Y - obs.height + 4
+        const oB = GROUND_Y
+
+        if (cR > oL && cL < oR && cB > oT && cT < oB) {
+          // HIT — lose a heart, go invincible
+          const newH = heartsRef.current - 1
+          heartsRef.current = newH
+          setHearts(newH)
+          invRef.current = true
+          setInvincible(true)
+
+          if (newH <= 0) {
+            runRef.current = false
+            setIsRunning(false)
+            setIsDead(true)
+            setDist(distRef.current)
+            setCharY(charYRef.current)
+            return
+          }
+
+          // Stumble bounce
+          vyRef.current = -6
+
+          // Clear invincibility after 1.5s
+          setTimeout(() => {
+            invRef.current = false
+            setInvincible(false)
+          }, 1500)
+          break outer
+        }
       }
     }
-    if (newCollected.size !== collectedRef.current.size) {
-      setCollectedCoinIds(new Set(newCollected))
+
+    // 5. Coin collection
+    const charCX = CHAR_SCREEN_X + CHAR_W / 2
+    const charCY = charYRef.current - CHAR_H / 2
+    let changed = false
+    const newSet = new Set(collRef.current)
+
+    for (const coin of level.coins) {
+      if (newSet.has(coin.id)) continue
+      const cx = coin.x - distRef.current + 8
+      const cy = GROUND_Y - coin.airY - 10
+      const dx = charCX - cx
+      const dy = charCY - cy
+      if (dx * dx + dy * dy < 24 * 24) {
+        newSet.add(coin.id)
+        changed = true
+      }
     }
 
-    setChar({ pos: { x, y }, vel: { x: vx, y: vy }, onGround, facing, isJumping })
-
-    if (runningRef.current) {
-      rafRef.current = requestAnimationFrame(physicsStep)
+    if (changed) {
+      collRef.current = newSet
+      setCollected(new Set(newSet))
     }
-  }
 
-  // Moving platforms
-  function updateMovingPlatforms() {
-    setMovingPlatforms(prev =>
-      prev.map((state, i) => {
-        const p = level.platforms[i]
-        if (!p?.isMoving || !p.moveRange || !p.speed) return state
-        const base = (p.x / 100) * SCENE_W
-        const range = p.moveRange / 2
-        let newX = state.x + p.speed * state.dir
-        let dir = state.dir
-        if (newX > base + range || newX < base - range) {
-          dir = (dir * -1) as 1 | -1
-          newX = state.x + p.speed * dir
-        }
-        return { x: newX, dir }
-      })
-    )
-  }
-
-  const startGame = useCallback(() => {
-    setChar({
-      pos: { x: 40, y: SCENE_H - 120 },
-      vel: { x: 0, y: 0 },
-      onGround: false,
-      facing: 'right',
-      isJumping: false,
-    })
-    setCollectedCoinIds(new Set())
-    setMovingPlatforms(level.platforms.map(p => ({ x: (p.x / 100) * SCENE_W, dir: 1 })))
-    setTimeLeft(level.timeLimit)
-    setIsDead(false)
-    setIsComplete(false)
-    runningRef.current = true
-    setIsRunning(true)
+    // 6. Push state to React (triggers re-render / canvas update)
+    setCharY(charYRef.current)
+    setDist(distRef.current)
 
     rafRef.current = requestAnimationFrame(physicsStep)
+  }
 
-    timerRef.current = setInterval(() => {
-      setTimeLeft(t => {
-        if (t <= 1) {
-          runningRef.current = false
-          setIsRunning(false)
-          setIsComplete(true)
-          if (rafRef.current) cancelAnimationFrame(rafRef.current)
-          if (timerRef.current) clearInterval(timerRef.current)
-          return 0
-        }
-        updateMovingPlatforms()
-        return t - 1
-      })
-    }, 1000)
-  }, [level])  // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    return () => {
-      runningRef.current = false
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      if (timerRef.current) clearInterval(timerRef.current)
+  // ─── Controls ───────────────────────────────────────────────
+  const jump = useCallback(() => {
+    if (onGroundRef.current && runRef.current) {
+      vyRef.current       = JUMP_VEL
+      onGroundRef.current = false
     }
   }, [])
 
-  const setControl = useCallback((key: keyof Controls, value: boolean) => {
-    controlsRef.current[key] = value
-  }, [])
+  // ─── Start / Restart ─────────────────────────────────────────
+  const startGame = useCallback(() => {
+    // Reset refs
+    charYRef.current    = GROUND_Y
+    vyRef.current       = 0
+    onGroundRef.current = true
+    distRef.current     = 0
+    heartsRef.current   = maxHearts
+    invRef.current      = false
+    collRef.current     = new Set()
+    runRef.current      = true
 
-  const jump = useCallback(() => {
-    if (charRef.current.onGround) {
-      controlsRef.current.jump = true
+    // Reset state
+    setCharY(GROUND_Y)
+    setDist(0)
+    setHearts(maxHearts)
+    setInvincible(false)
+    setCollected(new Set())
+    setIsRunning(true)
+    setIsDead(false)
+    setIsComplete(false)
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(physicsStep)
+  }, [level, maxHearts]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ─── Cleanup on unmount ──────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      runRef.current = false
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [])
 
   return {
-    char,
+    charY,
+    distance,
+    hearts,
+    maxHearts,
+    invincible,
     collectedCoinIds,
-    movingPlatforms,
-    timeLeft,
     isRunning,
     isDead,
     isComplete,
     score,
     stars,
     startGame,
-    setControl,
     jump,
   }
 }

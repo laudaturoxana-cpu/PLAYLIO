@@ -20,103 +20,75 @@ export default function ZoneCard({ zone, playerLevel, savedStars, isNew = false 
     <div
       className={`relative rounded-3xl border overflow-hidden transition-all ${
         unlocked
-          ? 'bg-white border-black/5 shadow-sm hover:-translate-y-1 active:scale-95'
+          ? 'bg-white border-black/5 shadow-sm active:scale-95'
           : 'bg-white/50 border-black/5 opacity-60'
       }`}
       style={{ touchAction: 'manipulation' }}
     >
-      {/* Decorative background gradient */}
+      {/* Background gradient */}
       <div
-        className="absolute inset-0 opacity-30 pointer-events-none"
-        style={{ background: zone.bgGradient }}
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{ backgroundColor: zone.color }}
       />
 
-      {/* "New!" badge */}
       {isNew && unlocked && (
         <div
           className="absolute -top-1 -right-1 z-10 rounded-full px-2 py-0.5 font-nunito text-xs font-bold text-white shadow-sm"
-          style={{ background: 'var(--coral)', animation: 'pop 0.4s ease' }}
+          style={{ background: '#FF7043', animation: 'pop 0.4s ease' }}
         >
-          New! ✨
+          Nou! ✨
         </div>
       )}
 
       <div className="relative z-10 p-4">
-        {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-3xl">{zone.emoji}</span>
+            <span className="text-3xl">{zone.flag}</span>
             <div>
               <p
                 className="font-fredoka text-base font-semibold"
-                style={{ color: unlocked ? zone.color : 'var(--gray)' }}
+                style={{ color: unlocked ? zone.color : '#757575' }}
               >
                 {zone.name}
               </p>
-              <p className="font-nunito text-xs text-[var(--gray)] leading-snug">
+              <p className="font-nunito text-xs text-[#757575] leading-snug">
                 {zone.description}
               </p>
             </div>
           </div>
-          {!unlocked && (
-            <span className="text-xl flex-shrink-0 ml-2" aria-label="Locked">🔒</span>
-          )}
-          {complete && (
-            <span className="text-xl flex-shrink-0 ml-2" aria-label="Completed">🏆</span>
-          )}
+          {!unlocked && <span className="text-xl flex-shrink-0 ml-2">🔒</span>}
+          {complete && <span className="text-xl flex-shrink-0 ml-2">🏆</span>}
         </div>
 
-        {/* Stars progress */}
+        {/* Stars */}
         <div className="flex items-center gap-2 mb-3">
           <div className="flex gap-1">
             {Array.from({ length: zone.totalStars }).map((_, i) => (
               <span
                 key={i}
                 className="text-sm"
-                aria-hidden="true"
-                style={{
-                  opacity: i < savedStars ? 1 : 0.3,
-                  filter: i < savedStars ? 'none' : 'grayscale(1)',
-                }}
+                style={{ opacity: i < savedStars ? 1 : 0.3, filter: i < savedStars ? 'none' : 'grayscale(1)' }}
               >
                 ⭐
               </span>
             ))}
           </div>
-          <span className="font-nunito text-xs text-[var(--gray)]">
-            {savedStars}/{zone.totalStars}
-          </span>
+          <span className="font-nunito text-xs text-[#757575]">{savedStars}/{zone.totalStars}</span>
         </div>
 
         {/* Progress bar */}
-        <div
-          className="h-2 rounded-full mb-3 overflow-hidden"
-          style={{ backgroundColor: 'rgba(0,0,0,0.06)' }}
-        >
+        <div className="h-2 rounded-full mb-3 overflow-hidden" style={{ backgroundColor: 'rgba(0,0,0,0.06)' }}>
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${progress * 100}%`,
               background: complete
-                ? 'linear-gradient(90deg, var(--mint-dark), var(--sky))'
+                ? 'linear-gradient(90deg, #388E3C, #29B6F6)'
                 : `linear-gradient(90deg, ${zone.color}, ${zone.color}99)`,
             }}
           />
         </div>
 
-        {/* Near-miss message */}
-        {unlocked && savedStars > 0 && !complete && (
-          <p
-            className="font-nunito text-xs mb-2 font-semibold"
-            style={{ color: zone.color }}
-          >
-            {zone.totalStars - savedStars === 1
-              ? '⚡ So close! Just ONE star left!'
-              : `💪 ${zone.totalStars - savedStars} stars left!`}
-          </p>
-        )}
-
-        {/* CTA */}
         {unlocked ? (
           <Link
             href={`/play/adventure/${zone.slug}`}
@@ -124,17 +96,15 @@ export default function ZoneCard({ zone, playerLevel, savedStars, isNew = false 
             style={{
               touchAction: 'manipulation',
               background: complete
-                ? 'linear-gradient(90deg, var(--mint-dark), var(--sky))'
+                ? 'linear-gradient(90deg, #388E3C, #29B6F6)'
                 : `linear-gradient(90deg, ${zone.color}, ${zone.color}cc)`,
             }}
           >
-            {complete ? '🔄 Play again' : savedStars > 0 ? '▶️ Continue' : '🗺️ Explore'}
+            {complete ? '🔄 Joacă din nou' : savedStars > 0 ? '▶️ Continuă' : '🌍 Explorează'}
           </Link>
         ) : (
-          <div className="flex items-center justify-center gap-2 w-full rounded-2xl py-2.5 bg-[var(--gray-light,#f0f0f0)]">
-            <span className="font-nunito text-sm text-[var(--gray)]">
-              🔒 Level {zone.requiredLevel} required
-            </span>
+          <div className="flex items-center justify-center gap-2 w-full rounded-2xl py-2.5 bg-[rgba(0,0,0,0.04)]">
+            <span className="font-nunito text-sm text-[#757575]">🔒 Nivel insuficient</span>
           </div>
         )}
       </div>

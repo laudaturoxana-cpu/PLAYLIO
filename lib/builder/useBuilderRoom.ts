@@ -1,190 +1,188 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { ITEM_MAP, DEFAULT_WALLPAPER, type BuilderItem } from './items'
+import { type Block } from './items'
 import { createClient } from '@/lib/supabase/client'
 
-export interface PlacedItem {
+export interface PlacedBlock {
   uid: string
-  itemId: string
+  blockId: string
   col: number
   row: number
 }
 
-export interface RoomState {
-  wallpaperId: string
-  placedItems: PlacedItem[]
+export interface SceneState {
+  placedBlocks: PlacedBlock[]
 }
 
-const GRID_COLS = 6
-const GRID_ROWS = 4
+const GRID_COLS = 14
+const GRID_ROWS = 9
 const AUTO_SAVE_INTERVAL = 10_000
 
 function makeUid() {
   return `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 }
 
-function loadFromLocalStorage(userId: string, roomId: string): RoomState | null {
+function loadFromLocalStorage(userId: string, sceneId: string): SceneState | null {
   try {
-    const raw = localStorage.getItem(`builder_room_${userId}_${roomId}`)
-    return raw ? (JSON.parse(raw) as RoomState) : null
+    const raw = localStorage.getItem(`builder_scene_${userId}_${sceneId}`)
+    return raw ? (JSON.parse(raw) as SceneState) : null
   } catch {
     return null
   }
 }
 
-function saveToLocalStorage(userId: string, roomId: string, state: RoomState) {
+function saveToLocalStorage(userId: string, sceneId: string, state: SceneState) {
   try {
-    localStorage.setItem(`builder_room_${userId}_${roomId}`, JSON.stringify(state))
+    localStorage.setItem(`builder_scene_${userId}_${sceneId}`, JSON.stringify(state))
   } catch {
-    // silent
+    // silent — storage full
   }
 }
 
-export function useBuilderRoom(userId: string, roomId: string, initialCoins: number) {
-  const [room, setRoom] = useState<RoomState>({
-    wallpaperId: DEFAULT_WALLPAPER,
-    placedItems: [],
-  })
-  const [coins, setCoins] = useState(initialCoins)
-  const [selectedItem, setSelectedItem] = useState<BuilderItem | null>(null)
+export function useBuilderScene(userId: string, sceneId: string) {
+  const [scene, setScene] = useState<SceneState>({ placedBlocks: [] })
+  const [selectedBlock, setSelectedBlock] = useState<Block | null>(null)
   const [lioComment, setLioComment] = useState<string | null>(null)
-  const [isFirstDecoration, setIsFirstDecoration] = useState(true)
   const [isDirty, setIsDirty] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [blockCount, setBlockCount] = useState(0)
 
-  const roomRef = useRef(room)
-  roomRef.current = room
+  const sceneRef = useRef(scene)
+  sceneRef.current = scene
 
+  // Load din localStorage (offline-first)
   useEffect(() => {
-    const saved = loadFromLocalStorage(userId, roomId)
+    const saved = loadFromLocalStorage(userId, sceneId)
     if (saved) {
-      setRoom(saved)
-      if (saved.placedItems.length > 0) setIsFirstDecoration(false)
+      setScene(saved)
+      setBlockCount(saved.placedBlocks.length)
     }
     setIsLoaded(true)
-  }, [userId, roomId])
+  }, [userId, sceneId])
 
+  // Auto-save la fiecare 10s
   useEffect(() => {
     if (!isLoaded) return
     const timer = setInterval(() => {
-      saveToLocalStorage(userId, roomId, roomRef.current)
+      saveToLocalStorage(userId, sceneId, sceneRef.current)
     }, AUTO_SAVE_INTERVAL)
     return () => clearInterval(timer)
-  }, [userId, roomId, isLoaded])
+  }, [userId, sceneId, isLoaded])
 
   const syncToSupabase = useCallback(async () => {
     if (!isDirty) return
     try {
       const supabase = createClient()
-      // Read existing rooms_data first
       const { data: existing } = await supabase
         .from('builder_state')
         .select('room_data')
         .eq('user_id', userId)
         .single()
 
-      const existingRooms = (existing?.room_data as Record<string, RoomState> | null) ?? {}
-      const updatedRooms = {
-        ...existingRooms,
-        [roomId]: roomRef.current,
-      }
+      const existingScenes = (existing?.room_data as Record<string, SceneState> | null) ?? {}
+      const updatedScenes = { ...existingScenes, [sceneId]: sceneRef.current }
 
       await supabase.from('builder_state').upsert({
         user_id: userId,
-        room_data: updatedRooms as unknown as import('@/lib/supabase/types').Json,
-        unlocked_rooms: Object.keys(updatedRooms),
+        room_data: updatedScenes as unknown as import('@/lib/supabase/types').Json,
+        unlocked_rooms: Object.keys(updatedScenes),
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' })
       setIsDirty(false)
     } catch {
-      // silent
+      // silent — va încerca din nou
     }
-  }, [isDirty, userId, roomId])
+  }, [isDirty, userId, sceneId])
 
-  function canPlace(item: BuilderItem, col: number, row: number): boolean {
-    if (col + item.width > GRID_COLS) return false
-    if (row + item.height > GRID_ROWS) return false
-    for (const placed of room.placedItems) {
-      const pi = ITEM_MAP.get(placed.itemId)
-      if (!pi) continue
-      const colOverlap = col < placed.col + pi.width && col + item.width > placed.col
-      const rowOverlap = row < placed.row + pi.height && row + item.height > placed.row
-      if (colOverlap && rowOverlap) return false
-    }
-    return true
+  // Verifică dacă celula e ocupată
+  function isCellOccupied(col: number, row: number): boolean {
+    return scene.placedBlocks.some(b => b.col === col && b.row === row)
   }
 
-  const placeItem = useCallback((item: BuilderItem, col: number, row: number) => {
-    if (!canPlace(item, col, row)) return false
-    if (coins < item.price) return false
+  // Plasează bloc
+  const placeBlock = useCallback((block: Block, col: number, row: number): boolean => {
+    if (col < 0 || col >= GRID_COLS) return false
+    if (row < 0 || row >= GRID_ROWS) return false
 
-    const newPlaced: PlacedItem = { uid: makeUid(), itemId: item.id, col, row }
-    setRoom(prev => {
-      const next = { ...prev, placedItems: [...prev.placedItems, newPlaced] }
-      saveToLocalStorage(userId, roomId, next)
+    // Verifică ocupare
+    const alreadyOccupied = sceneRef.current.placedBlocks.some(
+      b => b.col === col && b.row === row
+    )
+    if (alreadyOccupied) return false
+
+    const newBlock: PlacedBlock = { uid: makeUid(), blockId: block.id, col, row }
+    setScene(prev => {
+      const next = { placedBlocks: [...prev.placedBlocks, newBlock] }
+      saveToLocalStorage(userId, sceneId, next)
       return next
     })
-    if (item.price > 0) setCoins(c => c - item.price)
+    setBlockCount(c => c + 1)
     setIsDirty(true)
 
-    if (isFirstDecoration) {
-      setIsFirstDecoration(false)
-      setLioComment(`WOW! ${item.name} looks amazing here! 🏠✨`)
-      setTimeout(() => setLioComment(null), 3500)
-    } else {
-      const comments = [
-        `${item.name} looks perfect there! 🌟`,
-        `Wonderful! Your room is getting more beautiful! ✨`,
-        `Great job! You're a talented decorator! 🎨`,
-      ]
-      setLioComment(comments[Math.floor(Math.random() * comments.length)])
-      setTimeout(() => setLioComment(null), 2500)
-    }
+    // Lio comentariu
+    const comments = [
+      `${block.name} arată perfect! 🌟`,
+      `Bravo! Continui să construiești! ✨`,
+      `Super alegere! 🎨`,
+      `Minunat! Creația ta prinde viață! 🏗️`,
+    ]
+    const comment = comments[blockCount % comments.length]
+    setLioComment(comment)
+    setTimeout(() => setLioComment(null), 2500)
 
     return true
-  }, [room, coins, userId, roomId, isFirstDecoration]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId, sceneId, blockCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const removeItem = useCallback((uid: string) => {
-    setRoom(prev => {
-      const removed = prev.placedItems.find(p => p.uid === uid)
-      if (!removed) return prev
-      const item = ITEM_MAP.get(removed.itemId)
-      if (item && item.price > 0) setCoins(c => c + Math.floor(item.price / 2))
-      const next = { ...prev, placedItems: prev.placedItems.filter(p => p.uid !== uid) }
-      saveToLocalStorage(userId, roomId, next)
+  // Șterge bloc (tap pe bloc existent fără selecție)
+  const removeBlock = useCallback((uid: string) => {
+    setScene(prev => {
+      const next = { placedBlocks: prev.placedBlocks.filter(b => b.uid !== uid) }
+      saveToLocalStorage(userId, sceneId, next)
+      return next
+    })
+    setBlockCount(c => Math.max(0, c - 1))
+    setIsDirty(true)
+  }, [userId, sceneId])
+
+  // Înlocuiește bloc (suprascrie aceeași celulă cu alt tip)
+  const replaceBlock = useCallback((block: Block, col: number, row: number): boolean => {
+    setScene(prev => {
+      const filtered = prev.placedBlocks.filter(b => !(b.col === col && b.row === row))
+      const newBlock: PlacedBlock = { uid: makeUid(), blockId: block.id, col, row }
+      const next = { placedBlocks: [...filtered, newBlock] }
+      saveToLocalStorage(userId, sceneId, next)
       return next
     })
     setIsDirty(true)
-  }, [userId, roomId])
+    return true
+  }, [userId, sceneId])
 
-  const changeWallpaper = useCallback((wallpaperId: string) => {
-    const item = ITEM_MAP.get(wallpaperId)
-    if (item && item.price > coins) return
-    if (item && item.price > 0) setCoins(c => c - item.price)
-    setRoom(prev => {
-      const next = { ...prev, wallpaperId }
-      saveToLocalStorage(userId, roomId, next)
-      return next
-    })
+  // Șterge tot (buton clear)
+  const clearScene = useCallback(() => {
+    const empty: SceneState = { placedBlocks: [] }
+    setScene(empty)
+    setBlockCount(0)
+    saveToLocalStorage(userId, sceneId, empty)
     setIsDirty(true)
-    setLioComment('Room redecorated! Looks fantastic! 🌈')
+    setLioComment('Grilă curată! Să construiești ceva nou! 🏗️')
     setTimeout(() => setLioComment(null), 2500)
-  }, [coins, userId, roomId])
+  }, [userId, sceneId])
 
   return {
-    room,
-    coins,
-    selectedItem,
-    setSelectedItem,
+    scene,
+    selectedBlock,
+    setSelectedBlock,
     lioComment,
     isLoaded,
     isDirty,
-    placeItem,
-    removeItem,
-    changeWallpaper,
+    blockCount,
+    placeBlock,
+    removeBlock,
+    replaceBlock,
+    clearScene,
     syncToSupabase,
-    canPlace,
+    isCellOccupied,
     gridCols: GRID_COLS,
     gridRows: GRID_ROWS,
   }

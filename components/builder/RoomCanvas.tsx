@@ -1,182 +1,209 @@
 'use client'
 
 import { useState } from 'react'
-import { ITEM_MAP, WALLPAPER_THEMES, DEFAULT_WALLPAPER } from '@/lib/builder/items'
-import type { PlacedItem, RoomState } from '@/lib/builder/useBuilderRoom'
-import type { BuilderItem } from '@/lib/builder/items'
+import { BLOCK_MAP, type Block } from '@/lib/builder/items'
+import type { PlacedBlock, SceneState } from '@/lib/builder/useBuilderRoom'
+import type { BuildScene } from '@/lib/builder/items'
 
-interface RoomCanvasProps {
-  room: RoomState
-  selectedItem: BuilderItem | null
+interface BlockCanvasProps {
+  scene: SceneState
+  buildScene: BuildScene
+  selectedBlock: Block | null
   onCellTap: (col: number, row: number) => void
-  onItemTap: (uid: string) => void
+  onBlockTap: (uid: string) => void
   gridCols: number
   gridRows: number
 }
 
-export default function RoomCanvas({
-  room,
-  selectedItem,
+export default function BlockCanvas({
+  scene,
+  buildScene,
+  selectedBlock,
   onCellTap,
-  onItemTap,
+  onBlockTap,
   gridCols,
   gridRows,
-}: RoomCanvasProps) {
+}: BlockCanvasProps) {
   const [hoveredCell, setHoveredCell] = useState<{ col: number; row: number } | null>(null)
-  const theme = WALLPAPER_THEMES[room.wallpaperId] ?? WALLPAPER_THEMES[DEFAULT_WALLPAPER]
-  const isDarkWall = room.wallpaperId === 'wall_stars' || room.wallpaperId === 'wall_galaxy'
 
-  // Calculăm ocuparea grilei
-  const occupiedMap = new Map<string, string>()  // "col,row" → uid
-  for (const placed of room.placedItems) {
-    const item = ITEM_MAP.get(placed.itemId)
-    if (!item) continue
-    for (let dc = 0; dc < item.width; dc++) {
-      for (let dr = 0; dr < item.height; dr++) {
-        occupiedMap.set(`${placed.col + dc},${placed.row + dr}`, placed.uid)
-      }
-    }
+  // Map rapid col,row → PlacedBlock
+  const cellMap = new Map<string, PlacedBlock>()
+  for (const pb of scene.placedBlocks) {
+    cellMap.set(`${pb.col},${pb.row}`, pb)
   }
 
-  function isPlaceable(col: number, row: number): boolean {
-    if (!selectedItem) return false
-    if (col + selectedItem.width > gridCols) return false
-    if (row + selectedItem.height > gridRows) return false
-    for (let dc = 0; dc < selectedItem.width; dc++) {
-      for (let dr = 0; dr < selectedItem.height; dr++) {
-        if (occupiedMap.has(`${col + dc},${row + dr}`)) return false
-      }
-    }
-    return true
+  function isHovered(col: number, row: number) {
+    return hoveredCell?.col === col && hoveredCell?.row === row
   }
 
-  function isHoveredCell(col: number, row: number): boolean {
-    if (!hoveredCell || !selectedItem) return false
-    const { col: hc, row: hr } = hoveredCell
-    return (
-      col >= hc && col < hc + selectedItem.width &&
-      row >= hr && row < hr + selectedItem.height
-    )
+  function handlePointerEnter(col: number, row: number) {
+    setHoveredCell({ col, row })
+  }
+
+  function handlePointerLeave() {
+    setHoveredCell(null)
+  }
+
+  function handleTap(col: number, row: number) {
+    const existing = cellMap.get(`${col},${row}`)
+    if (selectedBlock) {
+      // Plasare sau înlocuire
+      onCellTap(col, row)
+    } else if (existing) {
+      // Fără selecție → șterge bloc existent
+      onBlockTap(existing.uid)
+    }
   }
 
   return (
     <div
-      className="relative w-full rounded-3xl overflow-hidden shadow-md border border-black/10"
+      className="relative w-full rounded-2xl overflow-hidden shadow-lg"
       style={{
-        background: theme.bg,
-        aspectRatio: '3/2',
+        background: buildScene.skyGradient,
+        aspectRatio: `${gridCols} / ${gridRows}`,
+        border: '2px solid rgba(0,0,0,0.12)',
       }}
     >
-      {/* Floor line */}
+      {/* Bara de sol (ground strip) */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-2 rounded-b-3xl opacity-30"
-        style={{ background: theme.accent }}
+        className="absolute bottom-0 left-0 right-0"
+        style={{
+          height: '10%',
+          background: buildScene.groundColor,
+          borderTop: '2px solid rgba(0,0,0,0.15)',
+        }}
       />
 
       {/* Grid */}
       <div
-        className="absolute inset-0 grid"
+        className="absolute inset-0"
         style={{
+          display: 'grid',
           gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
           gridTemplateRows: `repeat(${gridRows}, 1fr)`,
-          padding: '8px',
-          gap: '2px',
+          padding: '3px',
+          gap: '1px',
         }}
       >
         {Array.from({ length: gridRows }).map((_, row) =>
           Array.from({ length: gridCols }).map((_, col) => {
-            const uid = occupiedMap.get(`${col},${row}`)
-            const isOrigin = room.placedItems.find(p => p.col === col && p.row === row)
-            const canPlace = isPlaceable(col, row)
-            const isHovered = isHoveredCell(col, row)
+            const placed = cellMap.get(`${col},${row}`)
+            const block = placed ? BLOCK_MAP.get(placed.blockId) : undefined
+            const hovered = isHovered(col, row)
+            const canPlace = selectedBlock && !placed
 
             return (
               <div
                 key={`${col},${row}`}
-                className="relative rounded-lg transition-all"
+                onMouseEnter={() => handlePointerEnter(col, row)}
+                onMouseLeave={handlePointerLeave}
+                onTouchStart={() => handlePointerEnter(col, row)}
+                onTouchEnd={(e) => {
+                  e.preventDefault()
+                  handleTap(col, row)
+                  handlePointerLeave()
+                }}
+                onClick={() => handleTap(col, row)}
                 style={{
-                  backgroundColor: isHovered && canPlace
-                    ? `${theme.accent}44`
-                    : isHovered && !canPlace
-                    ? 'rgba(255,112,67,0.2)'
-                    : selectedItem && !uid
-                    ? 'rgba(255,255,255,0.08)'
-                    : 'transparent',
-                  border: isHovered
-                    ? `2px dashed ${canPlace ? theme.accent : 'var(--coral)'}`
-                    : '2px solid transparent',
-                  cursor: selectedItem ? (canPlace ? 'pointer' : 'not-allowed') : uid ? 'pointer' : 'default',
+                  position: 'relative',
+                  borderRadius: '2px',
+                  cursor: selectedBlock
+                    ? (placed ? 'crosshair' : 'pointer')
+                    : placed
+                    ? 'pointer'
+                    : 'default',
                   touchAction: 'manipulation',
+                  transition: 'transform 0.08s ease',
+                  transform: hovered && (selectedBlock || placed) ? 'scale(1.08)' : 'scale(1)',
+                  zIndex: hovered ? 5 : 1,
+                  // Block rendering
+                  background: block
+                    ? block.bgStyle
+                    : hovered && canPlace
+                    ? `${selectedBlock?.bgStyle ?? 'rgba(255,255,255,0.3)'}`
+                    : 'transparent',
+                  border: block
+                    ? `1px solid ${block.borderColor}`
+                    : hovered && canPlace
+                    ? `1px dashed rgba(255,255,255,0.7)`
+                    : hovered && placed
+                    ? `1px dashed rgba(255,80,80,0.7)`
+                    : '1px solid transparent',
+                  boxShadow: block
+                    ? `inset 2px 2px 0 ${block.shadowLight}, inset -1px -1px 0 ${block.shadowDark}`
+                    : 'none',
+                  opacity: hovered && canPlace ? 0.7 : 1,
                 }}
-                onMouseEnter={() => setHoveredCell({ col, row })}
-                onMouseLeave={() => setHoveredCell(null)}
-                onTouchStart={() => setHoveredCell({ col, row })}
-                onTouchEnd={() => {
-                  if (selectedItem) onCellTap(col, row)
-                  else if (uid) onItemTap(uid)
-                  setHoveredCell(null)
-                }}
-                onClick={() => {
-                  if (selectedItem) onCellTap(col, row)
-                  else if (uid) onItemTap(uid)
-                }}
+                aria-label={block ? `Bloc ${block.name} la (${col},${row})` : `Celulă goală (${col},${row})`}
               >
-                {/* Render item doar la origine */}
-                {isOrigin && (() => {
-                  const item = ITEM_MAP.get(isOrigin.itemId)
-                  if (!item) return null
-                  return (
-                    <div
-                      className="absolute inset-0 flex items-center justify-center"
-                      style={{
-                        gridColumn: `span ${item.width}`,
-                        gridRow: `span ${item.height}`,
-                        animation: 'pop 0.3s ease',
-                        zIndex: 10,
-                        pointerEvents: 'none',
-                      }}
-                    >
-                      <div className="flex flex-col items-center">
-                        <span
-                          className="leading-none"
-                          style={{
-                            fontSize: item.width >= 2 ? '2rem' : '1.5rem',
-                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
-                          }}
-                        >
-                          {item.emoji}
-                        </span>
-                        {item.isRare && (
-                          <span className="text-[8px] font-bold" style={{ color: theme.accent }}>✨</span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })()}
+                {/* Indicator bloc rar */}
+                {block?.isRare && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '1px',
+                      right: '1px',
+                      fontSize: '6px',
+                      lineHeight: 1,
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    ✨
+                  </span>
+                )}
+                {/* Preview bloc selectat hover */}
+                {hovered && canPlace && selectedBlock && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '8px',
+                      pointerEvents: 'none',
+                      opacity: 0.8,
+                    }}
+                  >
+                    +
+                  </span>
+                )}
+                {/* X pe hover când e ocupat și vrei să ștergi */}
+                {hovered && placed && !selectedBlock && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '8px',
+                      color: 'rgba(255,80,80,0.9)',
+                      fontWeight: 'bold',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    ✕
+                  </span>
+                )}
               </div>
             )
           })
         )}
       </div>
 
-      {/* Preview item la hover */}
-      {hoveredCell && selectedItem && (
-        <div
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          style={{ opacity: 0.5, zIndex: 20 }}
-        >
-          <span style={{ fontSize: '3rem' }}>{selectedItem.emoji}</span>
-        </div>
-      )}
-
-      {/* Hint dacă nu e item selectat */}
-      {!selectedItem && room.placedItems.length === 0 && (
+      {/* Hint dacă grila e goală */}
+      {scene.placedBlocks.length === 0 && !selectedBlock && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <p
-            className="font-nunito text-sm font-semibold opacity-60 text-center px-6"
-            style={{ color: isDarkWall ? 'white' : 'var(--gray)' }}
+            className="font-nunito text-xs font-semibold text-center px-4 py-2 rounded-2xl"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.6)',
+              color: '#555',
+              backdropFilter: 'blur(4px)',
+            }}
           >
-            Tap an item from the drawer below and place it in your room! 🏠
+            Selectează un bloc din paletă și construiește! 🏗️
           </p>
         </div>
       )}

@@ -1,55 +1,49 @@
 'use client'
 
 import { useState } from 'react'
-import { getItemsForRoom, type BuilderItem, type ItemCategory } from '@/lib/builder/items'
+import { getBlocksByCategory, type Block, type BlockCategory } from '@/lib/builder/items'
 
-interface ItemDrawerProps {
-  roomId: string
-  coins: number
-  selectedItem: BuilderItem | null
-  onSelect: (item: BuilderItem | null) => void
-  ownedItemIds: string[]
+interface BlockPaletteProps {
+  childAge: number
+  selectedBlock: Block | null
+  onSelect: (block: Block | null) => void
 }
 
-const CATEGORIES: { id: ItemCategory; label: string; emoji: string }[] = [
-  { id: 'furniture',  label: 'Furniture',  emoji: '🛋️' },
-  { id: 'decoration', label: 'Decor',      emoji: '🌸' },
-  { id: 'wallpaper',  label: 'Wallpaper',  emoji: '🖼️' },
+const CATEGORIES: { id: BlockCategory; label: string; emoji: string }[] = [
+  { id: 'ground',   label: 'Teren',    emoji: '🌍' },
+  { id: 'water',    label: 'Apă',      emoji: '💧' },
+  { id: 'plants',   label: 'Plante',   emoji: '🌿' },
+  { id: 'building', label: 'Zidărie',  emoji: '🧱' },
+  { id: 'sky',      label: 'Cer',      emoji: '☁️' },
+  { id: 'magic',    label: 'Magic',    emoji: '✨' },
 ]
 
-export default function ItemDrawer({
-  roomId,
-  coins,
-  selectedItem,
-  onSelect,
-  ownedItemIds,
-}: ItemDrawerProps) {
-  const [activeCategory, setActiveCategory] = useState<ItemCategory>('furniture')
+export default function BlockPalette({ childAge, selectedBlock, onSelect }: BlockPaletteProps) {
+  const [activeCategory, setActiveCategory] = useState<BlockCategory>('ground')
 
-  const allRoomItems = getItemsForRoom(roomId)
-  const items = allRoomItems.filter(i => i.category === activeCategory)
+  const blocks = getBlocksByCategory(activeCategory, childAge)
 
-  function handleSelect(item: BuilderItem) {
-    if (selectedItem?.id === item.id) {
-      onSelect(null)
-    } else {
-      onSelect(item)
-    }
+  function handleSelect(block: Block) {
+    onSelect(selectedBlock?.id === block.id ? null : block)
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Category tabs */}
-      <div className="flex gap-2">
+      {/* Tab-uri categorii — scroll orizontal pe mobil */}
+      <div
+        className="flex gap-1.5 overflow-x-auto pb-1"
+        style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+      >
         {CATEGORIES.map(cat => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
-            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 font-nunito text-xs font-semibold transition-all active:scale-95"
+            className="flex-shrink-0 flex items-center gap-1 rounded-full px-3 py-1.5 font-nunito text-xs font-semibold transition-all active:scale-95"
             style={{
               touchAction: 'manipulation',
-              backgroundColor: activeCategory === cat.id ? 'var(--sky)' : 'rgba(0,0,0,0.06)',
-              color: activeCategory === cat.id ? 'white' : 'var(--gray)',
+              backgroundColor: activeCategory === cat.id ? '#29B6F6' : 'rgba(0,0,0,0.06)',
+              color: activeCategory === cat.id ? 'white' : '#757575',
+              minHeight: '32px',
             }}
           >
             <span>{cat.emoji}</span>
@@ -58,71 +52,109 @@ export default function ItemDrawer({
         ))}
       </div>
 
-      {/* Item grid */}
-      <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
-        {items.map(item => {
-          const owned = ownedItemIds.includes(item.id) || item.price === 0
-          const canAfford = coins >= item.price
-          const isSelected = selectedItem?.id === item.id
-
+      {/* Grid de blocuri */}
+      <div className="grid grid-cols-5 gap-2 sm:grid-cols-6">
+        {blocks.map(block => {
+          const isSelected = selectedBlock?.id === block.id
           return (
             <button
-              key={item.id}
-              onClick={() => handleSelect(item)}
-              disabled={!canAfford && !owned}
-              className="flex flex-col items-center gap-1 rounded-2xl p-2 transition-all active:scale-95"
+              key={block.id}
+              onClick={() => handleSelect(block)}
+              className="flex flex-col items-center gap-1 rounded-xl p-1.5 transition-all active:scale-95"
               style={{
                 touchAction: 'manipulation',
-                backgroundColor: isSelected ? 'var(--sky)' : 'rgba(0,0,0,0.04)',
                 border: isSelected
-                  ? '2px solid var(--sky)'
-                  : item.isRare
-                  ? '2px solid var(--sun)'
+                  ? '2px solid #29B6F6'
+                  : block.isRare
+                  ? '2px solid #FFD600'
                   : '2px solid transparent',
-                opacity: !canAfford && !owned ? 0.45 : 1,
+                backgroundColor: isSelected ? 'rgba(41,182,246,0.12)' : 'rgba(0,0,0,0.03)',
                 minHeight: '64px',
               }}
-              aria-label={`${item.name}${item.price > 0 ? ` — ${item.price} coins` : ' — free'}`}
+              aria-label={block.name}
               aria-pressed={isSelected}
             >
-              <span
-                className="leading-none"
+              {/* Mini previzualizare bloc */}
+              <div
                 style={{
-                  fontSize: '1.6rem',
-                  filter: item.isRare ? 'drop-shadow(0 0 4px gold)' : 'none',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '5px',
+                  background: block.bgStyle,
+                  border: `1.5px solid ${block.borderColor}`,
+                  boxShadow: `inset 2px 2px 0 ${block.shadowLight}, inset -1px -1px 0 ${block.shadowDark}`,
+                  flexShrink: 0,
+                  position: 'relative',
+                  overflow: 'hidden',
                 }}
               >
-                {item.emoji}
-              </span>
+                {block.isRare && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '2px',
+                      right: '2px',
+                      fontSize: '8px',
+                      lineHeight: 1,
+                    }}
+                  >
+                    ✨
+                  </span>
+                )}
+              </div>
+
+              {/* Nume bloc */}
               <span
                 className="font-nunito text-[9px] text-center leading-tight"
-                style={{ color: isSelected ? 'white' : 'var(--gray)' }}
+                style={{ color: isSelected ? '#0288D1' : '#757575' }}
               >
-                {item.name}
+                {block.name}
               </span>
-              {item.price > 0 && (
-                <div className="flex items-center gap-0.5">
-                  <span className="text-[9px]">🪙</span>
-                  <span
-                    className="font-fredoka text-[10px] font-semibold"
-                    style={{ color: isSelected ? 'white' : canAfford ? 'var(--sun-dark)' : 'var(--coral)' }}
-                  >
-                    {item.price}
-                  </span>
-                </div>
-              )}
-              {item.isRare && (
-                <span className="font-nunito text-[8px] font-bold" style={{ color: 'var(--sun-dark)' }}>✨ Rare</span>
-              )}
             </button>
           )
         })}
-        {items.length === 0 && (
-          <p className="col-span-full font-nunito text-xs text-center py-4" style={{ color: 'var(--gray)' }}>
-            No items in this category for this room yet!
+
+        {blocks.length === 0 && (
+          <p className="col-span-full font-nunito text-xs text-center py-4" style={{ color: '#757575' }}>
+            Niciun bloc disponibil în această categorie.
           </p>
         )}
       </div>
+
+      {/* Info bloc selectat */}
+      {selectedBlock && (
+        <div
+          className="flex items-center gap-3 rounded-2xl px-3 py-2"
+          style={{
+            backgroundColor: 'rgba(41,182,246,0.1)',
+            border: '1px solid rgba(41,182,246,0.3)',
+            animation: 'slide-up 0.2s ease',
+          }}
+        >
+          <div
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '4px',
+              background: selectedBlock.bgStyle,
+              border: `1.5px solid ${selectedBlock.borderColor}`,
+              boxShadow: `inset 2px 2px 0 ${selectedBlock.shadowLight}, inset -1px -1px 0 ${selectedBlock.shadowDark}`,
+              flexShrink: 0,
+            }}
+          />
+          <p className="font-nunito text-xs font-semibold" style={{ color: '#0288D1' }}>
+            Selectat: <span className="font-bold">{selectedBlock.name}</span> — tap pe grilă pentru a plasa
+          </p>
+          <button
+            onClick={() => onSelect(null)}
+            className="ml-auto font-bold text-sm"
+            style={{ touchAction: 'manipulation', color: '#0288D1', minWidth: '28px', minHeight: '28px' }}
+            aria-label="Deselectează"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   )
 }

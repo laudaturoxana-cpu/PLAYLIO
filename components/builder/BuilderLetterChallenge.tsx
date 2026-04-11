@@ -1,11 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { BuilderItem } from '@/lib/builder/items'
 import { useSound } from '@/lib/sound/useSound'
 
+// Tip minim necesar pentru challenge
+interface ChallengeItem {
+  id: string
+  name: string
+  nameEn: string
+  icon: string
+}
+
 interface BuilderLetterChallengeProps {
-  item: BuilderItem
+  item: ChallengeItem
   onCorrect: () => void   // proceed to place item (with bonus)
   onSkip: () => void      // skip challenge, place anyway
 }
@@ -65,7 +72,7 @@ export default function BuilderLetterChallenge({ item, onCorrect, onSkip }: Buil
           </p>
           <p className="font-nunito text-sm" style={{ color: 'var(--dark)' }}>
             What letter does{' '}
-            <span className="font-bold">{item.emoji} {item.name}</span>{' '}
+            <span className="font-bold">{item.icon} {item.name}</span>{' '}
             start with?
           </p>
         </div>

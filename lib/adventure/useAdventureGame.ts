@@ -1,7 +1,15 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import type { Zone, ZoneItem } from './zones'
+import type { Zone } from './zones'
+
+// Tip local (compatibilitate)
+interface ZoneItem {
+  id: string
+  emoji: string
+  label: string
+  points: number
+}
 import { getNearMissMessage } from './zones'
 
 export interface FloatingItem {

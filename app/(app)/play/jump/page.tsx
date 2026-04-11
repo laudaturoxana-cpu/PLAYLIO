@@ -30,6 +30,7 @@ export default async function JumpWorldPage() {
     <JumpClient
       userId={user.id}
       profileName={profile.full_name ?? 'Jucătorule'}
+      childAge={profile.age ?? 6}
       initialCoins={profile.coins}
       bestScores={bestScores}
     />

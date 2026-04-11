@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { JUMP_LEVELS, type JumpLevel } from '@/lib/jump/levels'
+import { JUMP_LEVELS, CHARACTERS, getMaxHearts, type JumpLevel, type CharacterId } from '@/lib/jump/levels'
 import { useJumpGame } from '@/lib/jump/useJumpGame'
 import { createClient } from '@/lib/supabase/client'
 import JumpCanvas from '@/components/jump/JumpCanvas'
@@ -10,22 +10,73 @@ import JumpControls from '@/components/jump/JumpControls'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import { useSound } from '@/lib/sound/useSound'
 
+const TUTORIAL_STEPS = [
+  { emoji: '🦁', title: 'Lio aleargă singur!',    description: 'Nu trebuie să îl miști. El aleargă automat spre destinație!' },
+  { emoji: '🦘', title: 'Tap = SARI!',            description: 'Atinge ecranul sau apasă butonul SARI ca să sari peste obstacole.' },
+  { emoji: '❤️',  title: 'Ai 3 inimi!',            description: 'Fiecare obstacol lovit îți ia o inimă. Ajunge cu inimi = mai multe stele!' },
+  { emoji: '🧱',  title: 'Deblochezi blocuri!',    description: 'Fiecare nivel completat îți deschide un bloc nou în Builder World!' },
+]
+
+function loadCharsFromStorage(): CharacterId[] {
+  try {
+    const raw = localStorage.getItem('jump_chars')
+    return raw ? JSON.parse(raw) : ['lio']
+  } catch { return ['lio'] }
+}
+
+function loadSelectedChar(): CharacterId {
+  try {
+    return (localStorage.getItem('jump_selected_char') as CharacterId) ?? 'lio'
+  } catch { return 'lio' }
+}
+
+function saveChar(id: CharacterId) {
+  try { localStorage.setItem('jump_selected_char', id) } catch { /* silent */ }
+}
+
+function saveBuilderUnlock(blockId: string) {
+  try {
+    const raw = localStorage.getItem('builder_unlocked_blocks') ?? '[]'
+    const list: string[] = JSON.parse(raw)
+    if (!list.includes(blockId)) {
+      list.push(blockId)
+      localStorage.setItem('builder_unlocked_blocks', JSON.stringify(list))
+    }
+  } catch { /* silent */ }
+}
+
 interface JumpClientProps {
   userId: string
   profileName: string
+  childAge: number
   initialCoins: number
   bestScores: Record<string, { score: number; stars: number }>
 }
 
-export default function JumpClient({ userId, profileName, initialCoins, bestScores }: JumpClientProps) {
+export default function JumpClient({ userId, profileName, childAge, initialCoins, bestScores }: JumpClientProps) {
   const [selectedLevel, setSelectedLevel] = useState<JumpLevel | null>(null)
+  const [selectedChar, setSelectedChar] = useState<CharacterId>('lio')
+  const [unlockedChars, setUnlockedChars] = useState<CharacterId[]>(['lio'])
+
+  useEffect(() => {
+    setUnlockedChars(loadCharsFromStorage())
+    setSelectedChar(loadSelectedChar())
+  }, [])
+
+  function handleSelectChar(id: CharacterId) {
+    setSelectedChar(id)
+    saveChar(id)
+  }
 
   if (!selectedLevel) {
     return (
       <LevelSelect
         profileName={profileName}
         bestScores={bestScores}
-        onSelect={setSelectedLevel}
+        selectedChar={selectedChar}
+        unlockedChars={unlockedChars}
+        onSelectChar={handleSelectChar}
+        onSelectLevel={setSelectedLevel}
       />
     )
   }
@@ -34,190 +85,216 @@ export default function JumpClient({ userId, profileName, initialCoins, bestScor
     <JumpGame
       level={selectedLevel}
       userId={userId}
-      initialCoins={initialCoins}
+      profileName={profileName}
+      childAge={childAge}
+      selectedChar={selectedChar}
       bestScore={bestScores[selectedLevel.id]}
       onBack={() => setSelectedLevel(null)}
+      onCharUnlock={(charId) => {
+        const next = [...unlockedChars, charId]
+        setUnlockedChars(next)
+        try { localStorage.setItem('jump_chars', JSON.stringify(next)) } catch { /* silent */ }
+      }}
     />
   )
 }
 
-// ─── Level Select ─────────────────────────────────────────────────────────────
-
-const WORLD_COLORS: Record<1 | 2 | 3, string> = {
-  1: '#4CAF50',
-  2: '#7B1FA2',
-  3: '#1A237E',
-}
-
-const WORLD_EMOJIS: Record<1 | 2 | 3, string> = {
-  1: '🌿',
-  2: '🌈',
-  3: '🚀',
-}
+// ─── Level Select ─────────────────────────────────────────────
 
 function LevelSelect({
   profileName,
   bestScores,
-  onSelect,
+  selectedChar,
+  unlockedChars,
+  onSelectChar,
+  onSelectLevel,
 }: {
   profileName: string
   bestScores: Record<string, { score: number; stars: number }>
-  onSelect: (level: JumpLevel) => void
+  selectedChar: CharacterId
+  unlockedChars: CharacterId[]
+  onSelectChar: (id: CharacterId) => void
+  onSelectLevel: (l: JumpLevel) => void
 }) {
-  // Group levels by world
   const worlds = [1, 2, 3] as const
-  const levelsByWorld = worlds.map(w => JUMP_LEVELS.filter(l => l.world === w))
-
-  // Unlock logic helpers
-  function getWorldFirstLevel(world: 1 | 2 | 3): JumpLevel | undefined {
-    return levelsByWorld[world - 1][0]
+  const WORLD_META: Record<1|2|3, { label: string; color: string }> = {
+    1: { label: '🌲 Pădurea Magică',    color: '#388E3C' },
+    2: { label: '☁️ Tărâmul Cerului',   color: '#0288D1' },
+    3: { label: '🚀 Spațiul Cosmic',    color: '#4527A0' },
   }
 
-  function isWorldUnlocked(world: 1 | 2 | 3): boolean {
-    if (world === 1) return true
-    // World N unlocks when the first (non-boss) level of the previous world has ≥1 star
-    const prevFirstLevel = getWorldFirstLevel((world - 1) as 1 | 2 | 3)
-    if (!prevFirstLevel) return false
-    return (bestScores[prevFirstLevel.id]?.stars ?? 0) >= 1
-  }
-
-  function isLevelUnlocked(level: JumpLevel, worldLevels: JumpLevel[]): boolean {
-    const worldUnlocked = isWorldUnlocked(level.world)
-    if (!worldUnlocked) return false
-
-    const idxInWorld = worldLevels.indexOf(level)
-    if (idxInWorld === 0) return true
-
-    // Level 2 in world requires level 1 (first of world) has ≥1 star
-    // Boss level requires level 2 of world has ≥1 star
-    const prevLevel = worldLevels[idxInWorld - 1]
-    return (bestScores[prevLevel.id]?.stars ?? 0) >= 1
+  function isLevelUnlocked(level: JumpLevel): boolean {
+    if (level.world === 1) {
+      const idx = JUMP_LEVELS.filter(l => l.world === 1).indexOf(level)
+      if (idx === 0) return true
+      const prev = JUMP_LEVELS.filter(l => l.world === 1)[idx - 1]
+      return (bestScores[prev.id]?.stars ?? 0) >= 1
+    }
+    if (level.world === 2) {
+      // Need to complete W1 boss first
+      const w1Boss = JUMP_LEVELS.find(l => l.world === 1 && l.isBoss)!
+      if ((bestScores[w1Boss.id]?.stars ?? 0) < 1) return false
+      const idx = JUMP_LEVELS.filter(l => l.world === 2).indexOf(level)
+      if (idx === 0) return true
+      const prev = JUMP_LEVELS.filter(l => l.world === 2)[idx - 1]
+      return (bestScores[prev.id]?.stars ?? 0) >= 1
+    }
+    // World 3
+    const w2Boss = JUMP_LEVELS.find(l => l.world === 2 && l.isBoss)!
+    if ((bestScores[w2Boss.id]?.stars ?? 0) < 1) return false
+    const idx = JUMP_LEVELS.filter(l => l.world === 3).indexOf(level)
+    if (idx === 0) return true
+    const prev = JUMP_LEVELS.filter(l => l.world === 3)[idx - 1]
+    return (bestScores[prev.id]?.stars ?? 0) >= 1
   }
 
   return (
     <div className="game-container min-h-screen px-4 py-6">
-      <HowToPlayOverlay
-        storageKey="howtoplay_jump"
-        worldColor="#F57F17"
-        steps={[
-          { emoji: '🎮', title: 'Jump!', description: 'Tap LEFT and RIGHT to move, tap JUMP to leap over obstacles and reach platforms!' },
-          { emoji: '🪙', title: 'Collect coins!', description: 'Jump onto coins to collect them. The more coins you get, the more stars you earn!' },
-          { emoji: '⭐', title: 'Earn stars!', description: 'Each level has a coin goal. Reach it to earn 1, 2 or 3 stars. Beat your best score!' },
-        ]}
-      />
+      <HowToPlayOverlay storageKey="howtoplay_jump_v2" worldColor="#F57F17" steps={TUTORIAL_STEPS}/>
 
+      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <Link
           href="/worlds"
-          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform text-lg"
+          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[#757575] active:scale-95 transition-transform text-lg"
           style={{ touchAction: 'manipulation' }}
-          aria-label="Back"
-        >
-          ←
-        </Link>
+          aria-label="Înapoi"
+        >←</Link>
         <div className="text-center">
           <h1 className="font-fredoka text-xl font-semibold" style={{ color: '#F57F17' }}>
-            🎮 Jump World
+            🏃 Jump World
           </h1>
-          <p className="font-nunito text-xs text-[var(--gray)]">Choose level</p>
+          <p className="font-nunito text-xs text-[#757575]">Sari cu Lio spre destinație!</p>
         </div>
-        <div className="w-10" />
+        <div className="w-10"/>
       </div>
 
-      <div className="mb-4 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-black/5">
-        <span className="text-3xl" style={{ animation: 'float 2s ease-in-out infinite' }}>🎮</span>
-        <p className="font-nunito text-sm text-[var(--dark)]">
-          Hi, {profileName}! Jump over obstacles and collect coins! 🪙
+      {/* Lio mesaj */}
+      <div className="mb-5 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-black/5">
+        <span className="text-3xl flex-shrink-0" style={{ animation: 'bounce-soft 1.5s infinite' }}>🦁</span>
+        <p className="font-nunito text-sm text-[#212121]">
+          Salut, {profileName}! Sari peste obstacole și ajunge la destinație!
+          Completezi nivele = deblochezi blocuri pentru Builder World! 🧱
         </p>
       </div>
 
+      {/* Character selector */}
+      <div className="mb-5 rounded-3xl bg-white border border-black/5 shadow-sm p-4">
+        <p className="font-nunito text-xs font-bold text-[#757575] mb-3 uppercase tracking-wide">
+          Alege personajul tău
+        </p>
+        <div className="flex gap-3">
+          {CHARACTERS.map(char => {
+            const isUnlocked = unlockedChars.includes(char.id)
+            const isSelected = selectedChar === char.id
+            return (
+              <button
+                key={char.id}
+                onClick={() => isUnlocked && onSelectChar(char.id)}
+                disabled={!isUnlocked}
+                className="flex flex-col items-center gap-1 rounded-2xl p-2 transition-all active:scale-95 flex-1"
+                style={{
+                  touchAction: 'manipulation',
+                  backgroundColor: isSelected ? 'rgba(245,127,23,0.12)' : 'rgba(0,0,0,0.03)',
+                  border: isSelected ? '2.5px solid #F57F17' : '2.5px solid transparent',
+                  opacity: isUnlocked ? 1 : 0.45,
+                  minHeight: '72px',
+                }}
+                aria-label={char.name}
+                aria-pressed={isSelected}
+              >
+                <span style={{ fontSize: '1.8rem' }}>{char.emoji}</span>
+                <span className="font-nunito text-[10px] font-semibold" style={{ color: isSelected ? '#F57F17' : '#757575' }}>
+                  {isUnlocked ? char.name : '🔒'}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Levels per world */}
       <div className="flex flex-col gap-5">
         {worlds.map(worldNum => {
-          const worldLevels = levelsByWorld[worldNum - 1]
-          const worldUnlocked = isWorldUnlocked(worldNum)
-          const worldColor = WORLD_COLORS[worldNum]
-          const worldEmoji = WORLD_EMOJIS[worldNum]
-          const worldName = worldLevels[0]?.worldName ?? `World ${worldNum}`
-
+          const levels = JUMP_LEVELS.filter(l => l.world === worldNum)
+          const meta   = WORLD_META[worldNum]
           return (
             <div key={worldNum}>
-              {/* World header */}
-              <div
-                className="flex items-center gap-2 mb-2 px-1"
-                style={{ opacity: worldUnlocked ? 1 : 0.4 }}
-              >
-                <span className="text-lg">{worldEmoji}</span>
-                <p
-                  className="font-fredoka text-base font-semibold"
-                  style={{ color: worldUnlocked ? worldColor : 'var(--gray)' }}
-                >
-                  {worldName}
-                </p>
-                {!worldUnlocked && <span className="text-base">🔒</span>}
-              </div>
-
-              {/* Levels in world */}
-              <div className="flex flex-col gap-3">
-                {worldLevels.map(level => {
-                  const best = bestScores[level.id]
-                  const unlocked = isLevelUnlocked(level, worldLevels)
-
+              <p className="font-fredoka text-base font-semibold mb-2 px-1" style={{ color: meta.color }}>
+                {meta.label}
+              </p>
+              <div className="flex flex-col gap-2.5">
+                {levels.map(level => {
+                  const best     = bestScores[level.id]
+                  const unlocked = isLevelUnlocked(level)
                   return (
                     <button
                       key={level.id}
-                      onClick={() => unlocked && onSelect(level)}
+                      onClick={() => unlocked && onSelectLevel(level)}
                       disabled={!unlocked}
-                      className="flex items-center gap-4 rounded-3xl bg-white border shadow-sm p-4 text-left active:scale-95 transition-transform disabled:opacity-50"
+                      className="flex items-center gap-3 rounded-3xl bg-white border shadow-sm p-3.5 text-left active:scale-95 transition-transform disabled:opacity-50"
                       style={{
                         touchAction: 'manipulation',
-                        borderColor: level.isBoss ? `${worldColor}44` : 'rgba(0,0,0,0.05)',
+                        borderColor: level.isBoss ? `${meta.color}55` : 'rgba(0,0,0,0.06)',
                         background: level.isBoss
-                          ? `linear-gradient(135deg, white 60%, ${worldColor}0a 100%)`
+                          ? `linear-gradient(135deg, white 60%, ${meta.color}08 100%)`
                           : 'white',
                       }}
                     >
+                      {/* Level icon */}
                       <div
-                        className="flex items-center justify-center w-14 h-14 rounded-2xl text-3xl flex-shrink-0"
-                        style={{ background: level.bgGradient }}
+                        className="flex items-center justify-center w-13 h-13 rounded-2xl text-2xl flex-shrink-0"
+                        style={{ background: level.bgGradient, width: 52, height: 52 }}
                       >
                         {level.emoji}
                       </div>
+
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-fredoka text-base font-semibold text-[var(--dark)]">
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="font-fredoka text-base font-semibold text-[#212121] truncate">
                             {level.name}
                           </p>
                           {level.isBoss && (
-                            <span
-                              className="font-nunito text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                              style={{ backgroundColor: `${worldColor}22`, color: worldColor }}
-                            >
+                            <span className="font-nunito text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: `${meta.color}20`, color: meta.color }}>
                               BOSS
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-1 mt-1">
+
+                        {/* Stars */}
+                        <div className="flex items-center gap-1">
                           {[1, 2, 3].map(s => (
-                            <span
-                              key={s}
-                              className="text-sm"
-                              style={{
-                                opacity: (best?.stars ?? 0) >= s ? 1 : 0.25,
-                                filter: (best?.stars ?? 0) >= s ? 'none' : 'grayscale(1)',
-                              }}
-                            >
+                            <span key={s} className="text-sm"
+                              style={{ opacity: (best?.stars ?? 0) >= s ? 1 : 0.2,
+                                filter: (best?.stars ?? 0) >= s ? 'none' : 'grayscale(1)' }}>
                               ⭐
                             </span>
                           ))}
                           {best && (
-                            <span className="font-nunito text-xs text-[var(--gray)] ml-1">
-                              Best: {best.score} 🪙
+                            <span className="font-nunito text-xs text-[#9E9E9E] ml-1">
+                              {best.score} 🪙
                             </span>
                           )}
                         </div>
+
+                        {/* Builder block teaser */}
+                        {level.builderBlockUnlock && (
+                          <p className="font-nunito text-[10px] text-[#F57F17] mt-0.5">
+                            🧱 Deblochează: <strong>{level.builderBlockUnlock}</strong>
+                          </p>
+                        )}
                       </div>
-                      {!unlocked && <span className="text-xl">🔒</span>}
-                      {unlocked && !best && <span className="font-nunito text-xs text-[var(--sky)]">New!</span>}
+
+                      {/* Destination */}
+                      <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
+                        <span style={{ fontSize: '1.4rem' }}>{level.destinationEmoji}</span>
+                        {!unlocked && <span className="text-lg">🔒</span>}
+                        {unlocked && !best && (
+                          <span className="font-nunito text-[9px] font-bold rounded-full px-1.5"
+                            style={{ backgroundColor: '#E8F5E9', color: '#388E3C' }}>Nou!</span>
+                        )}
+                      </div>
                     </button>
                   )
                 })}
@@ -226,77 +303,74 @@ function LevelSelect({
           )
         })}
       </div>
+
+      <div className="h-6"/>
     </div>
   )
 }
 
-// ─── Jump Game ────────────────────────────────────────────────────────────────
+// ─── Jump Game ────────────────────────────────────────────────
 
 function JumpGame({
   level,
   userId,
-  initialCoins,
+  profileName,
+  childAge,
+  selectedChar,
   bestScore,
   onBack,
+  onCharUnlock,
 }: {
   level: JumpLevel
   userId: string
-  initialCoins: number
+  profileName: string
+  childAge: number
+  selectedChar: CharacterId
   bestScore?: { score: number; stars: number }
   onBack: () => void
+  onCharUnlock: (id: CharacterId) => void
 }) {
+  const maxHearts = getMaxHearts(childAge)
   const {
-    char,
-    collectedCoinIds,
-    movingPlatforms,
-    timeLeft,
-    isRunning,
-    isDead,
-    isComplete,
-    score,
-    stars,
-    startGame,
-    setControl,
-    jump,
-  } = useJumpGame(level)
+    charY, distance, hearts, invincible, collectedCoinIds,
+    isRunning, isDead, isComplete, score, stars, startGame, jump,
+  } = useJumpGame(level, maxHearts)
 
-  const [savedResult, setSavedResult] = useState(false)
-  const [prevScore, setPrevScore] = useState(0)
+  const [savedResult, setSavedResult]       = useState(false)
+  const [showBuilderUnlock, setShowBUnlock] = useState(false)
+  const [showCharUnlock, setShowCharUnlock] = useState<string | null>(null)
   const { playCoin, playLevelUp } = useSound()
 
-  // Play coin sound when score increases
+  // Coin sound
+  const prevScore = useState(0)
   useEffect(() => {
-    if (score > prevScore) {
-      playCoin()
-      setPrevScore(score)
-    }
+    if (score > 0) playCoin()
   }, [score]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Play fanfare when game completes with stars
+  // Win fanfare + unlock saves
   useEffect(() => {
-    if (isComplete && stars > 0) playLevelUp()
+    if (isComplete && stars > 0) {
+      playLevelUp()
+      // Builder block unlock
+      if (level.builderBlockUnlock) {
+        saveBuilderUnlock(level.builderBlockUnlock)
+        setShowBUnlock(true)
+      }
+      // Character unlock on 3 stars
+      if (stars === 3 && level.characterUnlock) {
+        const chars = loadCharsFromStorage()
+        if (!chars.includes(level.characterUnlock)) {
+          const updated = [...chars, level.characterUnlock]
+          try { localStorage.setItem('jump_chars', JSON.stringify(updated)) } catch { /* silent */ }
+          onCharUnlock(level.characterUnlock)
+          const cd = CHARACTERS.find(c => c.id === level.characterUnlock)
+          if (cd) setShowCharUnlock(`${cd.emoji} ${cd.name} deblocat!`)
+        }
+      }
+    }
   }, [isComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Keyboard support (desktop/tablet with keyboard)
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'ArrowLeft')  setControl('left', true)
-      if (e.key === 'ArrowRight') setControl('right', true)
-      if (e.key === ' ' || e.key === 'ArrowUp') jump()
-    }
-    function onKeyUp(e: KeyboardEvent) {
-      if (e.key === 'ArrowLeft')  setControl('left', false)
-      if (e.key === 'ArrowRight') setControl('right', false)
-    }
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('keyup', onKeyUp)
-    return () => {
-      window.removeEventListener('keydown', onKeyDown)
-      window.removeEventListener('keyup', onKeyUp)
-    }
-  }, [setControl, jump])
-
-  // Save score at the end
+  // Save to Supabase
   useEffect(() => {
     if ((isComplete || isDead) && !savedResult && score > 0) {
       setSavedResult(true)
@@ -306,176 +380,232 @@ function JumpGame({
         level_id: level.id,
         score,
         stars,
-        time_ms: (level.timeLimit - timeLeft) * 1000,
+        time_ms: Math.round(distance / level.runSpeed * 16),
       }).then(() => {
         if (stars > 0) {
           supabase.rpc('add_coins', {
             p_user_id: userId,
-            p_amount: score * 2,
+            p_amount: score + stars * 5,
             p_reason: `jump_${level.id}`,
             p_world: 'jump',
           })
         }
       })
     }
-  }, [isComplete, isDead, savedResult, score, stars, userId, level, timeLeft])
+  }, [isComplete, isDead]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keyboard support
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump() }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [jump])
 
   const isEnd = isComplete || isDead
 
   return (
-    <div className="game-container min-h-screen flex flex-col px-4 py-5 gap-4">
+    <div className="game-container min-h-screen flex flex-col px-4 py-4 gap-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[var(--gray)] active:scale-95 transition-transform text-lg"
-          style={{ touchAction: 'manipulation' }}
-          aria-label="Back"
-        >
-          ←
-        </button>
+        <button onClick={onBack}
+          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 text-[#757575] active:scale-95 transition-transform text-lg"
+          style={{ touchAction: 'manipulation' }} aria-label="Înapoi">←</button>
         <div className="text-center">
           <p className="font-fredoka text-base font-semibold" style={{ color: '#F57F17' }}>
             {level.emoji} {level.name}
           </p>
-          {bestScore && (
-            <p className="font-nunito text-xs text-[var(--gray)]">
-              Best: {bestScore.score} 🪙 {'⭐'.repeat(bestScore.stars)}
-            </p>
-          )}
+          <p className="font-nunito text-xs text-[#9E9E9E]">
+            {level.destinationEmoji} {level.destinationName}
+          </p>
         </div>
-        <div className="w-10" />
+        <div className="w-10"/>
       </div>
 
-      {/* Game */}
-      {!isRunning && !isEnd ? (
-        /* Start screen */
+      {/* ── START SCREEN ── */}
+      {!isRunning && !isEnd && (
         <div className="flex-1 flex flex-col items-center justify-center gap-5">
+          {/* Preview card */}
           <div
-            className="w-full rounded-3xl flex items-center justify-center overflow-hidden"
-            style={{ background: level.bgGradient, height: '220px' }}
+            className="w-full rounded-3xl overflow-hidden flex flex-col items-center justify-center gap-3 py-8"
+            style={{ background: level.bgGradient, minHeight: 180 }}
           >
-            <span className="text-7xl" style={{ animation: 'float 2s ease-in-out infinite' }}>
+            <span style={{ fontSize: '5rem', animation: 'float 2s ease-in-out infinite' }}>
               {level.emoji}
             </span>
+            <div className="flex items-center gap-2 rounded-full px-3 py-1"
+              style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+              <span style={{ fontSize: '1rem' }}>{level.destinationEmoji}</span>
+              <span className="font-nunito text-sm font-bold text-white">{level.destinationName}</span>
+            </div>
           </div>
 
-          <div className="text-center">
-            <p className="font-nunito text-sm text-[var(--gray)]">
-              Collect as many coins as you can in {level.timeLimit} seconds!
-            </p>
-            <p className="font-nunito text-xs text-[var(--gray)] mt-1">
-              {level.starThresholds[0]} 🪙 = ⭐ · {level.starThresholds[1]} 🪙 = ⭐⭐ · {level.starThresholds[2]} 🪙 = ⭐⭐⭐
-            </p>
+          {/* Instructions */}
+          <div className="w-full rounded-2xl bg-white border border-black/5 shadow-sm px-4 py-3 flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🦘</span>
+              <p className="font-nunito text-sm text-[#212121]">
+                Tap oriunde sau apasă <strong>SARI</strong> pentru a sări
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-lg">❤️</span>
+              <p className="font-nunito text-sm text-[#212121]">
+                Ai <strong>{maxHearts} inimi</strong> — cu cât mai multe rămân, cu atât mai multe stele!
+              </p>
+            </div>
+            {level.builderBlockUnlock && (
+              <div className="flex items-center gap-2 rounded-xl px-3 py-1.5"
+                style={{ backgroundColor: '#FFF8E1', border: '1px solid #FFE082' }}>
+                <span className="text-lg">🧱</span>
+                <p className="font-nunito text-xs font-semibold text-[#E65100]">
+                  Completează pentru a debloca blocul <strong>{level.builderBlockUnlock}</strong>!
+                </p>
+              </div>
+            )}
           </div>
 
-          <button
-            onClick={startGame}
-            className="rounded-full px-10 py-4 font-nunito text-lg font-semibold text-white shadow-lg active:scale-95 transition-transform"
+          {bestScore && (
+            <p className="font-nunito text-xs text-[#9E9E9E]">
+              Recordul tău: {bestScore.score} 🪙 {'⭐'.repeat(bestScore.stars)}
+            </p>
+          )}
+
+          <button onClick={startGame}
+            className="rounded-full font-nunito text-lg font-semibold text-white shadow-lg active:scale-95 transition-transform"
             style={{
               touchAction: 'manipulation',
               background: 'linear-gradient(90deg, #F57F17, #FF8F00)',
-              minWidth: '200px',
-              minHeight: '60px',
-            }}
-          >
-            🎮 Play!
+              minWidth: 200, minHeight: 60, paddingInline: 32,
+              boxShadow: '0 6px 20px rgba(245,127,23,0.5)',
+            }}>
+            🏃 Pornește!
           </button>
         </div>
-      ) : isEnd ? (
-        /* End screen */
+      )}
+
+      {/* ── END SCREEN ── */}
+      {isEnd && (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <div
             className="flex flex-col items-center gap-4 rounded-3xl bg-white px-8 py-8 shadow-lg border border-black/5 text-center w-full"
             style={{ animation: 'slide-up 0.4s ease' }}
           >
-            <span
-              className="text-6xl"
-              style={{ animation: 'pop 0.5s ease' }}
-            >
-              {isDead ? '💫' : stars === 3 ? '🏆' : '🎮'}
+            <span className="text-6xl" style={{ animation: 'pop 0.5s ease' }}>
+              {isDead ? '😵' : stars === 3 ? '🏆' : stars > 0 ? '🎉' : '😅'}
             </span>
-            <h2
-              className="font-fredoka text-2xl font-semibold"
-              style={{ color: '#F57F17' }}
-            >
-              {isDead ? 'You fell!' : 'Time\'s up!'}
+
+            <h2 className="font-fredoka text-2xl font-semibold" style={{ color: '#F57F17' }}>
+              {isDead
+                ? 'Lio a căzut!'
+                : `${level.destinationName} atinsă!`}
             </h2>
 
+            {isComplete && (
+              <p className="font-nunito text-sm text-[#757575]">
+                {level.destinationEmoji} Ai ajuns la destinație!
+              </p>
+            )}
+
             {/* Stars */}
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {[1, 2, 3].map(s => (
-                <span
-                  key={s}
-                  className="text-3xl"
-                  style={{
-                    opacity: s <= stars ? 1 : 0.2,
-                    filter: s <= stars ? 'none' : 'grayscale(1)',
-                    animation: s <= stars ? `pop 0.3s ease ${s * 0.15}s both` : undefined,
-                  }}
-                >
-                  ⭐
-                </span>
+                <span key={s} className="text-4xl" style={{
+                  opacity: s <= stars ? 1 : 0.18,
+                  filter: s <= stars ? 'none' : 'grayscale(1)',
+                  animation: s <= stars ? `pop 0.3s ease ${s * 0.15}s both` : undefined,
+                }}>⭐</span>
               ))}
             </div>
 
-            <div className="flex gap-6">
+            {/* Coins earned */}
+            <div className="flex gap-5">
               <div className="flex flex-col items-center">
                 <span className="text-2xl">🪙</span>
-                <span className="font-fredoka text-2xl font-semibold text-[var(--sun-dark)]">
-                  {score}
-                </span>
-                <span className="font-nunito text-xs text-[var(--gray)]">coins</span>
+                <span className="font-fredoka text-2xl font-semibold text-[#F57F17]">{score}</span>
+                <span className="font-nunito text-xs text-[#9E9E9E]">monede</span>
               </div>
               {stars > 0 && (
                 <div className="flex flex-col items-center">
                   <span className="text-2xl">💰</span>
-                  <span className="font-fredoka text-2xl font-semibold text-[var(--mint-dark)]">
-                    +{score * 2}
+                  <span className="font-fredoka text-2xl font-semibold text-[#388E3C]">
+                    +{score + stars * 5}
                   </span>
-                  <span className="font-nunito text-xs text-[var(--gray)]">coins earned</span>
+                  <span className="font-nunito text-xs text-[#9E9E9E]">câștigate</span>
                 </div>
               )}
             </div>
 
-            <div className="flex flex-col gap-3 w-full">
-              <button
-                onClick={startGame}
+            {/* Builder block unlock reveal */}
+            {showBuilderUnlock && level.builderBlockUnlock && (
+              <div className="w-full rounded-2xl px-4 py-3 text-left"
+                style={{ background: 'linear-gradient(135deg, #FFF8E1, #FFF3E0)',
+                  border: '2px solid #FFE082', animation: 'pop 0.4s ease' }}>
+                <p className="font-nunito text-xs font-bold text-[#F57F17] mb-1">
+                  🧱 Bloc nou deblocat în Builder World!
+                </p>
+                <p className="font-nunito text-base font-semibold text-[#E65100]">
+                  ✅ Blocul <strong>{level.builderBlockUnlock}</strong> e acum disponibil!
+                </p>
+              </div>
+            )}
+
+            {/* Character unlock */}
+            {showCharUnlock && (
+              <div className="w-full rounded-2xl px-4 py-3 text-center"
+                style={{ background: 'linear-gradient(135deg, #E8EAF6, #EDE7F6)',
+                  border: '2px solid #9FA8DA', animation: 'pop 0.5s ease' }}>
+                <p className="font-nunito text-sm font-bold text-[#5C6BC0]">
+                  🎉 Personaj nou deblocat!
+                </p>
+                <p className="font-fredoka text-lg font-semibold text-[#3949AB]">
+                  {showCharUnlock}
+                </p>
+              </div>
+            )}
+
+            {/* Hearts info */}
+            {isComplete && (
+              <p className="font-nunito text-xs text-[#9E9E9E]">
+                Ai finalizat cu {hearts} ❤️ {hearts === maxHearts ? '— Perfect!' : ''}
+              </p>
+            )}
+
+            <div className="flex flex-col gap-2.5 w-full">
+              <button onClick={startGame}
                 className="rounded-full py-3 font-nunito text-base font-semibold text-white active:scale-95 transition-transform shadow-md"
-                style={{ touchAction: 'manipulation', background: 'linear-gradient(90deg, #F57F17, #FF8F00)' }}
-              >
-                🔄 Try again
+                style={{ touchAction: 'manipulation',
+                  background: 'linear-gradient(90deg, #F57F17, #FF8F00)' }}>
+                🔄 Încearcă din nou
               </button>
-              <button
-                onClick={onBack}
-                className="rounded-full border-2 border-[rgba(0,0,0,0.08)] py-3 font-nunito text-base font-semibold text-[var(--gray)] active:scale-95 transition-transform"
-                style={{ touchAction: 'manipulation' }}
-              >
-                ← Levels
+              <button onClick={onBack}
+                className="rounded-full border-2 py-3 font-nunito text-base font-semibold active:scale-95 transition-transform"
+                style={{ touchAction: 'manipulation', borderColor: 'rgba(0,0,0,0.08)',
+                  color: '#757575' }}>
+                ← Nivele
               </button>
             </div>
           </div>
         </div>
-      ) : (
-        /* Active game */
+      )}
+
+      {/* ── ACTIVE GAME ── */}
+      {isRunning && (
         <>
           <JumpCanvas
             level={level}
-            char={char}
+            charY={charY}
+            charId={selectedChar}
+            distance={distance}
+            hearts={hearts}
+            maxHearts={maxHearts}
+            invincible={invincible}
             collectedCoinIds={collectedCoinIds}
-            movingPlatforms={movingPlatforms}
-            timeLeft={timeLeft}
             score={score}
-            stars={stars}
-            totalCoins={level.coins.length}
-          />
-          <JumpControls
-            onLeftStart={() => setControl('left', true)}
-            onLeftEnd={() => setControl('left', false)}
-            onRightStart={() => setControl('right', true)}
-            onRightEnd={() => setControl('right', false)}
             onJump={jump}
           />
+          <JumpControls onJump={jump} isRunning={isRunning}/>
         </>
       )}
     </div>

@@ -13,18 +13,11 @@ export default async function BuilderWorldPage() {
 
   const profile = await getActiveChildProfile(user.id)
 
-  const { data: inventory } = await supabase
-    .from('inventory')
-    .select('item_id')
-    .eq('user_id', user.id)
-
   const { data: builderState } = await supabase
     .from('builder_state')
     .select('unlocked_rooms')
     .eq('user_id', user.id)
     .single()
-
-  const ownedItemIds = (inventory ?? []).map(i => i.item_id)
 
   return (
     <BuilderClient
@@ -32,8 +25,7 @@ export default async function BuilderWorldPage() {
       profileName={profile.full_name ?? 'Builder'}
       childAge={profile.age ?? 6}
       initialCoins={profile.coins}
-      ownedItemIds={ownedItemIds}
-      unlockedRoomIds={builderState?.unlocked_rooms ?? ['bedroom']}
+      unlockedSceneIds={builderState?.unlocked_rooms ?? ['magic_forest']}
     />
   )
 }

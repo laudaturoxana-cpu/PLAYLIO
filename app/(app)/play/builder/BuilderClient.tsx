@@ -2,30 +2,29 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useBuilderRoom } from '@/lib/builder/useBuilderRoom'
-import { ITEM_MAP, ROOMS, type BuilderItem, type Room } from '@/lib/builder/items'
-import RoomCanvas from '@/components/builder/RoomCanvas'
-import ItemDrawer from '@/components/builder/ItemDrawer'
+import { useBuilderScene } from '@/lib/builder/useBuilderRoom'
+import { BUILD_SCENES, type Block, type BuildScene } from '@/lib/builder/items'
+import BlockCanvas from '@/components/builder/RoomCanvas'
+import BlockPalette from '@/components/builder/ItemDrawer'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
-import BuilderLetterChallenge from '@/components/builder/BuilderLetterChallenge'
 import { createClient } from '@/lib/supabase/client'
 import { useLio } from '@/lib/ai/useLio'
 
 const BUILDER_TUTORIAL = [
   {
-    emoji: '🏠',
-    title: 'Choose a room!',
-    description: 'You have 6 rooms to decorate: Bedroom, Kitchen, Bathroom, Living Room, Playroom and Garden!',
+    emoji: '🌍',
+    title: 'Alege o scenă!',
+    description: 'Ai 6 lumi în care poți construi: pădure, plajă, munte, oraș, ocean și cosmos!',
   },
   {
-    emoji: '🛋️',
-    title: 'Place furniture!',
-    description: 'Pick an item from the drawer below, then tap the room to place it where you want!',
+    emoji: '🧱',
+    title: 'Selectează un bloc!',
+    description: 'Din paleta de jos alege tipul de bloc dorit, apoi tapează pe grilă pentru a-l plasa.',
   },
   {
-    emoji: '🪙',
-    title: 'Unlock more rooms!',
-    description: 'Earn coins by learning letters and exploring adventures, then unlock new rooms!',
+    emoji: '✨',
+    title: 'Construiește liber!',
+    description: 'Fă orice: case, castele, orașe, păduri! Blocurile rare se deblochează explorând Adventure World.',
   },
 ]
 
@@ -34,8 +33,7 @@ interface BuilderClientProps {
   profileName: string
   childAge: number
   initialCoins: number
-  ownedItemIds: string[]
-  unlockedRoomIds: string[]
+  unlockedSceneIds: string[]
 }
 
 export default function BuilderClient({
@@ -43,91 +41,80 @@ export default function BuilderClient({
   profileName,
   childAge,
   initialCoins,
-  ownedItemIds,
-  unlockedRoomIds: initialUnlocked,
+  unlockedSceneIds: initialUnlocked,
 }: BuilderClientProps) {
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
+  const [selectedScene, setSelectedScene] = useState<BuildScene | null>(null)
   const [coins, setCoins] = useState(initialCoins)
-  const [unlockedRoomIds, setUnlockedRoomIds] = useState<string[]>(
-    initialUnlocked.length > 0 ? initialUnlocked : ['bedroom']
+  const [unlockedSceneIds, setUnlockedSceneIds] = useState<string[]>(
+    initialUnlocked.length > 0 ? initialUnlocked : ['magic_forest']
   )
   const [unlocking, setUnlocking] = useState<string | null>(null)
 
-  async function handleUnlockRoom(room: Room) {
-    if (coins < room.requiredCoins) return
-    setUnlocking(room.id)
+  async function handleUnlockScene(scene: BuildScene) {
+    if (coins < scene.requiredCoins) return
+    setUnlocking(scene.id)
     try {
       const supabase = createClient()
       await supabase.rpc('add_coins', {
         p_user_id: userId,
-        p_amount: -room.requiredCoins,
-        p_reason: `unlock_room_${room.id}`,
+        p_amount: -scene.requiredCoins,
+        p_reason: `unlock_scene_${scene.id}`,
         p_world: 'builder',
       })
-      const newUnlocked = [...unlockedRoomIds, room.id]
-      setUnlockedRoomIds(newUnlocked)
-      setCoins(c => c - room.requiredCoins)
-      // Save unlocked rooms
-      await supabase.from('builder_state').upsert({
-        user_id: userId,
-        room_data: {},
-        unlocked_rooms: newUnlocked,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' })
+      const newUnlocked = [...unlockedSceneIds, scene.id]
+      setUnlockedSceneIds(newUnlocked)
+      setCoins(c => c - scene.requiredCoins)
     } catch {
       // silent
     }
     setUnlocking(null)
   }
 
-  if (!selectedRoom) {
+  if (!selectedScene) {
     return (
-      <RoomSelector
+      <SceneSelector
         profileName={profileName}
         coins={coins}
-        unlockedRoomIds={unlockedRoomIds}
+        unlockedSceneIds={unlockedSceneIds}
         unlocking={unlocking}
-        onSelectRoom={setSelectedRoom}
-        onUnlockRoom={handleUnlockRoom}
+        onSelectScene={setSelectedScene}
+        onUnlockScene={handleUnlockScene}
       />
     )
   }
 
   return (
-    <RoomBuilder
-      room={selectedRoom}
+    <SceneBuilder
+      buildScene={selectedScene}
       userId={userId}
       profileName={profileName}
       childAge={childAge}
-      coins={coins}
-      onCoinsChange={setCoins}
-      ownedItemIds={ownedItemIds}
-      onBack={() => setSelectedRoom(null)}
+      onBack={() => setSelectedScene(null)}
     />
   )
 }
 
-// ─── Room Selector ─────────────────────────────────────────────────────────────
+// ─── Scene Selector ─────────────────────────────────────────────────────────
 
-function RoomSelector({
+function SceneSelector({
   profileName,
   coins,
-  unlockedRoomIds,
+  unlockedSceneIds,
   unlocking,
-  onSelectRoom,
-  onUnlockRoom,
+  onSelectScene,
+  onUnlockScene,
 }: {
   profileName: string
   coins: number
-  unlockedRoomIds: string[]
+  unlockedSceneIds: string[]
   unlocking: string | null
-  onSelectRoom: (room: Room) => void
-  onUnlockRoom: (room: Room) => void
+  onSelectScene: (scene: BuildScene) => void
+  onUnlockScene: (scene: BuildScene) => void
 }) {
   return (
     <div className="game-container min-h-screen px-4 py-6">
       <HowToPlayOverlay
-        storageKey="howtoplay_builder"
+        storageKey="howtoplay_builder_v2"
         worldColor="#29B6F6"
         steps={BUILDER_TUTORIAL}
       />
@@ -137,8 +124,8 @@ function RoomSelector({
         <Link
           href="/worlds"
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 active:scale-95 transition-transform text-lg"
-          style={{ touchAction: 'manipulation', color: 'var(--gray)' }}
-          aria-label="Back"
+          style={{ touchAction: 'manipulation', color: '#757575' }}
+          aria-label="Înapoi"
         >
           ←
         </Link>
@@ -146,8 +133,8 @@ function RoomSelector({
           <h1 className="font-fredoka text-xl font-semibold" style={{ color: '#29B6F6' }}>
             🏗️ Builder World
           </h1>
-          <p className="font-nunito text-xs" style={{ color: 'var(--gray)' }}>
-            {profileName}&apos;s House
+          <p className="font-nunito text-xs" style={{ color: '#757575' }}>
+            Lumea lui {profileName}
           </p>
         </div>
         <div className="flex items-center gap-1 rounded-full px-3 py-1.5" style={{ backgroundColor: '#FFF8E1' }}>
@@ -156,69 +143,82 @@ function RoomSelector({
         </div>
       </div>
 
-      {/* Lio message */}
+      {/* Lio mesaj */}
       <div className="mb-5 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-black/5">
         <span className="text-3xl flex-shrink-0" style={{ animation: 'bounce-soft 1.5s infinite' }}>🦁</span>
-        <p className="font-nunito text-sm" style={{ color: 'var(--dark)' }}>
-          Hi, {profileName}! Choose a room to decorate! Each room has special furniture! 🏠
+        <p className="font-nunito text-sm" style={{ color: '#212121' }}>
+          Salut, {profileName}! Alege o lume în care să construiești! Fiecare are blocuri speciale! 🧱
         </p>
       </div>
 
-      {/* Rooms grid */}
+      {/* Scene grid */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {ROOMS.map(room => {
-          const unlocked = unlockedRoomIds.includes(room.id)
-          const canAfford = coins >= room.requiredCoins
-          const isUnlocking = unlocking === room.id
+        {BUILD_SCENES.map(scene => {
+          const unlocked = unlockedSceneIds.includes(scene.id)
+          const canAfford = coins >= scene.requiredCoins
+          const isUnlocking = unlocking === scene.id
 
           return (
             <button
-              key={room.id}
+              key={scene.id}
               onClick={() => {
-                if (unlocked) onSelectRoom(room)
-                else if (canAfford) onUnlockRoom(room)
+                if (unlocked) onSelectScene(scene)
+                else if (canAfford) onUnlockScene(scene)
               }}
               disabled={(!unlocked && !canAfford) || isUnlocking}
-              className="flex flex-col items-start rounded-3xl p-4 text-left transition-all active:scale-95 border"
+              className="flex flex-col items-start rounded-3xl p-4 text-left transition-all active:scale-95 border overflow-hidden"
               style={{
                 touchAction: 'manipulation',
-                background: unlocked ? room.bgGradient : 'white',
-                borderColor: unlocked ? `${room.color}40` : 'rgba(0,0,0,0.06)',
-                opacity: !unlocked && !canAfford ? 0.6 : 1,
-                boxShadow: unlocked ? `0 2px 12px ${room.color}22` : 'none',
-                minHeight: '110px',
+                background: unlocked ? scene.skyGradient : 'white',
+                borderColor: unlocked ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.06)',
+                opacity: !unlocked && !canAfford ? 0.55 : 1,
+                minHeight: '120px',
+                position: 'relative',
               }}
-              aria-label={`${room.name}${!unlocked ? ` — ${room.requiredCoins} coins to unlock` : ''}`}
+              aria-label={`${scene.name}${!unlocked ? ` — ${scene.requiredCoins} monede` : ''}`}
             >
-              <div className="flex items-center justify-between w-full mb-2">
-                <span className="text-3xl">{room.emoji}</span>
-                {!unlocked && (
-                  <span
-                    className="font-nunito text-[10px] font-semibold rounded-full px-2 py-0.5"
-                    style={{
-                      backgroundColor: canAfford ? `${room.color}22` : 'rgba(0,0,0,0.06)',
-                      color: canAfford ? room.color : 'var(--gray)',
-                    }}
-                  >
-                    {canAfford ? `🔓 ${room.requiredCoins}🪙` : `🔒 ${room.requiredCoins}🪙`}
-                  </span>
-                )}
-                {unlocked && (
-                  <span className="text-base">✅</span>
+              {/* Ground strip preview */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '20%',
+                  background: scene.groundColor,
+                  opacity: unlocked ? 1 : 0.3,
+                }}
+              />
+
+              <div className="relative z-10 flex flex-col gap-1 w-full">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-3xl">{scene.emoji}</span>
+                  {!unlocked && (
+                    <span
+                      className="font-nunito text-[10px] font-semibold rounded-full px-2 py-0.5"
+                      style={{
+                        backgroundColor: canAfford ? 'rgba(255,213,79,0.3)' : 'rgba(0,0,0,0.06)',
+                        color: canAfford ? '#E65100' : '#757575',
+                      }}
+                    >
+                      {canAfford ? `🔓 ${scene.requiredCoins}🪙` : `🔒 ${scene.requiredCoins}🪙`}
+                    </span>
+                  )}
+                  {unlocked && <span className="text-base">✅</span>}
+                </div>
+                <p
+                  className="font-fredoka text-sm font-semibold"
+                  style={{ color: unlocked ? '#212121' : '#757575' }}
+                >
+                  {scene.name}
+                </p>
+                <p className="font-nunito text-[10px]" style={{ color: unlocked ? '#555' : '#9E9E9E' }}>
+                  {unlocked ? scene.description : canAfford ? 'Tap pentru a debloca!' : 'Câștigă mai multe monede'}
+                </p>
+                {isUnlocking && (
+                  <span className="font-nunito text-xs" style={{ color: '#29B6F6' }}>Se deblochează...</span>
                 )}
               </div>
-              <p
-                className="font-fredoka text-base font-semibold"
-                style={{ color: unlocked ? room.color : 'var(--gray)' }}
-              >
-                {room.name}
-              </p>
-              <p className="font-nunito text-[10px]" style={{ color: 'var(--gray)' }}>
-                {unlocked ? room.description : canAfford ? 'Tap to unlock!' : 'Earn more coins'}
-              </p>
-              {isUnlocking && (
-                <span className="text-xs mt-1" style={{ color: room.color }}>Unlocking...</span>
-              )}
             </button>
           )
         })}
@@ -229,231 +229,175 @@ function RoomSelector({
   )
 }
 
-// ─── Room Builder ──────────────────────────────────────────────────────────────
+// ─── Scene Builder ────────────────────────────────────────────────────────────
 
-function RoomBuilder({
-  room,
+function SceneBuilder({
+  buildScene,
   userId,
   profileName,
   childAge,
-  coins: initialCoins,
-  onCoinsChange,
-  ownedItemIds,
   onBack,
 }: {
-  room: Room
+  buildScene: BuildScene
   userId: string
   profileName: string
   childAge: number
-  coins: number
-  onCoinsChange: (fn: (c: number) => number) => void
-  ownedItemIds: string[]
   onBack: () => void
 }) {
   const {
-    room: roomState,
-    coins,
-    selectedItem,
-    setSelectedItem,
+    scene,
+    selectedBlock,
+    setSelectedBlock,
     lioComment,
     isLoaded,
     isDirty,
-    placeItem,
-    removeItem,
-    changeWallpaper,
+    blockCount,
+    placeBlock,
+    removeBlock,
+    replaceBlock,
+    clearScene,
     syncToSupabase,
     gridCols,
     gridRows,
-  } = useBuilderRoom(userId, room.id, initialCoins)
+  } = useBuilderScene(userId, buildScene.id)
 
   const { ask: askLio } = useLio({ childName: profileName, age: childAge, world: 'builder' })
   const [aiLioMessage, setAiLioMessage] = useState<string | null>(null)
 
-  // Challenge state
-  const [pendingItem, setPendingItem] = useState<BuilderItem | null>(null)
-  const [bonusCoins, setBonusCoins] = useState(0)
-
-  function handleItemSelect(item: BuilderItem | null) {
-    if (item && item.category !== 'wallpaper') {
-      setPendingItem(item)
-    } else {
-      setSelectedItem(item)
-    }
-  }
-
-  function handleChallengeCorrect() {
-    if (!pendingItem) return
-    setBonusCoins(b => b + 5)
-    setSelectedItem(pendingItem)
-    setPendingItem(null)
-  }
-
-  function handleChallengeSkip() {
-    if (!pendingItem) return
-    setSelectedItem(pendingItem)
-    setPendingItem(null)
+  function handleBlockSelect(block: Block | null) {
+    setSelectedBlock(block)
   }
 
   function handleCellTap(col: number, row: number) {
-    if (!selectedItem) return
-    if (selectedItem.category === 'wallpaper') {
-      changeWallpaper(selectedItem.id)
-      setSelectedItem(null)
-      return
-    }
-    const success = placeItem(selectedItem, col, row)
+    if (!selectedBlock) return
+    // Încearcă plasare directă; dacă celula e ocupată → înlocuire
+    const placed = scene.placedBlocks.some(b => b.col === col && b.row === row)
+    const success = placed
+      ? replaceBlock(selectedBlock, col, row)
+      : placeBlock(selectedBlock, col, row)
+
     if (success) {
-      setSelectedItem(null)
-      // Ask Lio for AI comment on item placement
-      askLio('item_placed', { context: `placed ${selectedItem.name} in ${room.name}` })
-        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+      // Lio AI mesaj la fiecare 5 blocuri
+      if (blockCount > 0 && blockCount % 5 === 0) {
+        askLio('item_placed', { context: `a plasat ${blockCount + 1} blocuri în ${buildScene.nameEn}` })
+          .then(msg => {
+            if (msg) {
+              setAiLioMessage(msg)
+              setTimeout(() => setAiLioMessage(null), 3000)
+            }
+          })
+      }
     }
   }
 
-  function handleItemTap(uid: string) {
-    if (selectedItem) return
-    removeItem(uid)
-  }
-
-  async function handleSave() {
-    await syncToSupabase()
+  function handleBlockTap(uid: string) {
+    removeBlock(uid)
   }
 
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <span className="text-5xl" style={{ animation: 'bounce-soft 1s infinite' }}>{room.emoji}</span>
+        <span className="text-5xl" style={{ animation: 'bounce-soft 1s infinite' }}>{buildScene.emoji}</span>
       </div>
     )
   }
 
-  const rareCount = roomState.placedItems.filter(p => ITEM_MAP.get(p.itemId)?.isRare).length
-
   return (
-    <div className="game-container min-h-screen flex flex-col px-4 py-5 gap-4">
+    <div
+      className="game-container min-h-screen px-3 py-4"
+      style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
           className="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-sm border border-black/5 active:scale-95 transition-transform text-lg"
-          style={{ touchAction: 'manipulation', color: 'var(--gray)' }}
-          aria-label="Back to rooms"
+          style={{ touchAction: 'manipulation', color: '#757575' }}
+          aria-label="Înapoi la scene"
         >
           ←
         </button>
         <div className="text-center">
-          <h1 className="font-fredoka text-lg font-semibold" style={{ color: room.color }}>
-            {room.emoji} {profileName}&apos;s {room.name}
+          <h1 className="font-fredoka text-lg font-semibold" style={{ color: '#29B6F6' }}>
+            {buildScene.emoji} {profileName}&apos;s {buildScene.name}
           </h1>
-          {rareCount > 0 && (
-            <p className="font-nunito text-xs" style={{ color: 'var(--sun-dark)' }}>
-              ✨ {rareCount} rare items!
-            </p>
-          )}
+          <p className="font-nunito text-xs" style={{ color: '#757575' }}>
+            {blockCount} blocuri plasate
+          </p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <div className="flex items-center gap-1 rounded-full px-2 py-1" style={{ backgroundColor: '#FFF8E1' }}>
-            <span className="text-sm">🪙</span>
-            <span className="font-fredoka text-sm font-semibold" style={{ color: '#F57F17' }}>
-              {coins}
-            </span>
-          </div>
           {isDirty && (
             <button
-              onClick={handleSave}
+              onClick={syncToSupabase}
               className="font-nunito text-[10px] underline"
-              style={{ touchAction: 'manipulation', color: 'var(--sky)' }}
+              style={{ touchAction: 'manipulation', color: '#29B6F6' }}
             >
-              Save
+              Salvează
             </button>
           )}
+          <button
+            onClick={clearScene}
+            className="font-nunito text-[10px]"
+            style={{ touchAction: 'manipulation', color: '#EF5350' }}
+          >
+            🗑️ Șterge tot
+          </button>
         </div>
       </div>
 
-      {/* Letter challenge */}
-      {pendingItem && (
-        <BuilderLetterChallenge
-          item={pendingItem}
-          onCorrect={handleChallengeCorrect}
-          onSkip={handleChallengeSkip}
-        />
-      )}
-
-      {bonusCoins > 0 && (
-        <div
-          className="rounded-2xl px-4 py-2 text-center"
-          style={{ backgroundColor: 'rgba(255,213,79,0.18)', animation: 'slide-up 0.3s ease' }}
-        >
-          <p className="font-nunito text-sm font-semibold" style={{ color: '#F57F17' }}>
-            🎉 +{bonusCoins} bonus coins from challenges!
-          </p>
-        </div>
-      )}
-
-      {/* Lio comment — AI message takes priority over static hook message */}
+      {/* Lio mesaj */}
       {(aiLioMessage || lioComment) && (
         <div
-          className="rounded-2xl px-4 py-2 text-center border"
+          className="rounded-2xl px-4 py-2 text-center"
           style={{
-            backgroundColor: `${room.color}12`,
-            borderColor: `${room.color}30`,
+            backgroundColor: 'rgba(41,182,246,0.1)',
+            border: '1px solid rgba(41,182,246,0.25)',
             animation: 'slide-up 0.3s ease',
           }}
         >
-          <p className="font-nunito text-sm font-semibold" style={{ color: room.color }}>
+          <p className="font-nunito text-sm font-semibold" style={{ color: '#0288D1' }}>
             🦁 {aiLioMessage ?? lioComment}
           </p>
         </div>
       )}
 
-      {/* Selected item indicator */}
-      {selectedItem && (
-        <div
-          className="flex items-center justify-between rounded-2xl px-4 py-2"
-          style={{ backgroundColor: room.color, animation: 'slide-up 0.2s ease' }}
-        >
-          <p className="font-nunito text-sm font-semibold text-white">
-            Tap the room to place {selectedItem.emoji}
-          </p>
-          <button
-            onClick={() => setSelectedItem(null)}
-            className="ml-2 text-white/80 font-bold text-lg"
-            style={{ touchAction: 'manipulation', minWidth: '32px', minHeight: '32px' }}
-            aria-label="Cancel"
-          >
-            ✕
-          </button>
+      {/* Two-column on desktop: canvas left, palette right */}
+      <div
+        className="builder-layout flex flex-col gap-3"
+        style={{
+          flex: 1,
+          /* On lg screens: row layout via inline media would need CSS — handled via globals */
+        }}
+      >
+        {/* Canvas */}
+        <div className="builder-canvas flex flex-col gap-2">
+          <BlockCanvas
+            scene={scene}
+            buildScene={buildScene}
+            selectedBlock={selectedBlock}
+            onCellTap={handleCellTap}
+            onBlockTap={handleBlockTap}
+            gridCols={gridCols}
+            gridRows={gridRows}
+          />
+          {!selectedBlock && scene.placedBlocks.length > 0 && (
+            <p className="font-nunito text-[10px] text-center" style={{ color: '#BDBDBD' }}>
+              Tap pe un bloc din canvas pentru a-l șterge
+            </p>
+          )}
         </div>
-      )}
 
-      {/* Room canvas */}
-      <RoomCanvas
-        room={roomState}
-        selectedItem={selectedItem}
-        onCellTap={handleCellTap}
-        onItemTap={handleItemTap}
-        gridCols={gridCols}
-        gridRows={gridRows}
-      />
-
-      {!selectedItem && roomState.placedItems.length > 0 && (
-        <p className="font-nunito text-xs text-center" style={{ color: 'var(--gray)' }}>
-          Tap an item in the room to remove it (50% coins refund)
-        </p>
-      )}
-
-      {/* Item drawer */}
-      <div className="rounded-3xl bg-white border border-black/5 shadow-sm p-4">
-        <ItemDrawer
-          roomId={room.id}
-          coins={coins}
-          selectedItem={selectedItem}
-          onSelect={(item: BuilderItem | null) => handleItemSelect(item)}
-          ownedItemIds={ownedItemIds}
-        />
+        {/* Palette */}
+        <div className="builder-palette rounded-3xl bg-white border border-black/5 shadow-sm p-3">
+          <BlockPalette
+            childAge={childAge}
+            selectedBlock={selectedBlock}
+            onSelect={handleBlockSelect}
+          />
+        </div>
       </div>
 
-      <div className="h-4" />
+      <div className="h-2" />
     </div>
   )
 }
