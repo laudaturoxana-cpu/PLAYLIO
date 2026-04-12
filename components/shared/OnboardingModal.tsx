@@ -599,7 +599,8 @@ export function OnboardingModal({ parentId, parentName, onComplete }: Props) {
                 onClick={async () => {
                   if (createdChildId) {
                     await setActiveChild(createdChildId)
-                    router.push('/worlds')
+                    // Full reload ca să citească cookie-ul de limbă setat în handleFinish
+                    window.location.href = '/worlds'
                   } else {
                     onComplete()
                   }
