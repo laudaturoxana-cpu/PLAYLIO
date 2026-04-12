@@ -15,18 +15,6 @@ export default async function ParentsLayout({
     redirect('/login?redirect=/parents/dashboard')
   }
 
-  // Verifică că userul e părinte
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  // Only block if explicitly identified as a child profile
-  if (profile?.role === 'child') {
-    redirect('/worlds')
-  }
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--light)' }}>
       {/* Header minimal dashboard părinți */}
