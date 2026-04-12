@@ -5,7 +5,6 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const type = searchParams.get('type')
-  const next = searchParams.get('next') ?? '/parents/dashboard'
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=missing_code`)
@@ -23,14 +22,16 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/reset-password`)
   }
 
-  // Verifică dacă profilul există, îl creează dacă nu
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.redirect(`${origin}/login?error=no_user`)
   }
+
+  // Asigură că profilul există cu role = parent
+  // Dacă triggerul l-a creat deja => upsert nu face nimic (ignoreDuplicates)
+  const username =
+    user.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '') ??
+    `user_${user.id.slice(0, 8)}`
 
   const { data: existingProfile } = await supabase
     .from('profiles')
@@ -39,30 +40,23 @@ export async function GET(request: Request) {
     .single()
 
   if (!existingProfile) {
-    // Creare profil părinte — poate fi override de trigger Supabase
-    const username =
-      user.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '') ??
-      `user_${user.id.slice(0, 8)}`
-
-    await supabase.from('profiles').insert({
+    // Triggerul nu a rulat încă — inserăm manual
+    await supabase.from('profiles').upsert({
       id: user.id,
       username,
       full_name: user.user_metadata?.full_name ?? null,
       role: 'parent',
-    })
+    }, { onConflict: 'id', ignoreDuplicates: true })
 
-    return NextResponse.redirect(`${origin}/parents/dashboard?onboarding=true`)
+    return NextResponse.redirect(`${origin}/worlds?onboarding=true`)
   }
 
-  // Profil fără rol (creat de trigger) — set role parent
-  if (!existingProfile.role || existingProfile.role === 'parent') {
-    if (!existingProfile.role) {
-      await supabase
-        .from('profiles')
-        .update({ role: 'parent' })
-        .eq('id', user.id)
-    }
-    return NextResponse.redirect(`${origin}${next}`)
+  // Profilul există dar poate are role greșit (creat de trigger cu 'child')
+  if (existingProfile.role !== 'parent') {
+    await supabase
+      .from('profiles')
+      .update({ role: 'parent' })
+      .eq('id', user.id)
   }
 
   return NextResponse.redirect(`${origin}/worlds`)
