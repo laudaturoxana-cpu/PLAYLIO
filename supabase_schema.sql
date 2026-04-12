@@ -209,7 +209,7 @@ begin
     new.id,
     coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
     new.raw_user_meta_data->>'full_name',
-    coalesce(new.raw_user_meta_data->>'role', 'child')
+    coalesce(new.raw_user_meta_data->>'role', 'parent')
   );
   return new;
 end;
