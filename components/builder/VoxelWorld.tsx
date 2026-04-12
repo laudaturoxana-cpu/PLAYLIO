@@ -51,7 +51,10 @@ function makePixelTexture(topColor: string, sideColor: string, size = 16): THREE
     const px = Math.floor(Math.random() * size)
     const py = Math.floor(Math.random() * size)
     const bright = Math.random() > 0.5 ? 0.12 : -0.08
-    ctx.fillStyle = `rgb(${Math.round(Math.min(255,Math.max(0,(c.r+bright)*255))},${Math.round(Math.min(255,Math.max(0,(c.g+bright)*255)))},${Math.round(Math.min(255,Math.max(0,(c.b+bright)*255)))})`
+    const r = Math.round(Math.min(255, Math.max(0, (c.r + bright) * 255)))
+    const g = Math.round(Math.min(255, Math.max(0, (c.g + bright) * 255)))
+    const b = Math.round(Math.min(255, Math.max(0, (c.b + bright) * 255)))
+    ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
     ctx.fillRect(px, py, 1, 1)
   }
   // Darker border edge (Minecraft block edge)
