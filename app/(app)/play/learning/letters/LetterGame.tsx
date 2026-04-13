@@ -6,6 +6,7 @@ import { useAdaptiveGame, countMastered } from '@/lib/learning/useAdaptiveGame'
 import { syncPendingToSupabase } from '@/lib/learning/offlineSync'
 import { createClient } from '@/lib/supabase/client'
 import LioGuide from '@/components/learning/LioGuide'
+import LioTeacher from '@/components/learning/LioTeacher'
 import LetterDisplay from '@/components/learning/LetterDisplay'
 import ChoiceButton from '@/components/learning/ChoiceButton'
 import FeedbackOverlay from '@/components/learning/FeedbackOverlay'
@@ -48,9 +49,16 @@ export default function LetterGame({ userId, initialCoins, series, childName, ch
   const targetLetters = getLettersBySeries(series)
   const seriesInfo = SERIES_INFO[series]
   const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
-  const { ask: askLio } = useLio({ childName, age: childAge, world: 'letters' })
+  const { ask: askLio, teach, hint, socratic } = useLio({ childName, age: childAge, world: 'letters' })
   const [aiLioMessage, setAiLioMessage] = useState<string | null>(null)
   const streakRef = useRef(0)
+
+  // Per-letter wrong count — drives teach/hint/socratic escalation
+  const wrongCountMap = useRef<Record<string, number>>({})
+  const [teachMessage, setTeachMessage]       = useState<string | null>(null)
+  const [teachLoading, setTeachLoading]       = useState(false)
+  const [teachMode, setTeachMode]             = useState<'teach' | 'hint' | 'socratic'>('teach')
+  const [showTeacher, setShowTeacher]         = useState(false)
 
   const {
     currentQuestion,
@@ -112,18 +120,73 @@ export default function LetterGame({ userId, initialCoins, series, childName, ch
   useEffect(() => {
     if (!feedback || !currentQuestion) return
     const letter = currentQuestion.targetLetter.letter
+    const word    = currentQuestion.targetLetter.wordRo ?? currentQuestion.targetLetter.word
+
     if (feedback === 'correct') {
       streakRef.current += 1
+      wrongCountMap.current[letter] = 0 // reset wrong count on correct
       const evt = streakRef.current >= 3 ? 'streak' : 'correct'
-      askLio(evt, { context: `letter ${letter}`, streak: streakRef.current >= 3 ? streakRef.current : undefined })
-        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+      askLio(evt, {
+        context: `litera ${letter} — cuvântul: ${word}`,
+        streak: streakRef.current >= 3 ? streakRef.current : undefined,
+      }).then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+
     } else if (feedback === 'wrong') {
       streakRef.current = 0
-      askLio('wrong', { context: `letter ${letter}` })
-        .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
+      const wrongCount = (wrongCountMap.current[letter] ?? 0) + 1
+      wrongCountMap.current[letter] = wrongCount
+
+      const chosenLtr = chosenLetter?.letter ?? '?'
+      const teachOpts = {
+        wrongAnswer:   `${chosenLtr} (pentru cuvântul ${chosenLetter?.wordRo ?? chosenLetter?.word ?? '?'})`,
+        correctAnswer: `${letter} (${word})`,
+        questionText:  `Găsește prima literă din cuvântul: ${word}`,
+        attemptCount:  wrongCount,
+        context:       `litera ${letter}, copilul a ales ${chosenLtr}`,
+      }
+
+      if (wrongCount === 1) {
+        // First wrong: quick encouragement
+        askLio('wrong', { context: `litera ${letter}` })
+          .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 2500) } })
+      } else if (wrongCount === 2) {
+        // Second wrong: hint mode
+        setTeachMode('hint')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        hint(teachOpts).then(msg => {
+          setTeachLoading(false)
+          if (msg) setTeachMessage(msg)
+        })
+      } else if (wrongCount === 3) {
+        // Third wrong: socratic question
+        setTeachMode('socratic')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        socratic(teachOpts).then(msg => {
+          setTeachLoading(false)
+          if (msg) setTeachMessage(msg)
+        })
+      } else {
+        // 4th+ wrong: full teacher explanation
+        setTeachMode('teach')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        teach(teachOpts).then(msg => {
+          setTeachLoading(false)
+          if (msg) setTeachMessage(msg)
+        })
+      }
+
     } else if (feedback === 'level_up' || feedback === 'mastered') {
       streakRef.current = 0
-      askLio('level_up', { context: `mastered letter ${letter}` })
+      wrongCountMap.current[letter] = 0
+      setShowTeacher(false)
+      setTeachMessage(null)
+      askLio('level_up', { context: `a stăpânit litera ${letter}` })
         .then(msg => { if (msg) { setAiLioMessage(msg); setTimeout(() => setAiLioMessage(null), 3000) } })
     }
   }, [feedback]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -265,15 +328,25 @@ export default function LetterGame({ userId, initialCoins, series, childName, ch
       <LioGuide
         message={aiLioMessage ?? lioMessage}
         situation={lioSituation}
-        className="mb-4"
+        className="mb-2"
       />
+
+      {/* Lio Teacher — apare după greșeli repetate */}
+      {showTeacher && (
+        <LioTeacher
+          message={teachMessage}
+          isLoading={teachLoading}
+          mode={teachMode}
+          onDismiss={() => { setShowTeacher(false); setTeachMessage(null) }}
+        />
+      )}
 
       {/* Feedback overlay */}
       <FeedbackOverlay
         feedback={feedback}
         coins={pendingCoins}
         onDone={handleFeedbackDone}
-        autoAdvanceMs={feedback === 'wrong' ? 900 : 1000}
+        autoAdvanceMs={feedback === 'wrong' ? (showTeacher ? 4000 : 900) : 1000}
       />
     </div>
   )

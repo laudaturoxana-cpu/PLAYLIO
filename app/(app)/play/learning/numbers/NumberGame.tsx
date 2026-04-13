@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { generateMathQuestion, MATH_TOPIC_COLORS, MATH_TOPIC_EMOJIS, type MathQuestion } from '@/lib/learning/math'
 import { useSound } from '@/lib/sound/useSound'
 import { useLio } from '@/lib/ai/useLio'
+import LioTeacher from '@/components/learning/LioTeacher'
 import { createClient } from '@/lib/supabase/client'
 
 interface NumberGameProps {
@@ -25,7 +26,14 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
   const [sessionDone, setSessionDone] = useState(false)
   const [lioMessage, setLioMessage] = useState<string | null>(null)
   const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
-  const { ask: askLio } = useLio({ childName: profileName, age, world: 'numbers' })
+  const { ask: askLio, teach, hint, socratic } = useLio({ childName: profileName, age, world: 'numbers' })
+
+  // Per-question wrong count for escalating pedagogy
+  const wrongCountRef    = useRef(0)
+  const [teachMessage, setTeachMessage]   = useState<string | null>(null)
+  const [teachLoading, setTeachLoading]   = useState(false)
+  const [teachMode, setTeachMode]         = useState<'teach' | 'hint' | 'socratic'>('hint')
+  const [showTeacher, setShowTeacher]     = useState(false)
 
   useEffect(() => {
     setQuestion(generateMathQuestion(age))
@@ -60,38 +68,74 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
       playCorrect()
       playCoin()
       setStreak(newStreak)
+      wrongCountRef.current = 0
+      setShowTeacher(false)
+      setTeachMessage(null)
       const earned = streak >= 3 ? question.coinsReward * 2 : question.coinsReward
       setTotalCoins(c => c + earned)
 
-      // Ask Lio for AI message (streak or correct)
       const event = newStreak >= 3 ? 'streak' : 'correct'
       askLio(event, {
-        context: `answered ${question.question}`,
+        context: `a rezolvat ${question.question} = ${question.correctAnswer}`,
         streak: newStreak,
       }).then(msg => { if (msg) setLioMessage(msg) })
     } else {
       setFeedback('wrong')
       playWrong()
       setStreak(0)
+      const wc = wrongCountRef.current + 1
+      wrongCountRef.current = wc
 
-      askLio('wrong', {
-        context: `tried ${question.question}, correct was ${question.correctAnswer}`,
-      }).then(msg => { if (msg) setLioMessage(msg) })
+      const teachOpts = {
+        wrongAnswer:   String(choice),
+        correctAnswer: String(question.correctAnswer),
+        questionText:  question.question,
+        attemptCount:  wc,
+        context:       `${question.question} — copilul a răspuns ${choice}, corect era ${question.correctAnswer}`,
+      }
+
+      if (wc === 1) {
+        askLio('wrong', {
+          context: `${question.question}, corect era ${question.correctAnswer}`,
+        }).then(msg => { if (msg) setLioMessage(msg) })
+      } else if (wc === 2) {
+        setTeachMode('hint')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        hint(teachOpts).then(msg => { setTeachLoading(false); if (msg) setTeachMessage(msg) })
+      } else if (wc === 3) {
+        setTeachMode('socratic')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        socratic(teachOpts).then(msg => { setTeachLoading(false); if (msg) setTeachMessage(msg) })
+      } else {
+        setTeachMode('teach')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        teach(teachOpts).then(msg => { setTeachLoading(false); if (msg) setTeachMessage(msg) })
+      }
     }
 
+    const delay = isCorrect ? 900 : (wrongCountRef.current >= 2 ? 3500 : 1200)
     setTimeout(() => {
       const next = questionsAnswered + 1
       setQuestionsAnswered(next)
       setChosen(null)
       setFeedback(null)
+      if (isCorrect) { setShowTeacher(false); setTeachMessage(null) }
 
       if (next >= QUESTIONS_PER_SESSION) {
         askLio('session_end', { score: totalCoins }).then(msg => { if (msg) setLioMessage(msg) })
         setSessionDone(true)
+        wrongCountRef.current = 0
         return
       }
       setQuestion(generateMathQuestion(age))
-    }, feedback === 'wrong' ? 1200 : 900)
+      wrongCountRef.current = 0 // reset per new question
+    }, delay)
   }
 
   useEffect(() => {
@@ -321,6 +365,16 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
               : `❌ Nu chiar! Răspunsul corect este ${question.correctAnswer}`}
           </p>
         </div>
+      )}
+
+      {/* Lio Teacher — apare după greșeli repetate */}
+      {showTeacher && (
+        <LioTeacher
+          message={teachMessage}
+          isLoading={teachLoading}
+          mode={teachMode}
+          onDismiss={() => { setShowTeacher(false); setTeachMessage(null) }}
+        />
       )}
     </div>
   )

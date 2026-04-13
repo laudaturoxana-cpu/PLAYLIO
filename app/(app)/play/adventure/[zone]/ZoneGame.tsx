@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import type { Zone, MiniGame, QuizOption } from '@/lib/adventure/zones'
 import { getAgeContent, getMiniGamesForAge, getOptionsCount, isZoneUnlocked } from '@/lib/adventure/zones'
 import { createClient } from '@/lib/supabase/client'
 import { useSound } from '@/lib/sound/useSound'
 import { useLio } from '@/lib/ai/useLio'
+import LioTeacher from '@/components/learning/LioTeacher'
 
 // Stocăm în localStorage (cache offline) + Supabase (sync)
 function markCountryVisitedLocally(countryId: string) {
@@ -86,7 +87,15 @@ export default function ZoneGame({
   const [localCompleted, setLocalCompleted] = useState<string[]>(completedQuestIds)
 
   const { playCorrect, playWrong, playLevelUp } = useSound()
-  const { ask: askLio } = useLio({ childName, age: childAge, world: 'adventure' })
+  const { ask: askLio, teach, hint, socratic } = useLio({ childName, age: childAge, world: 'adventure' })
+
+  // Per-question wrong count for escalating pedagogy
+  const wrongCountRef = useRef(0)
+  const [teachMessage, setTeachMessage] = useState<string | null>(null)
+  const [teachLoading, setTeachLoading] = useState(false)
+  const [teachMode, setTeachMode] = useState<'teach' | 'hint' | 'socratic'>('hint')
+  const [showTeacher, setShowTeacher] = useState(false)
+  const [wrongOptionText, setWrongOptionText] = useState<string | null>(null)
 
   const ageContent = getAgeContent(zone, childAge)
   const optionsCount = getOptionsCount(childAge)
@@ -125,10 +134,56 @@ export default function ZoneGame({
       saveStarsForCountry(zone.id, newStars)
       setFeedbackText(currentGame!.correctFeedback)
       setLastAnswerCorrect(true)
+      wrongCountRef.current = 0
+      setShowTeacher(false)
+      setTeachMessage(null)
+
+      const event = 'correct'
+      askLio(event, {
+        context: `${zone.nameEn ?? zone.name}: ${currentGame!.question}`,
+      }).then(msg => { if (msg) setLioMessage(msg) })
     } else {
       playWrong()
       setFeedbackText(currentGame!.wrongFeedback)
       setLastAnswerCorrect(false)
+      setWrongOptionText(option.text)
+
+      const wc = wrongCountRef.current + 1
+      wrongCountRef.current = wc
+
+      // Find correct answer text
+      const correctOption = currentGame!.options.find(o => o.isCorrect)
+      const teachOpts = {
+        wrongAnswer:   option.text,
+        correctAnswer: correctOption?.text ?? '',
+        questionText:  currentGame!.question,
+        attemptCount:  wc,
+        context:       `${zone.nameEn ?? zone.name}: ${currentGame!.question} — copilul a răspuns "${option.text}", corect era "${correctOption?.text ?? ''}"`,
+      }
+
+      if (wc === 1) {
+        askLio('wrong', {
+          context: `${zone.nameEn ?? zone.name}: ${currentGame!.question}, corect era "${correctOption?.text ?? ''}"`,
+        }).then(msg => { if (msg) setLioMessage(msg) })
+      } else if (wc === 2) {
+        setTeachMode('hint')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        hint(teachOpts).then(msg => { setTeachLoading(false); if (msg) setTeachMessage(msg) })
+      } else if (wc === 3) {
+        setTeachMode('socratic')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        socratic(teachOpts).then(msg => { setTeachLoading(false); if (msg) setTeachMessage(msg) })
+      } else {
+        setTeachMode('teach')
+        setTeachMessage(null)
+        setTeachLoading(true)
+        setShowTeacher(true)
+        teach(teachOpts).then(msg => { setTeachLoading(false); if (msg) setTeachMessage(msg) })
+      }
     }
 
     setFunFact(currentGame!.funFact)
@@ -136,6 +191,9 @@ export default function ZoneGame({
   }
 
   function handleNextQuestion() {
+    setShowTeacher(false)
+    setTeachMessage(null)
+    wrongCountRef.current = 0
     if (isLastQuestion) {
       // Finalizare
       markCountryVisitedLocally(zone.id)
@@ -445,14 +503,24 @@ export default function ZoneGame({
 
       {/* Feedback phase */}
       {phase === 'feedback' && (
-        <FeedbackCard
-          correct={lastAnswerCorrect!}
-          feedbackText={feedbackText}
-          funFact={funFact}
-          countryFlag={zone.flag}
-          onNext={handleNextQuestion}
-          isLast={isLastQuestion}
-        />
+        <>
+          <FeedbackCard
+            correct={lastAnswerCorrect!}
+            feedbackText={feedbackText}
+            funFact={funFact}
+            countryFlag={zone.flag}
+            onNext={handleNextQuestion}
+            isLast={isLastQuestion}
+          />
+          {showTeacher && (
+            <LioTeacher
+              message={teachMessage}
+              isLoading={teachLoading}
+              mode={teachMode}
+              onDismiss={() => { setShowTeacher(false); setTeachMessage(null) }}
+            />
+          )}
+        </>
       )}
 
       {/* Quiz phase */}
