@@ -34,7 +34,7 @@ const SUPABASE_ERRORS: Record<string, string> = {
 }
 
 function getErrorMessage(msg: string): string {
-  return SUPABASE_ERRORS[msg] ?? 'Something went wrong. Please try again.'
+  return SUPABASE_ERRORS[msg] ?? msg ?? 'Something went wrong. Please try again.'
 }
 
 export default function RegisterPage() {
@@ -69,7 +69,7 @@ export default function RegisterPage() {
 
     // Dacă sesiunea există imediat (email confirm dezactivat în Supabase dev)
     if (data.session) {
-      window.location.href = '/parents/dashboard?onboarding=true'
+      window.location.href = '/worlds?onboarding=true'
       return
     }
 
