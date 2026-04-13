@@ -11,30 +11,30 @@ import { Input } from '@/components/ui/Input'
 
 const schema = z
   .object({
-    full_name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
+    full_name: z.string().min(2, 'Numele trebuie să aibă cel puțin 2 caractere'),
+    email: z.string().email('Adresa de email nu este validă'),
     password: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/\d/, 'Password must contain at least one number'),
+      .min(8, 'Parola trebuie să aibă cel puțin 8 caractere')
+      .regex(/\d/, 'Parola trebuie să conțină cel puțin o cifră'),
     confirm_password: z.string(),
-    terms: z.boolean().refine((v) => v, 'You must accept the terms to continue'),
+    terms: z.boolean().refine((v) => v, 'Trebuie să accepți termenii pentru a continua'),
   })
   .refine((d) => d.password === d.confirm_password, {
-    message: 'Passwords do not match',
+    message: 'Parolele nu coincid',
     path: ['confirm_password'],
   })
 
 type FormValues = z.infer<typeof schema>
 
 const SUPABASE_ERRORS: Record<string, string> = {
-  'User already registered': 'An account with this email already exists. Try logging in.',
-  'Invalid email': 'The email address is not valid.',
-  'Signup requires a valid password': 'The password is not valid.',
+  'User already registered': 'Un cont cu acest email există deja. Încearcă să te autentifici.',
+  'Invalid email': 'Adresa de email nu este validă.',
+  'Signup requires a valid password': 'Parola introdusă nu este validă.',
 }
 
 function getErrorMessage(msg: string): string {
-  return SUPABASE_ERRORS[msg] ?? msg ?? 'Something went wrong. Please try again.'
+  return SUPABASE_ERRORS[msg] ?? msg ?? 'Ceva nu a funcționat. Încearcă din nou.'
 }
 
 export default function RegisterPage() {
@@ -88,19 +88,19 @@ export default function RegisterPage() {
           📧
         </div>
         <h1 className="font-fredoka text-2xl font-semibold text-[var(--dark)]">
-          Check your email!
+          Verifică email-ul!
         </h1>
         <p className="font-nunito text-base text-[var(--gray)] leading-relaxed">
-          We sent a confirmation link to your email. Click it to enter Playlio!
+          Ți-am trimis un link de confirmare pe email. Dă click pe el pentru a intra în Playlio!
         </p>
         <p className="font-nunito text-sm text-[var(--gray)]">
-          Didn&apos;t receive anything?{' '}
+          Nu ai primit nimic?{' '}
           <button
             onClick={() => setSuccess(false)}
             className="font-semibold underline"
             style={{ color: 'var(--coral)' }}
           >
-            Try again
+            Încearcă din nou
           </button>
         </p>
       </div>
@@ -111,16 +111,16 @@ export default function RegisterPage() {
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h1 className="font-fredoka text-3xl font-semibold text-[var(--dark)] mb-1">
-          Create parent account
+          Creează cont de părinte
         </h1>
         <p className="font-nunito text-sm text-[var(--gray)]">
-          Already have an account?{' '}
+          Ai deja un cont?{' '}
           <Link
             href="/login"
             className="font-semibold hover:underline"
             style={{ color: 'var(--coral)' }}
           >
-            Log in
+            Autentifică-te
           </Link>
         </p>
       </div>
@@ -132,7 +132,7 @@ export default function RegisterPage() {
       >
         <span className="text-xl flex-shrink-0">👨‍👧</span>
         <p className="font-nunito text-sm text-[var(--dark)] leading-relaxed">
-          <strong>This is the parent&apos;s account.</strong> After creating it, you&apos;ll add your child&apos;s name &amp; age inside the app — no separate account needed for children!
+          <strong>Acesta este contul părintelui.</strong> După creare, adaugi numele și vârsta copilului în aplicație — copiii nu au nevoie de cont separat!
         </p>
       </div>
 
@@ -148,8 +148,8 @@ export default function RegisterPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         <Input
-          label="Your name (parent)"
-          placeholder="e.g. Maria"
+          label="Numele tău (părinte)"
+          placeholder="ex. Maria"
           autoComplete="given-name"
           error={errors.full_name?.message}
           {...register('full_name')}
@@ -158,7 +158,7 @@ export default function RegisterPage() {
         <Input
           type="email"
           label="Email"
-          placeholder="parent@email.com"
+          placeholder="parinte@email.com"
           autoComplete="email"
           error={errors.email?.message}
           {...register('email')}
@@ -167,11 +167,11 @@ export default function RegisterPage() {
         <div className="relative">
           <Input
             type={showPass ? 'text' : 'password'}
-            label="Password"
-            placeholder="Min 8 characters + a number"
+            label="Parolă"
+            placeholder="Min 8 caractere + o cifră"
             autoComplete="new-password"
             error={errors.password?.message}
-            hint="Min 8 characters and at least one number"
+            hint="Minimum 8 caractere și cel puțin o cifră"
             {...register('password')}
           />
           <button
@@ -187,8 +187,8 @@ export default function RegisterPage() {
         <div className="relative">
           <Input
             type={showConfirm ? 'text' : 'password'}
-            label="Confirm password"
-            placeholder="Repeat password"
+            label="Confirmă parola"
+            placeholder="Repetă parola"
             autoComplete="new-password"
             error={errors.confirm_password?.message}
             {...register('confirm_password')}
@@ -211,11 +211,11 @@ export default function RegisterPage() {
             {...register('terms')}
           />
           <span className="font-nunito text-sm text-[var(--gray)]">
-            I accept the{' '}
+            Accept{' '}
             <Link href="/terms" className="underline font-semibold text-[var(--dark)]">
-              terms and conditions
+              termenii și condițiile
             </Link>{' '}
-            and confirm I am at least 18 years old
+            și confirm că am cel puțin 18 ani
           </span>
         </label>
         {errors.terms && (
@@ -233,10 +233,10 @@ export default function RegisterPage() {
           {isSubmitting ? (
             <>
               <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-              Creating account...
+              Se creează contul...
             </>
           ) : (
-            'Create free account'
+            'Creează cont gratuit'
           )}
         </button>
       </form>

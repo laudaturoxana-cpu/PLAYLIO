@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 
 const NAV_LINKS = [
-  { href: '#lumi', label: 'Worlds' },
+  { href: '#lumi', label: 'Lumi' },
   { href: '#avatar', label: 'Avatar' },
-  { href: '#parinti', label: 'Parents' },
-  { href: '#despre', label: 'About' },
+  { href: '#parinti', label: 'Părinți' },
+  { href: '#despre', label: 'Despre' },
 ] as const
 
 export function Navbar() {
@@ -92,7 +92,7 @@ export function Navbar() {
               minHeight: '44px',
             }}
           >
-            Start Free
+            Începe Gratuit
           </Link>
 
           {/* Mobile hamburger */}
@@ -194,7 +194,7 @@ export function Navbar() {
             }}
             onClick={() => setMobileOpen(false)}
           >
-            Start Free
+            Începe Gratuit
           </Link>
         </div>
       </div>

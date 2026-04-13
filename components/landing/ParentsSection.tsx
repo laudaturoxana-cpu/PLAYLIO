@@ -2,35 +2,35 @@ const BENEFIT_CARDS = [
   {
     icon: '🔒',
     iconBg: 'rgba(79,195,247,0.15)',
-    title: 'Zero chat with strangers',
-    text: 'Playlio has no chat or player communication system. Your child cannot be contacted by anyone. Ever.',
+    title: 'Zero chat cu necunoscuți',
+    text: 'Playlio nu are sistem de chat sau comunicare între jucători. Copilul tău nu poate fi contactat de nimeni. Niciodată.',
   },
   {
     icon: '📵',
     iconBg: 'rgba(102,187,106,0.15)',
-    title: 'Zero ads, ever',
-    text: 'Not even in the free version. No pop-ups, no banners, no video ads. Our unconditional promise.',
+    title: 'Zero reclame, vreodată',
+    text: 'Nici măcar în versiunea gratuită. Fără pop-up-uri, bannere sau reclame video. Promisiunea noastră necondiționată.',
   },
   {
     icon: '🎓',
     iconBg: 'rgba(255,213,79,0.15)',
-    title: 'Real education, real play',
-    text: 'Letters, numbers, logic and creativity taught invisibly through gameplay. Your child advances at school without knowing they\'re "doing homework".',
+    title: 'Educație reală, joc real',
+    text: 'Litere, cifre, logică și creativitate predate invizibil prin joc. Copilul tău avansează la școală fără să știe că face "temele".',
   },
   {
     icon: '🛡️',
     iconBg: 'rgba(206,147,216,0.15)',
-    title: 'GDPR & data 100% protected',
-    text: 'Compliant with European law. Your child\'s data is never sold, shared, or used for advertising.',
+    title: 'GDPR & date 100% protejate',
+    text: 'Conform legii europene. Datele copilului tău nu sunt niciodată vândute, partajate sau folosite pentru publicitate.',
   },
 ]
 
 const TRUST_BADGES = [
-  '✓ Ages 3–10',
-  '✓ No violence',
-  '✓ Full parental control',
-  '✓ Positive content',
-  '✓ COPPA compliant',
+  '✓ Vârste 3–10 ani',
+  '✓ Fără violență',
+  '✓ Control parental complet',
+  '✓ Conținut pozitiv',
+  '✓ Conform GDPR',
 ]
 
 export function ParentsSection() {
@@ -49,13 +49,13 @@ export function ParentsSection() {
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)', color: '#212121', marginBottom: '12px' }}
           >
-            Designed with care for parents
+            Creat cu grijă pentru părinți
           </h2>
           <p
             className="font-nunito"
             style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6, margin: '0 auto' }}
           >
-            You decide. You control. Your child plays in complete safety.
+            Tu decizi. Tu controlezi. Copilul tău se joacă în deplină siguranță.
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export function ParentsSection() {
               className="font-nunito italic"
               style={{ fontSize: 'clamp(14px, 2.5vw, 17px)', color: '#212121', lineHeight: 1.7, marginBottom: '20px' }}
             >
-              &ldquo;Andrei always asks for &lsquo;more of the letters game&rsquo;. He never realized he was actually practicing for school.&rdquo;
+              &ldquo;Andrei cere mereu &lsquo;mai mult jocul cu litere&rsquo;. Nu și-a dat seama că exersa de fapt pentru școală.&rdquo;
             </p>
             <footer className="flex items-center justify-center gap-3">
               <div
@@ -175,7 +175,7 @@ export function ParentsSection() {
                 MC
               </div>
               <cite className="not-italic font-nunito font-semibold" style={{ fontSize: '14px', color: '#212121' }}>
-                Maria C., mom, Bucharest
+                Maria C., mamă, București
               </cite>
             </footer>
           </blockquote>

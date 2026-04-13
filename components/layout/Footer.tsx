@@ -1,24 +1,24 @@
 import Link from 'next/link'
 
 const PRODUCT_LINKS = [
-  { href: '#lumi', label: 'The 4 Worlds' },
-  { href: '#avatar', label: 'Avatar Creator' },
+  { href: '#lumi', label: 'Cele 4 Lumi' },
+  { href: '#avatar', label: 'Creator Avatar' },
   { href: '/register?plan=plus', label: 'Playlio Plus' },
-  { href: '#', label: 'News' },
+  { href: '#', label: 'Noutăți' },
 ]
 
 const COMPANY_LINKS = [
-  { href: '#', label: 'About us' },
+  { href: '#', label: 'Despre noi' },
   { href: '#', label: 'Blog' },
   { href: '#', label: 'Contact' },
-  { href: '#', label: 'Careers' },
+  { href: '#', label: 'Cariere' },
 ]
 
 const LEGAL_LINKS = [
-  { href: '#', label: 'Privacy Policy' },
-  { href: '#', label: 'Terms & Conditions' },
+  { href: '#', label: 'Politica de confidențialitate' },
+  { href: '/terms', label: 'Termeni și condiții' },
   { href: '#', label: 'GDPR' },
-  { href: '#', label: 'Parents Guide' },
+  { href: '#', label: 'Ghidul părinților' },
 ]
 
 function FooterColumn({ title, links }: { title: string; links: { href: string; label: string }[] }) {
@@ -79,7 +79,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E', lineHeight: 1.6, maxWidth: '200px' }}>
-              A safe and colorful world for your kids.
+              O lume sigură și colorată pentru copiii tăi.
             </p>
             <Link href="/" className="font-nunito font-semibold" style={{ fontSize: '13px', color: '#4FC3F7' }}>
               playlio.fun
@@ -108,9 +108,9 @@ export function Footer() {
             </div>
           </div>
 
-          <FooterColumn title="Product" links={PRODUCT_LINKS} />
-          <FooterColumn title="Company" links={COMPANY_LINKS} />
-          <FooterColumn title="Legal & Safety" links={LEGAL_LINKS} />
+          <FooterColumn title="Produs" links={PRODUCT_LINKS} />
+          <FooterColumn title="Companie" links={COMPANY_LINKS} />
+          <FooterColumn title="Legal & Siguranță" links={LEGAL_LINKS} />
         </div>
 
         {/* Bottom bar */}
@@ -119,7 +119,7 @@ export function Footer() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '24px', gap: '12px' }}
         >
           <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E' }}>
-            © 2026 Playlio. Built with ❤️ for kids worldwide.
+            © 2026 Playlio. Creat cu ❤️ pentru copiii din toată lumea.
           </p>
           <p className="font-nunito" style={{ fontSize: '13px', color: '#9E9E9E' }}>
             🇷🇴 Made in Romania

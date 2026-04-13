@@ -23,7 +23,7 @@ export function HeroSection() {
           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold font-nunito"
           style={{ background: 'rgba(79,195,247,0.12)', border: '1px solid #4FC3F7', color: '#0288D1' }}
         >
-          🌍 Safe · No Ads · Educational
+          🌍 Sigur · Fără Reclame · Educativ
         </span>
 
         {/* Heading */}
@@ -32,7 +32,7 @@ export function HeroSection() {
             className="block font-fredoka"
             style={{ fontSize: 'clamp(22px, 4vw, 40px)', fontWeight: 400, color: '#212121' }}
           >
-            Welcome to
+            Bine ai venit în
           </span>
           <span
             className="block font-fredoka"
@@ -48,7 +48,7 @@ export function HeroSection() {
               lineHeight: 1.15,
             }}
           >
-            The Playlio World
+            Lumea Playlio
           </span>
         </h1>
 
@@ -57,7 +57,7 @@ export function HeroSection() {
           className="font-nunito w-full"
           style={{ fontSize: 'clamp(15px, 2.5vw, 19px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6 }}
         >
-          A colorful and safe world where kids explore, build, learn and play — no ads, no dangers.
+          O lume colorată și sigură unde copiii explorează, construiesc, învață și se joacă — fără reclame, fără pericole.
         </p>
 
         {/* CTA buttons */}
@@ -74,7 +74,7 @@ export function HeroSection() {
               maxWidth: '280px',
             }}
           >
-            Start the Adventure
+            Începe Aventura
           </Link>
           <Link
             href="#lumi"
@@ -88,13 +88,13 @@ export function HeroSection() {
               maxWidth: '280px',
             }}
           >
-            Explore the worlds
+            Explorează lumile
           </Link>
         </div>
 
         {/* Trust badges */}
         <div className="flex flex-wrap justify-center gap-2">
-          {['Free', 'No ads', 'Safe for kids', 'Educational'].map((t) => (
+          {['Gratuit', 'Fără reclame', 'Sigur pentru copii', 'Educativ'].map((t) => (
             <span key={t} className="font-nunito text-xs font-semibold" style={{ color: '#9E9E9E' }}>
               ✓ {t}
             </span>
@@ -135,10 +135,10 @@ export function HeroSection() {
           {/* 4 world badges — 2x2 grid, always visible on all screens */}
           <div className="grid grid-cols-2" style={{ gap: '12px' }}>
             {[
-              { label: 'Adventure', emoji: '🗺️', bg: 'rgba(102,187,106,0.15)', color: '#2E7D32', delay: '0s' },
-              { label: 'Builder', emoji: '🏗️', bg: 'rgba(79,195,247,0.15)', color: '#0277BD', delay: '0.5s' },
-              { label: 'Learning', emoji: '📚', bg: 'rgba(255,112,67,0.15)', color: '#BF360C', delay: '1s' },
-              { label: 'Jump', emoji: '🎮', bg: 'rgba(255,213,79,0.20)', color: '#F57F17', delay: '1.5s' },
+              { label: 'Aventură', emoji: '🗺️', bg: 'rgba(102,187,106,0.15)', color: '#2E7D32', delay: '0s' },
+              { label: 'Constructor', emoji: '🏗️', bg: 'rgba(79,195,247,0.15)', color: '#0277BD', delay: '0.5s' },
+              { label: 'Învățare', emoji: '📚', bg: 'rgba(255,112,67,0.15)', color: '#BF360C', delay: '1s' },
+              { label: 'Salt', emoji: '🎮', bg: 'rgba(255,213,79,0.20)', color: '#F57F17', delay: '1.5s' },
             ].map((c) => (
               <div
                 key={c.label}

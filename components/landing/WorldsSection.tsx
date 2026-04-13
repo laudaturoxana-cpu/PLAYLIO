@@ -3,56 +3,56 @@ import { WorldCard } from './WorldCard'
 const WORLDS = [
   {
     icon: '🗺️',
-    title: 'Adventure World',
-    badge: 'Explore',
+    title: 'Lumea Aventurii',
+    badge: 'Explorare',
     badgeBg: 'rgba(102,187,106,0.18)',
     badgeTextColor: '#2E7D32',
-    description: 'Explore 5 magical zones, collect treasures and complete missions with Lio your guide.',
-    features: ['• 5 zones to explore', '• 50+ missions', '• Friendly characters'],
+    description: 'Explorează 5 zone magice, colectează comori și completează misiuni cu Lio, ghidul tău.',
+    features: ['• 5 zone de explorat', '• 50+ misiuni', '• Personaje prietenoase'],
     bulletColor: '#388E3C',
-    ctaLabel: 'Explore →',
+    ctaLabel: 'Explorează →',
     ctaHref: '/play/adventure',
     gradientStyle: 'linear-gradient(135deg, rgba(102,187,106,0.08) 0%, rgba(255,249,196,0.15) 100%)',
     accentColor: '#2E7D32',
   },
   {
     icon: '🏗️',
-    title: 'Builder World',
-    badge: 'Creativity',
+    title: 'Lumea Constructorului',
+    badge: 'Creativitate',
     badgeBg: 'rgba(79,195,247,0.18)',
     badgeTextColor: '#0277BD',
-    description: 'Build and decorate your own house. Choose furniture, colors and objects earned in the game.',
-    features: ['• 6 rooms to decorate', '• 100+ objects', '• Your unique home'],
+    description: 'Construiește și decorează propria casă. Alege mobilă, culori și obiecte câștigate în joc.',
+    features: ['• 6 camere de decorat', '• 100+ obiecte', '• Casa ta unică'],
     bulletColor: '#0288D1',
-    ctaLabel: 'Build →',
+    ctaLabel: 'Construiește →',
     ctaHref: '/play/builder',
     gradientStyle: 'linear-gradient(135deg, rgba(79,195,247,0.08) 0%, rgba(237,231,246,0.12) 100%)',
     accentColor: '#0277BD',
   },
   {
     icon: '📚',
-    title: 'Learning World',
-    badge: 'Education',
+    title: 'Lumea Învățării',
+    badge: 'Educație',
     badgeBg: 'rgba(255,112,67,0.15)',
     badgeTextColor: '#BF360C',
-    description: '6 mini-games that teach letters, numbers, colors, shapes and logic — without kids even noticing they\'re learning.',
-    features: ['• Letters & numbers', '• Logical thinking', '• Age-appropriate'],
+    description: '6 mini-jocuri care predau litere, cifre, culori, forme și logică — fără ca micuții să realizeze că învață.',
+    features: ['• Litere și cifre', '• Gândire logică', '• Adaptat pe vârstă'],
     bulletColor: '#E64A19',
-    ctaLabel: 'Learn →',
+    ctaLabel: 'Învață →',
     ctaHref: '/play/learning',
     gradientStyle: 'linear-gradient(135deg, rgba(255,112,67,0.08) 0%, rgba(232,245,233,0.12) 100%)',
     accentColor: '#BF360C',
   },
   {
     icon: '🎮',
-    title: 'Jump World',
-    badge: 'Fun',
+    title: 'Lumea Saltului',
+    badge: 'Distracție',
     badgeBg: 'rgba(255,213,79,0.22)',
     badgeTextColor: '#F57F17',
-    description: 'Colorful platformer with progressive levels. Jump, dodge obstacles, collect stars and break records.',
-    features: ['• 3 difficulty levels', '• 15 levels', '• Boss levels'],
+    description: 'Platformer colorat cu niveluri progresive. Sari, evită obstacole, colectează stele și bate recorduri.',
+    features: ['• 3 grade de dificultate', '• 15 niveluri', '• Niveluri boss'],
     bulletColor: '#F57F17',
-    ctaLabel: 'Play →',
+    ctaLabel: 'Joacă →',
     ctaHref: '/play/jump',
     gradientStyle: 'linear-gradient(135deg, rgba(255,213,79,0.10) 0%, rgba(232,234,246,0.12) 100%)',
     accentColor: '#F57F17',
@@ -74,13 +74,13 @@ export function WorldsSection() {
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)', color: '#212121', marginBottom: '12px' }}
           >
-            The 4 Playlio Worlds
+            Cele 4 Lumi Playlio
           </h2>
           <p
             className="font-nunito"
             style={{ fontSize: 'clamp(15px, 2.5vw, 18px)', color: '#757575', maxWidth: '560px', lineHeight: 1.6, margin: '0 auto' }}
           >
-            Each world has unique adventures, rewards and lessons hidden in the gameplay
+            Fiecare lume are aventuri unice, recompense și lecții ascunse în joc
           </p>
         </div>
 

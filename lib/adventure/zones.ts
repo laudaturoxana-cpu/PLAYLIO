@@ -388,6 +388,69 @@ export const CONTINENTS: Continent[] = [
           ],
         },
       },
+      {
+        id: 'spain',
+        continentId: 'europe',
+        name: 'Spania', nameEn: 'Spain',
+        flag: '🇪🇸', capital: 'Madrid', capitalEmoji: '💃',
+        landmark: 'Sagrada Família', landmarkEmoji: '⛪',
+        animal: 'Taur iberic', animalEmoji: '🐂',
+        color: '#B71C1C',
+        postcardEmoji: '🌹',
+        builderBlockUnlock: 'mosaic_tile',
+        age3to5: {
+          lioIntro: '¡Hola! Spania e țara flamenco-ului și a portocalelor! 🌹🇪🇸',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Ce dans tradițional vine din Spania?',
+              options: [
+                { text: '💃 Flamenco', isCorrect: true },
+                { text: '🩰 Baletul', isCorrect: false },
+              ],
+              correctFeedback: 'Olé! Flamenco e dansul cu bătăi de picior și rochii colorate! 💃',
+              wrongFeedback: 'Flamenco e dansul tradițional spaniol cu pași rapizi și rochii roșii!',
+              funFact: 'Spania produce cei mai mulți struguri din Europa! 🍇',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bienvenidos a España! Sagrada Família e construită de 140 ani și nu e gata! ⛪',
+          miniGames: [
+            {
+              type: 'landmark_quiz',
+              question: 'Cine a proiectat Sagrada Família din Barcelona?',
+              options: [
+                { text: 'Antoni Gaudí', isCorrect: true },
+                { text: 'Pablo Picasso', isCorrect: false },
+                { text: 'Salvador Dalí', isCorrect: false },
+                { text: 'Francisco Goya', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! Gaudí a dedicat 40 ani din viață acestei biserici! ⛪',
+              wrongFeedback: 'Sagrada Família a fost proiectată de arhitectul catalan Antoni Gaudí!',
+              funFact: 'Spania a inventat mopul (mopul de podele) în 1956 — util în toată lumea! 🧹',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'España — imperiul care a descoperit America și a schimbat lumea! 🌍',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Cristofor Columb a navigat sub steagul Spaniei când a descoperit America în…',
+              options: [
+                { text: '1492', isCorrect: true },
+                { text: '1776', isCorrect: false },
+                { text: '1066', isCorrect: false },
+                { text: '1350', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! 1492 — unul din cele mai importante momente din istoria lumii! ⛵',
+              wrongFeedback: 'Columb a descoperit America în 1492, finanțat de regii Spaniei!',
+              funFact: 'Spania are 44 situri UNESCO — printre primele 10 țări din lume! 🏛️',
+            },
+          ],
+        },
+      },
     ],
   },
 
@@ -1243,6 +1306,132 @@ export const CONTINENTS: Continent[] = [
           ],
         },
       },
+      {
+        id: 'cuba',
+        continentId: 'north_america',
+        name: 'Cuba', nameEn: 'Cuba',
+        flag: '🇨🇺', capital: 'Havana', capitalEmoji: '🎺',
+        landmark: 'Malecón — Havana', landmarkEmoji: '🌊',
+        animal: 'Colibri Bee (cel mai mic păsărel)', animalEmoji: '🐦',
+        color: '#1B5E20',
+        postcardEmoji: '🎺',
+        builderBlockUnlock: 'painted_brick',
+        age3to5: {
+          lioIntro: '¡Hola! Cuba e o insulă mare cu muzică și culori vii! 🎺🇨🇺',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Cel mai mic păsărel din lume trăiește în Cuba:',
+              options: [
+                { text: '🐦 Colibri Bee', isCorrect: true },
+                { text: '🦅 Vultur', isCorrect: false },
+              ],
+              correctFeedback: 'Uimitor! Colibri Bee e cât un deget — cel mai mic din lume! 🐦',
+              wrongFeedback: 'Colibri Bee din Cuba e cea mai mică pasăre din lume!',
+              funFact: 'Cuba are mașini vechi din anii 1950 care arată ca niște bomboane! 🚗',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bienvenidos a Cuba! O insulă unde muzica curge pe toate străzile! 🎵',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Cuba este…',
+              options: [
+                { text: 'Cea mai mare insulă din Caraibe', isCorrect: true },
+                { text: 'O peninsulă a Mexicului', isCorrect: false },
+                { text: 'Un arhipelag de 100 insule', isCorrect: false },
+                { text: 'Parte din SUA', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Cuba e insula-regină a Caraibelor! 🌴',
+              wrongFeedback: 'Cuba este cea mai mare insulă din Marea Caraibilor!',
+              funFact: 'Cuba a inventat salsa și mambo — ritmuri ascultate acum în toată lumea! 🎵',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Cuba — insulă cu un rol uriaș în istoria Americii Latine! 🌎',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Cuba este renumită pentru exportul de…',
+              options: [
+                { text: 'Tutun (trabucuri) și zahăr din trestie', isCorrect: true },
+                { text: 'Petrol și gaze', isCorrect: false },
+                { text: 'Mașini și electronice', isCorrect: false },
+                { text: 'Grâu și porumb', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! Trabucurile cubaneze sunt faimoase în toată lumea! 🌿',
+              wrongFeedback: 'Cuba e renumită pentru zahărul din trestie și trabucurile handmade!',
+              funFact: 'Cuba are unul din cele mai bune sisteme de sănătate din lume — gratuit pentru toți! 🏥',
+            },
+          ],
+        },
+      },
+      {
+        id: 'costa_rica',
+        continentId: 'north_america',
+        name: 'Costa Rica', nameEn: 'Costa Rica',
+        flag: '🇨🇷', capital: 'San José', capitalEmoji: '🌿',
+        landmark: 'Volcán Arenal', landmarkEmoji: '🌋',
+        animal: 'Leneș cu două degete', animalEmoji: '🦥',
+        color: '#1B5E20',
+        postcardEmoji: '🌿',
+        builderBlockUnlock: 'jungle_leaf',
+        age3to5: {
+          lioIntro: '¡Pura Vida! Costa Rica e țara lenioșilor și a junglei! 🦥🇨🇷',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce animal doarme 20 ore pe zi și stă agățat în copaci?',
+              options: [
+                { text: '🦥 Leneș', isCorrect: true },
+                { text: '🦁 Leu', isCorrect: false },
+              ],
+              correctFeedback: 'Da! Leneșul e campionul somnului — 20 ore pe zi! 🦥',
+              wrongFeedback: 'Leneșul trăiește în copacii din Costa Rica și doarme aproape toată ziua!',
+              funFact: '"Pura Vida" e salutul din Costa Rica — înseamnă "Viață pură și bună"! ☀️',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bienvenidos a Costa Rica! 25% din teritoriu e parc național! 🌿',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Costa Rica este printre primele țări din lume care a…',
+              options: [
+                { text: 'Abolit armata (1948)', isCorrect: true },
+                { text: 'Trimis oameni pe Lună', isCorrect: false },
+                { text: 'Construit primul zgârie-nori', isCorrect: false },
+                { text: 'Inventat internetul', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! Costa Rica nu are armată de 75 ani și investește în educație! 📚',
+              wrongFeedback: 'Costa Rica a abolit armata în 1948 — una din primele țări din lume!',
+              funFact: 'Costa Rica produce 99% din energia electrică din surse regenerabile! ⚡🌊',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Costa Rica — model global de sustenabilitate și ecoturism! 🌱',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Costa Rica are 5% din biodiversitatea Pământului, deși ocupă doar…',
+              options: [
+                { text: '0.03% din suprafața Pământului', isCorrect: true },
+                { text: '5% din suprafața Pământului', isCorrect: false },
+                { text: '1% din suprafața Pământului', isCorrect: false },
+                { text: '10% din suprafața Pământului', isCorrect: false },
+              ],
+              correctFeedback: 'Extraordinar! 5% din speciile lumii în 0.03% din suprafață! 🌿',
+              wrongFeedback: 'Costa Rica e o "super-zonă" de biodiversitate — 5% din specii în 0.03% din suprafață!',
+              funFact: 'Costa Rica e liderul mondial în energie verde — obiectiv: carbon neutru în 2050! 🌱',
+            },
+          ],
+        },
+      },
     ],
   },
 
@@ -1503,6 +1692,69 @@ export const CONTINENTS: Continent[] = [
               correctFeedback: 'Fascinant! Construită în 800 d.Hr. — cu 650 ani înaintea Machu Picchu! 🏛️',
               wrongFeedback: 'Ciudad Perdida a fost construită în jurul anului 800 d.Hr., cu 650 ani înainte de Machu Picchu!',
               funFact: 'Columbia are 59 de parcuri naționale — 11% din suprafața țării e protejată! 🌳',
+            },
+          ],
+        },
+      },
+      {
+        id: 'chile',
+        continentId: 'south_america',
+        name: 'Chile', nameEn: 'Chile',
+        flag: '🇨🇱', capital: 'Santiago', capitalEmoji: '🏔️',
+        landmark: 'Deșertul Atacama', landmarkEmoji: '🌵',
+        animal: 'Condor andin', animalEmoji: '🦅',
+        color: '#1A237E',
+        postcardEmoji: '🌵',
+        builderBlockUnlock: 'desert_stone',
+        age3to5: {
+          lioIntro: 'Hola! Chile e cea mai lungă și subțire țară din lume! 🌵🇨🇱',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Chile are o formă specială pe hartă — seamănă cu un…',
+              options: [
+                { text: '🌶️ Ardei iute (chili)', isCorrect: true },
+                { text: '🔵 Cerc', isCorrect: false },
+              ],
+              correctFeedback: 'Haha! Chile chiar seamănă cu un ardei lung și subțire! 🌶️',
+              wrongFeedback: 'Chile e lungă și subțire ca un ardei — de aceea se potrivesc numele!',
+              funFact: 'Chile produce 1/3 din cuprul mondial — cel mai important metal al tehnologiei! 🔧',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bienvenidos a Chile! Deșertul Atacama e cel mai uscat loc de pe Pământ! 🌵',
+          miniGames: [
+            {
+              type: 'landmark_quiz',
+              question: 'Deșertul Atacama din Chile este special deoarece…',
+              options: [
+                { text: 'E cel mai uscat deșert din lume', isCorrect: true },
+                { text: 'E cel mai cald deșert din lume', isCorrect: false },
+                { text: 'E singurul deșert din America', isCorrect: false },
+                { text: 'E cel mai mare deșert din lume', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Unele zone din Atacama nu au primit ploaie de 400 ani! 🌵',
+              wrongFeedback: 'Atacama e cel mai uscat deșert — unele zone nu au văzut ploaie de secole!',
+              funFact: 'Atacama e atât de uscat că NASA îl folosește ca teren de test pentru roboți pe Marte! 🤖',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Chile — de la Patagonia la Atacama, o țară cu peisaje extreme! 🏔️',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Insula Paștelui (cu statuile Moai) aparține de…',
+              options: [
+                { text: 'Chile', isCorrect: true },
+                { text: 'Peru', isCorrect: false },
+                { text: 'Polinezia Franceză', isCorrect: false },
+                { text: 'Ecuador', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! Rapa Nui / Insula Paștelui e teritoriu chilian! 🗿',
+              wrongFeedback: 'Insula Paștelui cu misterioasele statui Moai aparține de Chile!',
+              funFact: 'Statuile Moai de pe Insula Paștelui au corpuri întregi îngropate — nu sunt doar capete! 🗿',
             },
           ],
         },
@@ -1769,6 +2021,69 @@ export const CONTINENTS: Continent[] = [
               correctFeedback: 'Corect! Insula Noua Guinee e a doua ca mărime din lume, împărtășită de două țări! 🗺️',
               wrongFeedback: 'Papua Noua Guinee împarte insula cu Indonezia — este a doua cea mai mare insulă din lume!',
               funFact: 'Jungla Papuei ascunde specii nedescoperite — oamenii de știință găsesc noi animale în fiecare an! 🦋',
+            },
+          ],
+        },
+      },
+      {
+        id: 'samoa',
+        continentId: 'oceania',
+        name: 'Samoa', nameEn: 'Samoa',
+        flag: '🇼🇸', capital: 'Apia', capitalEmoji: '🌺',
+        landmark: 'Cascadele Papapapaitai', landmarkEmoji: '💦',
+        animal: 'Liliac zburător (Flying Fox)', animalEmoji: '🦇',
+        color: '#4E342E',
+        postcardEmoji: '🌺',
+        builderBlockUnlock: 'palm_plank',
+        age3to5: {
+          lioIntro: 'Talofa! Samoa e o insulă tropicală cu flori și cascate! 🌺🇼🇸',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce animal zboară noaptea și mănâncă fructe în Samoa?',
+              options: [
+                { text: '🦇 Liliac Flying Fox', isCorrect: true },
+                { text: '🐦 Porumbel', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! Flying Fox e un liliac uriaș cât o vrabie — mănâncă fructe! 🦇',
+              wrongFeedback: 'Flying Fox e liliaculul gigant din Samoa care mănâncă fructe tropicale!',
+              funFact: '"Talofa" înseamnă "Bună ziua" în Samoa — spune-l și tu! 👋',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Talofa lava! Samoa e renumită pentru arta tatoo-ului polinez! 🌊',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Samoa e prima țară din lume care vede fiecare…',
+              options: [
+                { text: 'Zi nouă (e lângă linia datei internaționale)', isCorrect: true },
+                { text: 'Apus de soare', isCorrect: false },
+                { text: 'Eclipsă de soare', isCorrect: false },
+                { text: 'Furtună tropicală', isCorrect: false },
+              ],
+              correctFeedback: 'Wow! Samoa e "Prima ziuă pe Pământ" — chiar lângă linia de date! 🌅',
+              wrongFeedback: 'Samoa e lângă linia datei internaționale — prima care intră în ziua nouă!',
+              funFact: 'Samoa a schimbat fusul orar în 2011 sărind o zi întreagă — de la joi direct la sâmbătă! 🗓️',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Samoa — cultură polineziană pură, ospitalitate legendară și "fa\'asamoa"! 🌺',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Scriitorul Robert Louis Stevenson (autorul Insula Comorilor) a ales să trăiască ultimii ani în…',
+              options: [
+                { text: 'Samoa', isCorrect: true },
+                { text: 'Hawaii', isCorrect: false },
+                { text: 'Fiji', isCorrect: false },
+                { text: 'Tahiti', isCorrect: false },
+              ],
+              correctFeedback: 'Da! Stevenson a iubit atât Samoa că a rămas acolo pentru totdeauna! 📚',
+              wrongFeedback: 'Robert Louis Stevenson, autorul Insulei Comorilor, a trăit ultimii ani în Samoa!',
+              funFact: 'Samoanii sunt printre cei mai înalți oameni din Pacific — mulți devin jucători de rugby! 🏉',
             },
           ],
         },
