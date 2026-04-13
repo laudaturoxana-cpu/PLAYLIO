@@ -589,6 +589,132 @@ export const CONTINENTS: Continent[] = [
           ],
         },
       },
+      {
+        id: 'morocco',
+        continentId: 'africa',
+        name: 'Maroc', nameEn: 'Morocco',
+        flag: '🇲🇦', capital: 'Rabat', capitalEmoji: '🕌',
+        landmark: 'Piața Jemaa el-Fna', landmarkEmoji: '🕌',
+        animal: 'Dromedarul', animalEmoji: '🐪',
+        color: '#E65100',
+        postcardEmoji: '🧱',
+        builderBlockUnlock: 'terracotta',
+        age3to5: {
+          lioIntro: 'Marhaba! Suntem în Maroc — țara deșertului și a condimentelor! 🐪🕌',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce animal cu o singură cocoașă trăiește în deșertul Sahara din Maroc?',
+              options: [
+                { text: '🐪 Dromeder', isCorrect: true },
+                { text: '🦒 Girafă', isCorrect: false },
+              ],
+              correctFeedback: 'Da! Dromedarul are o singură cocoașă și merge zile fără apă! 🐪',
+              wrongFeedback: 'Dromedarul cu o cocoașă trăiește în deșerturile africane!',
+              funFact: 'Cocoașa dromedărului stochează grăsime, nu apă! 🐪',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Ahlan! Marocul e în Africa de Nord, la marginea deșertului Sahara! 🌅',
+          miniGames: [
+            {
+              type: 'capital_quiz',
+              question: 'Care este capitala Marocului?',
+              options: [
+                { text: 'Rabat', isCorrect: true },
+                { text: 'Casablanca', isCorrect: false },
+                { text: 'Marrakech', isCorrect: false },
+                { text: 'Fez', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Rabat e capitala, deși Casablanca e mai mare! 🌟',
+              wrongFeedback: 'Capitala Marocului e Rabat, nu Casablanca!',
+              funFact: 'Marocul e singurul stat african cu coastă atât la Atlanticul de Nord, cât și la Mediterana! 🌊',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Maroc — poarta dintre Africa și Europa, cu deșerturi și munți înalți! 🏔️',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Deșertul Sahara, cel mai mare deșert cald din lume, acoperă cât din Africa?',
+              options: [
+                { text: '25% din Africa (mărimea SUA)', isCorrect: true },
+                { text: '5% din Africa', isCorrect: false },
+                { text: '50% din Africa', isCorrect: false },
+                { text: '10% din Africa', isCorrect: false },
+              ],
+              correctFeedback: 'Uimitor! Sahara e cât tot SUA! 🏜️',
+              wrongFeedback: 'Sahara acoperă 25% din Africa — cât suprafața SUA!',
+              funFact: 'Sahara nu e mereu nisip! 70% din ea e stâncă și piatră! 🪨',
+            },
+          ],
+        },
+      },
+      {
+        id: 'nigeria',
+        continentId: 'africa',
+        name: 'Nigeria', nameEn: 'Nigeria',
+        flag: '🇳🇬', capital: 'Abuja', capitalEmoji: '🏙️',
+        landmark: 'Parcul Național Yankari', landmarkEmoji: '🐘',
+        animal: 'Elefant african', animalEmoji: '🐘',
+        color: '#2E7D32',
+        postcardEmoji: '🎭',
+        builderBlockUnlock: 'jungle_wood',
+        age3to5: {
+          lioIntro: 'Ndewo! Nigeria e cea mai populată țară din Africa! 🇳🇬🌍',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Cel mai mare animal de uscat din Africa are urechi mari și trompă. Este…',
+              options: [
+                { text: '🐘 Elefant african', isCorrect: true },
+                { text: '🦏 Rinocer', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! Elefantul african e cel mai mare animal de uscat! 🐘',
+              wrongFeedback: 'Elefantul african e cel mai mare animal de pe uscat!',
+              funFact: 'Elefanții africani pot recunoaște până la 100 de rude după voce! 🐘',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Lagos din Nigeria e cel mai mare oraș din Africa! 🌆',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Nigeria e cel mai populat stat din Africa. Are aproximativ…',
+              options: [
+                { text: '220 milioane de oameni', isCorrect: true },
+                { text: '50 milioane', isCorrect: false },
+                { text: '100 milioane', isCorrect: false },
+                { text: '400 milioane', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! 1 din 5 africani e nigerian! 🌍',
+              wrongFeedback: 'Nigeria are 220 milioane — cel mai populat stat african!',
+              funFact: 'Nigeria are peste 500 de limbi locale vorbite — una din cele mai diverse țări! 🗣️',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Nigeria — gigantul Africii cu petrol, film (Nollywood) și ritm! 🎬',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Nollywood din Nigeria produce anual cele mai multe filme din lume după…',
+              options: [
+                { text: 'India (Bollywood)', isCorrect: true },
+                { text: 'SUA (Hollywood)', isCorrect: false },
+                { text: 'China', isCorrect: false },
+                { text: 'Japonia', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! Nollywood e pe locul 2 mondial — înaintea Hollywoodului! 🎬',
+              wrongFeedback: 'Nollywood produce mai multe filme ca Hollywood — al 2-lea după Bollywood!',
+              funFact: 'Nollywood produce peste 2.500 de filme pe an cu bugete mici dar audiență uriașă! 📽️',
+            },
+          ],
+        },
+      },
     ],
   },
 
@@ -787,6 +913,132 @@ export const CONTINENTS: Continent[] = [
               correctFeedback: 'Exact! De aceea le numim "cifre arabe" deși sunt indiene! 🔢',
               wrongFeedback: 'Numerele indiene au ajuns în Europa prin matematicienii arabi!',
               funFact: 'India nu a invadat nicio altă țară în ultimii 100.000 de ani de istorie! ☮️',
+            },
+          ],
+        },
+      },
+      {
+        id: 'south_korea',
+        continentId: 'asia',
+        name: 'Coreea de Sud', nameEn: 'South Korea',
+        flag: '🇰🇷', capital: 'Seoul', capitalEmoji: '🏙️',
+        landmark: 'Palatul Gyeongbokgung', landmarkEmoji: '🏯',
+        animal: 'Tigrul siberian', animalEmoji: '🐯',
+        color: '#B71C1C',
+        postcardEmoji: '🎎',
+        builderBlockUnlock: 'paper_lantern',
+        age3to5: {
+          lioIntro: 'Annyeong! Suntem în Coreea de Sud — țara K-pop și a roboților! 🎵🤖',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Coreea de Sud e faimoasă pentru muzica numită…',
+              options: [
+                { text: '🎵 K-pop', isCorrect: true },
+                { text: '🎸 Rock', isCorrect: false },
+              ],
+              correctFeedback: 'Da! K-pop e ascultat de milioane de copii în toată lumea! 🎵',
+              wrongFeedback: 'Coreea de Sud e patria K-pop — muzica ascultată în toată lumea!',
+              funFact: 'BTS din Coreea de Sud e una din trupele cu cei mai mulți fani din lume! 🎤',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Coreea de Sud e lider mondial în tehnologie — Samsung, LG, Hyundai! 📱',
+          miniGames: [
+            {
+              type: 'capital_quiz',
+              question: 'Care e capitala Coreei de Sud?',
+              options: [
+                { text: 'Seoul', isCorrect: true },
+                { text: 'Busan', isCorrect: false },
+                { text: 'Pyongyang', isCorrect: false },
+                { text: 'Incheon', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Seoul are 10 milioane de locuitori! 🌆',
+              wrongFeedback: 'Capitala Coreei de Sud e Seoul — Pyongyang e Coreea de Nord!',
+              funFact: 'Coreea de Sud are internet cel mai rapid din lume! 🚀',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Coreea de Sud — una din cele mai rapide transformări economice din istorie! 📈',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Coreea de Sud s-a transformat dintr-una din cele mai sărace țări în economie G20 în…',
+              options: [
+                { text: '50 de ani (1960-2010)', isCorrect: true },
+                { text: '200 de ani', isCorrect: false },
+                { text: '10 ani', isCorrect: false },
+                { text: '100 de ani', isCorrect: false },
+              ],
+              correctFeedback: 'Remarcabil! "Miracolul de pe Râul Han" — cea mai rapidă creștere economică! 📈',
+              wrongFeedback: 'Coreea de Sud s-a dezvoltat spectaculos în 50 de ani — „Miracolul de pe Râul Han"!',
+              funFact: 'Samsung singur contribuie cu 20% din exporturile Coreei de Sud! 📱',
+            },
+          ],
+        },
+      },
+      {
+        id: 'thailand',
+        continentId: 'asia',
+        name: 'Thailanda', nameEn: 'Thailand',
+        flag: '🇹🇭', capital: 'Bangkok', capitalEmoji: '🛕',
+        landmark: 'Templul Wat Phra Kaew', landmarkEmoji: '🛕',
+        animal: 'Elefantul asiatic', animalEmoji: '🐘',
+        color: '#880E4F',
+        postcardEmoji: '🙏',
+        builderBlockUnlock: 'gold_tile',
+        age3to5: {
+          lioIntro: 'Sawasdee! Suntem în Thailanda — țara elefanților și a templelor aurii! 🐘🛕',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce animal sacru și inteligent este simbolul Thailandei?',
+              options: [
+                { text: '🐘 Elefantul alb', isCorrect: true },
+                { text: '🐯 Tigrul', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! Elefantul alb e sacru în Thailanda! 🐘',
+              wrongFeedback: 'Elefantul alb este simbolul sacru al Thailandei!',
+              funFact: 'Elefanții asiatici pot picta tablouri cu trompa lor! 🎨🐘',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bangkok din Thailanda are cele mai multe temple cu aur din lume! 🛕✨',
+          miniGames: [
+            {
+              type: 'landmark_quiz',
+              question: 'Templul Wat Phra Kaew din Bangkok adăpostește…',
+              options: [
+                { text: 'Statuia Budei de Jad (Buddha de Smarald)', isCorrect: true },
+                { text: 'O cruce de aur', isCorrect: false },
+                { text: 'Un diamant uriaș', isCorrect: false },
+                { text: 'O mumie regală', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Buddha de Smarald e o comoară națională! 💚',
+              wrongFeedback: 'Templul adăpostește statuia Buddha de Jad (Smarald) — cea mai sfântă din Thailanda!',
+              funFact: 'Regele Thailandei schimbă hainele statuii Buddha de 3 ori pe an, conform anotimpurilor! 👘',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Thailanda — "Țara Surâsurilor", singurul stat din Asia de Sud-Est necucerit de europeni! 🌟',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Thailanda este singura țară din Asia de Sud-Est care nu a fost niciodată…',
+              options: [
+                { text: 'Colonizată de o putere europeană', isCorrect: true },
+                { text: 'Lovită de un tsunami', isCorrect: false },
+                { text: 'Condusă de un rege', isCorrect: false },
+                { text: 'Vizitată de turiști', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! Diplomația abilă a regilor a ferit Siam de colonizare! 🌟',
+              wrongFeedback: 'Thailanda (fostul Siam) e singura țară din regiune necolonizată de europeni!',
+              funFact: 'Numele oficial al capitalei Bangkok are 169 de litere — cel mai lung din lume! 😄',
             },
           ],
         },
@@ -1129,6 +1381,132 @@ export const CONTINENTS: Continent[] = [
           ],
         },
       },
+      {
+        id: 'argentina',
+        continentId: 'south_america',
+        name: 'Argentina', nameEn: 'Argentina',
+        flag: '🇦🇷', capital: 'Buenos Aires', capitalEmoji: '💃',
+        landmark: 'Cascadele Iguazú', landmarkEmoji: '💦',
+        animal: 'Guanaco', animalEmoji: '🦙',
+        color: '#1A237E',
+        postcardEmoji: '💃',
+        builderBlockUnlock: 'marble',
+        age3to5: {
+          lioIntro: 'Hola! Argentina e țara tangou-lui și a fotbalului! 💃🇦🇷',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce animal mare și elegant trăiește în Patagonia?',
+              options: [
+                { text: '🦙 Guanaco', isCorrect: true },
+                { text: '🐘 Elefant', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! Guanacoul e ruda sălbatică a lamei! 🦙',
+              wrongFeedback: 'Guanacoul trăiește în Patagonia din Argentina!',
+              funFact: 'Argentina are al doilea cel mai mare număr de psihoterapeuți per cap de locuitor! 🧠',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bienvenidos a Argentina! Cascadele Iguazú sunt mai mari decât Niagara! 💦',
+          miniGames: [
+            {
+              type: 'landmark_quiz',
+              question: 'Cascadele Iguazú de la granița Argentina-Brazilia sunt…',
+              options: [
+                { text: 'Cele mai largi cascade din lume', isCorrect: true },
+                { text: 'Cele mai înalte cascade din lume', isCorrect: false },
+                { text: 'Singurele cascade din America de Sud', isCorrect: false },
+                { text: 'Un râu cu apă caldă', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Iguazú înseamnă "Apă Mare" în limba guaraní! 💦',
+              wrongFeedback: 'Cascadele Iguazú sunt cele mai largi din lume — 2,7 km lățime!',
+              funFact: 'Argentina a dat lumii Papa Francisc — primul papă din America Latină! ⛪',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Argentina — de la tango la Messi, o țară de campioni! 🏆',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Patagonia din Argentina este…',
+              options: [
+                { text: 'Una dintre cele mai mari regiuni sălbatice din lume', isCorrect: true },
+                { text: 'Un deșert tropical', isCorrect: false },
+                { text: 'Un lanț de insule tropicale', isCorrect: false },
+                { text: 'O regiune urbană densă', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! Patagonia e una dintre ultimele regiuni sălbatice ale Pământului! 🏔️',
+              wrongFeedback: 'Patagonia este una dintre cele mai mari și sălbatice regiuni din lume!',
+              funFact: 'Argentina are glaciarul Perito Moreno — unul dintre puținii ghețari care cresc, nu se topesc! 🧊',
+            },
+          ],
+        },
+      },
+      {
+        id: 'colombia',
+        continentId: 'south_america',
+        name: 'Columbia', nameEn: 'Colombia',
+        flag: '🇨🇴', capital: 'Bogotá', capitalEmoji: '🌸',
+        landmark: 'Ciudad Perdida', landmarkEmoji: '🏛️',
+        animal: 'Condor andin', animalEmoji: '🦅',
+        color: '#1A237E',
+        postcardEmoji: '🌸',
+        builderBlockUnlock: 'flower_pot',
+        age3to5: {
+          lioIntro: 'Hola! Columbia e țara florilor și a cafelei! 🌸🇨🇴',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce pasăre uriașă zboară deasupra munților Anzilor?',
+              options: [
+                { text: '🦅 Condor andin', isCorrect: true },
+                { text: '🦜 Papagal', isCorrect: false },
+              ],
+              correctFeedback: 'Superb! Condorul are anvergura de 3 metri! 🦅',
+              wrongFeedback: 'Condorul andin e cea mai mare pasăre zburătoare din lume!',
+              funFact: 'Columbia are mai multe specii de fluturi decât orice altă țară din lume! 🦋',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bienvenidos a Colombia! Cea mai bogată țară în biodiversitate per km²! 🌿',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Columbia este cel mai mare producător mondial de…',
+              options: [
+                { text: 'Flori tăiate (trandafiri, garoafe)', isCorrect: true },
+                { text: 'Mango', isCorrect: false },
+                { text: 'Portocale', isCorrect: false },
+                { text: 'Orez', isCorrect: false },
+              ],
+              correctFeedback: 'Da! Columbia e locul 2 mondial la export de flori, după Olanda! 🌹',
+              wrongFeedback: 'Columbia exportă enorm de multe flori — trandafiri și garoafe în toată lumea!',
+              funFact: 'Columbia e singura țară din America de Sud cu ieșire la Oceanul Pacific și Atlantic! 🌊',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Colombia — megadiversitate biologică, 10% din speciile lumii! 🌿',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Ciudad Perdida din Columbia este mai veche decât Machu Picchu cu…',
+              options: [
+                { text: 'Aproximativ 650 ani', isCorrect: true },
+                { text: '100 ani', isCorrect: false },
+                { text: '2000 ani', isCorrect: false },
+                { text: '50 ani', isCorrect: false },
+              ],
+              correctFeedback: 'Fascinant! Construită în 800 d.Hr. — cu 650 ani înaintea Machu Picchu! 🏛️',
+              wrongFeedback: 'Ciudad Perdida a fost construită în jurul anului 800 d.Hr., cu 650 ani înainte de Machu Picchu!',
+              funFact: 'Columbia are 59 de parcuri naționale — 11% din suprafața țării e protejată! 🌳',
+            },
+          ],
+        },
+      },
     ],
   },
 
@@ -1202,6 +1580,195 @@ export const CONTINENTS: Continent[] = [
               correctFeedback: 'Incredibil! 2.300 km de corali vii — vizibil din spațiu! 🪸',
               wrongFeedback: 'Marea Barieră de Corali e cel mai mare organism viu din lume!',
               funFact: 'Australia e mai lată decât distanța de la Luna la Pământ? Nu! Dar e aproape! 🌏',
+            },
+          ],
+        },
+      },
+      {
+        id: 'new_zealand',
+        continentId: 'oceania',
+        name: 'Noua Zeelandă', nameEn: 'New Zealand',
+        flag: '🇳🇿', capital: 'Wellington', capitalEmoji: '🏔️',
+        landmark: 'Munții Alpi din Noua Zeelandă', landmarkEmoji: '⛰️',
+        animal: 'Kiwi', animalEmoji: '🥝',
+        color: '#4E342E',
+        postcardEmoji: '🥝',
+        builderBlockUnlock: 'fern_block',
+        age3to5: {
+          lioIntro: 'Kia ora! Noua Zeelandă e țara păsării Kiwi! 🥝🇳🇿',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Această pasăre mică, fără aripi, trăiește în Noua Zeelandă:',
+              options: [
+                { text: '🥝 Kiwi', isCorrect: true },
+                { text: '🦜 Papagal', isCorrect: false },
+              ],
+              correctFeedback: 'Da! Kiwi e o pasăre care nu poate zbura dar are nas foarte fin! 🥝',
+              wrongFeedback: 'Kiwi e pasărea simbol a Noii Zeelande — nu poate zbura!',
+              funFact: 'Pasărea Kiwi doarme ziua și caută mâncare noaptea ca un detectiv! 🔦',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Welcome to New Zealand! Filmată ca Pământul de Mijloc din Stăpânul Inelelor! 🧙',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Noua Zeelandă a fost prima țară din lume care a acordat dreptul de vot…',
+              options: [
+                { text: 'Femeilor (1893)', isCorrect: true },
+                { text: 'Tinerilor de 16 ani', isCorrect: false },
+                { text: 'Persoanelor fără cetățenie', isCorrect: false },
+                { text: 'Pensionarilor', isCorrect: false },
+              ],
+              correctFeedback: 'Bravo! NZ a fost pionieră în drepturile femeilor în 1893! 🗳️',
+              wrongFeedback: 'Noua Zeelandă a dat dreptul de vot femeilor în 1893 — prima din lume!',
+              funFact: 'Noua Zeelandă are de 9 ori mai multe oi decât oameni! 🐑',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'New Zealand — biculturalism maori-european și conservare excepțională! 🌿',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Maori — poporul indigen din Noua Zeelandă — au ajuns acolo din…',
+              options: [
+                { text: 'Polinezia (acum ~700 ani)', isCorrect: true },
+                { text: 'Australia', isCorrect: false },
+                { text: 'Asia de Est', isCorrect: false },
+                { text: 'Africa', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Maori au navigat din Polinezia cu canoe pe distanțe imense! ⛵',
+              wrongFeedback: 'Maori au venit din Polinezia acum aproximativ 700 ani cu bărci!',
+              funFact: 'Haka — dansul tradițional maori — e practicat de echipa națională de rugby All Blacks! 💪',
+            },
+          ],
+        },
+      },
+      {
+        id: 'fiji',
+        continentId: 'oceania',
+        name: 'Fiji', nameEn: 'Fiji',
+        flag: '🇫🇯', capital: 'Suva', capitalEmoji: '🌴',
+        landmark: 'Recifele de corali', landmarkEmoji: '🪸',
+        animal: 'Iguana Fiji', animalEmoji: '🦎',
+        color: '#4E342E',
+        postcardEmoji: '🌊',
+        builderBlockUnlock: 'coral_block',
+        age3to5: {
+          lioIntro: 'Bula! Fiji e o insulă cu ape albastre și pești colorați! 🐠🇫🇯',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Ce animal colorat trăiește în recifele de corali din Fiji?',
+              options: [
+                { text: '🐠 Pești tropicali colorați', isCorrect: true },
+                { text: '🐻‍❄️ Urs polar', isCorrect: false },
+              ],
+              correctFeedback: 'Da! Recifele din Fiji au cei mai colorați pești din lume! 🐠',
+              wrongFeedback: 'Recifele de corali din Fiji găzduiesc mii de specii de pești colorați!',
+              funFact: '"Bula" înseamnă "Bună ziua" în Fiji — cuvântul cel mai fericit din lume! 😊',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Bula Vinaka! Fiji are 332 insule și ape între cele mai curate din lume! 🌊',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Fiji este un arhipelag format din…',
+              options: [
+                { text: 'Peste 300 de insule', isCorrect: true },
+                { text: 'O singură insulă mare', isCorrect: false },
+                { text: '10 insule', isCorrect: false },
+                { text: '50 insule', isCorrect: false },
+              ],
+              correctFeedback: 'Exact! 332 insule, din care doar 110 sunt locuite! 🏝️',
+              wrongFeedback: 'Fiji are 332 insule — un adevărat paradis tropical!',
+              funFact: 'Fiji exportă apă minerală în toată lumea — are unele dintre cele mai pure surse de apă! 💧',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Fiji — diversitate culturală: melanezieni, indieni, europeni trăind împreună! 🌍',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Indienii au ajuns în Fiji în perioada colonială britanică în calitate de…',
+              options: [
+                { text: 'Muncitori aduși pe plantații de trestie de zahăr', isCorrect: true },
+                { text: 'Comercianți voluntari', isCorrect: false },
+                { text: 'Exploratori', isCorrect: false },
+                { text: 'Misionari', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Indienii aduși de britanici acum formează 38% din populație! 🌿',
+              wrongFeedback: 'Britanicii au adus muncitori indieni pe plantații — azi 38% din populația Fiji e de origine indiană!',
+              funFact: 'Fiji a câștigat medalie de aur olimpică la rugby în 7 la Rio 2016 — prima din istoria lor! 🏅',
+            },
+          ],
+        },
+      },
+      {
+        id: 'papua_new_guinea',
+        continentId: 'oceania',
+        name: 'Papua Noua Guinee', nameEn: 'Papua New Guinea',
+        flag: '🇵🇬', capital: 'Port Moresby', capitalEmoji: '🌿',
+        landmark: 'Jungle-urile din Highlands', landmarkEmoji: '🌳',
+        animal: 'Pasărea Paradisului', animalEmoji: '🦚',
+        color: '#4E342E',
+        postcardEmoji: '🦚',
+        builderBlockUnlock: 'tropical_wood',
+        age3to5: {
+          lioIntro: 'Buna ziua din jungla Papua! Avem păsări cu pene magice! 🦚🇵🇬',
+          miniGames: [
+            {
+              type: 'animal_match',
+              question: 'Această pasăre cu pene colorate ca un curcubeu se numește…',
+              options: [
+                { text: '🦚 Pasărea Paradisului', isCorrect: true },
+                { text: '🦆 Rățușcă', isCorrect: false },
+              ],
+              correctFeedback: 'Minunat! Pasărea Paradisului are cele mai frumoase pene din lume! 🦚',
+              wrongFeedback: 'Pasărea Paradisului trăiește în Papua — are pene incredibil de colorate!',
+              funFact: 'Băieții papagali ai Paradisului dansează ore întregi pentru a cuceri o femelă! 💃',
+            },
+          ],
+        },
+        age6to8: {
+          lioIntro: 'Papua Noua Guinee — una dintre cele mai diverse țări lingvistic! 800+ limbi! 🗣️',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Papua Noua Guinee are cel mai mare număr de…',
+              options: [
+                { text: 'Limbi vorbite (800+)', isCorrect: true },
+                { text: 'Specii de rechini', isCorrect: false },
+                { text: 'Vulcani activi', isCorrect: false },
+                { text: 'Specii de fluturi', isCorrect: false },
+              ],
+              correctFeedback: 'Uimitor! 800 de limbi în aceeași țară — diversitate fără egal! 🗣️',
+              wrongFeedback: 'Papua Noua Guinee are peste 800 de limbi distincte — cea mai mare diversitate lingvistică!',
+              funFact: 'Papua are junglă primară neexplorată — există triburi care nu au văzut niciodată lumea modernă! 🌳',
+            },
+          ],
+        },
+        age9to12: {
+          lioIntro: 'Papua Noua Guinee — biodiversitate incredibilă, descoperiri noi în fiecare an! 🔬',
+          miniGames: [
+            {
+              type: 'fact_quiz',
+              question: 'Papua Noua Guinee împarte insula cu țara…',
+              options: [
+                { text: 'Indonezia (Irian Jaya / Papua de Vest)', isCorrect: true },
+                { text: 'Australia', isCorrect: false },
+                { text: 'Fiji', isCorrect: false },
+                { text: 'Noua Zeelandă', isCorrect: false },
+              ],
+              correctFeedback: 'Corect! Insula Noua Guinee e a doua ca mărime din lume, împărtășită de două țări! 🗺️',
+              wrongFeedback: 'Papua Noua Guinee împarte insula cu Indonezia — este a doua cea mai mare insulă din lume!',
+              funFact: 'Jungla Papuei ascunde specii nedescoperite — oamenii de știință găsesc noi animale în fiecare an! 🦋',
             },
           ],
         },
