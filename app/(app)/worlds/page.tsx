@@ -19,11 +19,15 @@ export default async function WorldsPage() {
     .eq('id', user.id)
     .single()
 
-  const isParent = parentProfile?.role === 'parent'
+  // role = 'parent', null, sau undefined = tot parinte
+  // role = 'child' = joacă ca un copil (cont separat — rar)
+  const isExplicitChild = parentProfile?.role === 'child'
   const profile = await getActiveChildProfile(user.id)
   const isPlayingAsChild = profile.activeChildId !== null
 
-  if (isParent && !isPlayingAsChild) {
+  // Orice user autentificat care nu e copil activ și nu are child selectat
+  // merge la dashboard (unde apare și onboarding-ul)
+  if (!isExplicitChild && !isPlayingAsChild) {
     const { data: children } = await supabase
       .from('profiles')
       .select('id')
