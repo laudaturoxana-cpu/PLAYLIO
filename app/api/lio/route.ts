@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const GEMINI_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 
 export interface LioRequestBody {
   childName: string
@@ -325,22 +325,22 @@ export async function POST(req: NextRequest) {
   switch (mode) {
     case 'teach':
       prompt      = buildTeachPrompt(body)
-      maxTokens   = 120
+      maxTokens   = 300
       temperature = 0.7
       break
     case 'hint':
       prompt      = buildHintPrompt(body)
-      maxTokens   = 60
+      maxTokens   = 150
       temperature = 0.8
       break
     case 'socratic':
       prompt      = buildSocraticPrompt(body)
-      maxTokens   = 60
+      maxTokens   = 150
       temperature = 0.85
       break
     default:
       prompt      = buildQuickPrompt(body)
-      maxTokens   = 50
+      maxTokens   = 150
       temperature = 0.9
   }
 
@@ -354,6 +354,7 @@ export async function POST(req: NextRequest) {
           temperature,
           maxOutputTokens: maxTokens,
           topP: 0.95,
+          thinkingConfig: { thinkingBudget: 0 },
         },
         safetySettings: [
           { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_LOW_AND_ABOVE' },
