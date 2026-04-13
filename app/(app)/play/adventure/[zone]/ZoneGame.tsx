@@ -8,8 +8,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useSound } from '@/lib/sound/useSound'
 import { useLio } from '@/lib/ai/useLio'
 
-// Stocăm în localStorage ce țări au fost vizitate
-function markCountryVisited(countryId: string) {
+// Stocăm în localStorage (cache offline) + Supabase (sync)
+function markCountryVisitedLocally(countryId: string) {
   try {
     const raw = localStorage.getItem('adventure_visited') ?? '[]'
     const visited: string[] = JSON.parse(raw)
@@ -19,6 +19,23 @@ function markCountryVisited(countryId: string) {
     }
   } catch {
     // silent
+  }
+}
+
+async function markCountryVisitedSupabase(userId: string, countryId: string) {
+  try {
+    const supabase = createClient()
+    await supabase.from('learning_progress').upsert({
+      user_id: userId,
+      game_type: 'adventure_visit',
+      item_id: countryId,
+      attempts: 1,
+      correct: 1,
+      mastered: true,
+      last_seen: new Date().toISOString(),
+    }, { onConflict: 'user_id,game_type,item_id', ignoreDuplicates: true })
+  } catch {
+    // silent — localStorage fallback already saved
   }
 }
 
@@ -121,7 +138,8 @@ export default function ZoneGame({
   function handleNextQuestion() {
     if (isLastQuestion) {
       // Finalizare
-      markCountryVisited(zone.id)
+      markCountryVisitedLocally(zone.id)
+      markCountryVisitedSupabase(userId, zone.id)
       playLevelUp()
       setPhase('summary')
       syncToSupabase()

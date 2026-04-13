@@ -60,7 +60,7 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
       playCorrect()
       playCoin()
       setStreak(newStreak)
-      const earned = streak >= 2 ? question.coinsReward * 2 : question.coinsReward
+      const earned = streak >= 3 ? question.coinsReward * 2 : question.coinsReward
       setTotalCoins(c => c + earned)
 
       // Ask Lio for AI message (streak or correct)
@@ -317,8 +317,8 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
             style={{ color: feedback === 'correct' ? '#2E7D32' : '#C62828' }}
           >
             {feedback === 'correct'
-              ? streak >= 3 ? `🔥 ${streak} in a row! Amazing!` : '✅ Correct! Great job!'
-              : `❌ Not quite! The answer is ${question.correctAnswer}`}
+              ? streak >= 3 ? `🔥 ${streak} la rând! Extraordinar!` : '✅ Corect! Bravo!'
+              : `❌ Nu chiar! Răspunsul corect este ${question.correctAnswer}`}
           </p>
         </div>
       )}

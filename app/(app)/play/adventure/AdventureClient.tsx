@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CONTINENTS, COUNTRY_MAP, type Continent, type Country } from '@/lib/adventure/zones'
+import { createClient } from '@/lib/supabase/client'
 
 // Globe3D uses WebGL — must be client-only, no SSR
 const Globe3D = dynamic(
@@ -39,7 +40,7 @@ interface AdventureClientProps {
   completedQuestIds: string[]
 }
 
-function loadVisitedCountries(): string[] {
+function loadVisitedCountriesLocal(): string[] {
   try {
     return JSON.parse(localStorage.getItem('adventure_visited') ?? '[]') as string[]
   } catch { return [] }
@@ -58,9 +59,29 @@ export default function AdventureClient({
   const [selectedContinent, setSelectedContinent] = useState<Continent | null>(null)
 
   useEffect(() => {
-    setVisitedCountryIds(loadVisitedCountries())
+    // Load from localStorage immediately (offline-first)
+    const local = loadVisitedCountriesLocal()
+    setVisitedCountryIds(local)
     setLoaded(true)
-  }, [])
+
+    // Then sync from Supabase and merge
+    const supabase = createClient()
+    supabase
+      .from('learning_progress')
+      .select('item_id')
+      .eq('user_id', userId)
+      .eq('game_type', 'adventure_visit')
+      .then(({ data }) => {
+        if (!data) return
+        const remoteIds = data.map((r: { item_id: string }) => r.item_id)
+        const merged = Array.from(new Set([...local, ...remoteIds]))
+        if (merged.length > local.length) {
+          // Update localStorage with data from Supabase
+          localStorage.setItem('adventure_visited', JSON.stringify(merged))
+          setVisitedCountryIds(merged)
+        }
+      })
+  }, [userId])
 
   const handleSelectContinent = useCallback((continent: Continent) => {
     if (continent.requiredLevel <= playerLevel) {

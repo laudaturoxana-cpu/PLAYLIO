@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
@@ -9,11 +9,27 @@ interface AccountClientProps {
   email: string
 }
 
+function getCurrentLang(): 'ro' | 'en' {
+  if (typeof document === 'undefined') return 'ro'
+  const match = document.cookie.match(/playlio_lang=([^;]+)/)
+  return (match?.[1] as 'ro' | 'en') ?? 'ro'
+}
+
+function setLang(lang: 'ro' | 'en') {
+  document.cookie = `playlio_lang=${lang};path=/;max-age=31536000;SameSite=Lax`
+  window.location.reload()
+}
+
 export default function AccountClient({ parentName, email }: AccountClientProps) {
   const [newPassword, setNewPassword]         = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [currentLang, setCurrentLang] = useState<'ro' | 'en'>('ro')
+
+  useEffect(() => {
+    setCurrentLang(getCurrentLang())
+  }, [])
 
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault()
@@ -163,6 +179,46 @@ export default function AccountClient({ parentName, email }: AccountClientProps)
             {status === 'loading' ? 'Se schimbă...' : 'Schimbă parola'}
           </button>
         </form>
+      </div>
+
+      {/* Language selector */}
+      <div className="rounded-3xl bg-white border border-black/5 shadow-sm p-5 mb-4">
+        <h2 className="font-fredoka text-lg font-semibold mb-3" style={{ color: '#212121' }}>
+          🌍 Limbă / Language
+        </h2>
+        <div className="flex gap-3">
+          <button
+            onClick={() => { setCurrentLang('ro'); setLang('ro') }}
+            className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-3 font-nunito text-sm font-semibold transition-all active:scale-95"
+            style={{
+              touchAction: 'manipulation',
+              background: currentLang === 'ro' ? 'linear-gradient(135deg, #FF7043, #F4511E)' : 'rgba(0,0,0,0.04)',
+              color: currentLang === 'ro' ? 'white' : '#757575',
+              border: currentLang === 'ro' ? 'none' : '1.5px solid rgba(0,0,0,0.1)',
+              boxShadow: currentLang === 'ro' ? '0 4px 12px rgba(255,112,67,0.35)' : 'none',
+            }}
+            aria-pressed={currentLang === 'ro'}
+          >
+            🇷🇴 Română
+          </button>
+          <button
+            onClick={() => { setCurrentLang('en'); setLang('en') }}
+            className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-3 font-nunito text-sm font-semibold transition-all active:scale-95"
+            style={{
+              touchAction: 'manipulation',
+              background: currentLang === 'en' ? 'linear-gradient(135deg, #29B6F6, #0288D1)' : 'rgba(0,0,0,0.04)',
+              color: currentLang === 'en' ? 'white' : '#757575',
+              border: currentLang === 'en' ? 'none' : '1.5px solid rgba(0,0,0,0.1)',
+              boxShadow: currentLang === 'en' ? '0 4px 12px rgba(41,182,246,0.35)' : 'none',
+            }}
+            aria-pressed={currentLang === 'en'}
+          >
+            🇬🇧 English
+          </button>
+        </div>
+        <p className="font-nunito text-[11px] mt-2" style={{ color: '#BDBDBD' }}>
+          Schimbarea limbii reîncarcă aplicația.
+        </p>
       </div>
 
       {/* Danger zone — sign out */}

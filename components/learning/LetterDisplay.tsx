@@ -22,7 +22,7 @@ export default function LetterDisplay({
     >
       {/* Instruction (simple, large text) */}
       <p className="font-nunito text-base text-[var(--gray)] text-center">
-        Find the letter for
+        Găsește litera pentru
       </p>
 
       {/* Large concrete object — Piaget: concrete thinking, not abstract */}
@@ -36,8 +36,8 @@ export default function LetterDisplay({
           boxShadow: `0 8px 24px ${letter.color}33`,
         }}
       >
-        <span className="text-6xl" role="img" aria-label={letter.word}>
-          {letter.emoji}
+        <span className="text-6xl" role="img" aria-label={letter.wordRo}>
+          {letter.emojiRo ?? letter.emoji}
         </span>
       </div>
 
@@ -46,7 +46,7 @@ export default function LetterDisplay({
         className="font-fredoka text-2xl font-semibold text-center"
         style={{ color: letter.color }}
       >
-        {letter.word}
+        {letter.wordRo}
       </p>
 
       {/* Letter (if visible — level 1 or indicator) */}

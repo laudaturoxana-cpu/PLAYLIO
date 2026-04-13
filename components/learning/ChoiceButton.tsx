@@ -59,7 +59,7 @@ export default function ChoiceButton({
       onTouchEnd={handleInteraction}
       onClick={handleInteraction}
       disabled={isDisabled}
-      aria-label={`Letter ${letter.letter} — ${letter.word}`}
+      aria-label={`Litera ${letter.letter} — ${letter.wordRo}`}
       aria-pressed={wasChosen}
       className={`
         relative flex flex-col items-center justify-center gap-1
@@ -88,7 +88,7 @@ export default function ChoiceButton({
     >
       {/* Concrete object emoji (Piaget: never the abstract symbol in isolation) */}
       <span className="text-3xl leading-none" aria-hidden="true">
-        {letter.emoji}
+        {letter.emojiRo ?? letter.emoji}
       </span>
       {/* Letter */}
       <span
@@ -99,7 +99,7 @@ export default function ChoiceButton({
       </span>
       {/* Word */}
       <span className="font-nunito text-xs text-[var(--gray)] leading-none">
-        {letter.word}
+        {letter.wordRo}
       </span>
 
       {/* Correct/wrong indicator */}

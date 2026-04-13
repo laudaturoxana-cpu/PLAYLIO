@@ -12,9 +12,10 @@ export const CHAR_H = 44
 export const CHAR_W = 32
 export const CHAR_SCREEN_X = 80  // fixed horizontal position of character
 
-const GRAVITY = 0.62
-const JUMP_VEL = -13.5
-const MAX_FALL = 18
+const GRAVITY    = 0.62
+const JUMP_VEL   = -13.5
+const JUMP_VEL_2 = -11.5   // double-jump is slightly weaker
+const MAX_FALL   = 18
 
 export interface JumpGameState {
   charY: number          // Y of character's feet (screen px)
@@ -43,6 +44,7 @@ export function useJumpGame(level: JumpLevel, maxHearts: number) {
   const charYRef    = useRef(GROUND_Y)
   const vyRef       = useRef(0)
   const onGroundRef = useRef(true)
+  const jumpsUsedRef = useRef(0)  // 0=on ground, 1=first jump, 2=double-jumped
   const distRef     = useRef(0)
   const heartsRef   = useRef(maxHearts)
   const invRef      = useRef(false)
@@ -77,6 +79,7 @@ export function useJumpGame(level: JumpLevel, maxHearts: number) {
       charYRef.current = GROUND_Y
       vyRef.current    = 0
       onGroundRef.current = true
+      jumpsUsedRef.current = 0
     } else {
       onGroundRef.current = false
     }
@@ -162,23 +165,31 @@ export function useJumpGame(level: JumpLevel, maxHearts: number) {
 
   // ─── Controls ───────────────────────────────────────────────
   const jump = useCallback(() => {
-    if (onGroundRef.current && runRef.current) {
-      vyRef.current       = JUMP_VEL
-      onGroundRef.current = false
+    if (!runRef.current) return
+    if (jumpsUsedRef.current === 0) {
+      // First jump (on ground)
+      vyRef.current        = JUMP_VEL
+      onGroundRef.current  = false
+      jumpsUsedRef.current = 1
+    } else if (jumpsUsedRef.current === 1) {
+      // Double-jump (in the air, once only)
+      vyRef.current        = JUMP_VEL_2
+      jumpsUsedRef.current = 2
     }
   }, [])
 
   // ─── Start / Restart ─────────────────────────────────────────
   const startGame = useCallback(() => {
     // Reset refs
-    charYRef.current    = GROUND_Y
-    vyRef.current       = 0
-    onGroundRef.current = true
-    distRef.current     = 0
-    heartsRef.current   = maxHearts
-    invRef.current      = false
-    collRef.current     = new Set()
-    runRef.current      = true
+    charYRef.current     = GROUND_Y
+    vyRef.current        = 0
+    onGroundRef.current  = true
+    jumpsUsedRef.current = 0
+    distRef.current      = 0
+    heartsRef.current    = maxHearts
+    invRef.current       = false
+    collRef.current      = new Set()
+    runRef.current       = true
 
     // Reset state
     setCharY(GROUND_Y)

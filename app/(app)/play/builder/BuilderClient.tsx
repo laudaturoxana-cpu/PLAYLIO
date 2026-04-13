@@ -305,6 +305,8 @@ function SceneBuilder({
     placeVoxel,
     removeVoxel,
     clearScene:       clearScene3D,
+    undo:             undo3D,
+    canUndo:          canUndo3D,
     syncToSupabase:   syncToSupabase3D,
     gridSize,
   } = useVoxelScene(userId, buildScene.id)
@@ -356,6 +358,8 @@ function SceneBuilder({
 
   const syncToSupabase = is3D ? syncToSupabase3D : syncToSupabase2D
   const clearScene     = is3D ? clearScene3D     : clearScene2D
+  const undo           = is3D ? undo3D           : () => {}
+  const canUndo        = is3D ? canUndo3D        : false
 
   return (
     <div className="builder-page game-container px-3 py-3 flex flex-col gap-3">
@@ -395,15 +399,34 @@ function SceneBuilder({
           >
             {is3D ? '2D' : '3D ✨'}
           </button>
-          {isDirty && (
-            <button
-              onClick={syncToSupabase}
-              className="font-nunito text-[10px] underline"
-              style={{ touchAction: 'manipulation', color: '#29B6F6' }}
-            >
-              Salvează
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {canUndo && (
+              <button
+                onClick={undo}
+                className="font-nunito text-[10px] rounded-lg px-2 py-1 active:scale-95 transition-transform"
+                style={{ touchAction: 'manipulation', backgroundColor: 'rgba(41,182,246,0.1)', color: '#0288D1' }}
+                aria-label="Anulează ultima acțiune"
+              >
+                ↩️ Anulează
+              </button>
+            )}
+            {isDirty ? (
+              <button
+                onClick={syncToSupabase}
+                className="font-nunito text-[10px] flex items-center gap-1 rounded-full px-2 py-1"
+                style={{ touchAction: 'manipulation', backgroundColor: 'rgba(255,152,0,0.12)', color: '#E65100' }}
+                title="Salvează acum în cloud"
+              >
+                <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#FF9800', display: 'inline-block' }} />
+                Salvează
+              </button>
+            ) : (
+              <span className="font-nunito text-[10px] flex items-center gap-1" style={{ color: '#4CAF50' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#4CAF50', display: 'inline-block' }} />
+                Salvat
+              </span>
+            )}
+          </div>
           <button
             onClick={clearScene}
             className="font-nunito text-[10px]"
