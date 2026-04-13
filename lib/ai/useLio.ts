@@ -7,6 +7,7 @@ interface UseLioOptions {
   childName: string
   age: number
   world: LioRequestBody['world']
+  lang?: 'ro' | 'en'
 }
 
 export interface TeachOptions {
@@ -17,7 +18,7 @@ export interface TeachOptions {
   context?: string
 }
 
-export function useLio({ childName, age, world }: UseLioOptions) {
+export function useLio({ childName, age, world, lang = 'ro' }: UseLioOptions) {
   const inFlight      = useRef(false)
   const teachInFlight = useRef(false)
 
@@ -36,6 +37,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
           body: JSON.stringify({
             childName, age, world, event,
             mode: 'quick',
+            lang,
             ...opts,
           } satisfies LioRequestBody),
         })
@@ -47,7 +49,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
         inFlight.current = false
       }
     },
-    [childName, age, world]
+    [childName, age, world, lang]
   )
 
   // ─── Teacher message (2-3 sentences, explains why + logic) ──
@@ -63,6 +65,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
             childName, age, world,
             event: 'wrong',
             mode: 'teach',
+            lang,
             ...opts,
           } satisfies LioRequestBody),
         })
@@ -74,7 +77,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
         teachInFlight.current = false
       }
     },
-    [childName, age, world]
+    [childName, age, world, lang]
   )
 
   // ─── Hint message (indirect clue) ────────────────────────────
@@ -88,6 +91,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
             childName, age, world,
             event: 'wrong',
             mode: 'hint',
+            lang,
             ...opts,
           } satisfies LioRequestBody),
         })
@@ -97,7 +101,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
         return ''
       }
     },
-    [childName, age, world]
+    [childName, age, world, lang]
   )
 
   // ─── Socratic question (makes child think) ───────────────────
@@ -111,6 +115,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
             childName, age, world,
             event: 'wrong',
             mode: 'socratic',
+            lang,
             ...opts,
           } satisfies LioRequestBody),
         })
@@ -120,7 +125,7 @@ export function useLio({ childName, age, world }: UseLioOptions) {
         return ''
       }
     },
-    [childName, age, world]
+    [childName, age, world, lang]
   )
 
   return { ask, teach, hint, socratic }

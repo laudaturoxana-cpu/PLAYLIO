@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { generateMathQuestion, MATH_TOPIC_COLORS, MATH_TOPIC_EMOJIS, type MathQuestion } from '@/lib/learning/math'
 import { useSound } from '@/lib/sound/useSound'
 import { useLio } from '@/lib/ai/useLio'
+import { useLanguage } from '@/lib/i18n/LanguageContext'
 import LioTeacher from '@/components/learning/LioTeacher'
 import { createClient } from '@/lib/supabase/client'
 
@@ -26,7 +27,8 @@ export default function NumberGame({ userId, age, profileName }: NumberGameProps
   const [sessionDone, setSessionDone] = useState(false)
   const [lioMessage, setLioMessage] = useState<string | null>(null)
   const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
-  const { ask: askLio, teach, hint, socratic } = useLio({ childName: profileName, age, world: 'numbers' })
+  const { lang } = useLanguage()
+  const { ask: askLio, teach, hint, socratic } = useLio({ childName: profileName, age, world: 'numbers', lang })
 
   // Per-question wrong count for escalating pedagogy
   const wrongCountRef    = useRef(0)

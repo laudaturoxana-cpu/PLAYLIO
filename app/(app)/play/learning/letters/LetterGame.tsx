@@ -14,6 +14,7 @@ import GameHUD from '@/components/learning/GameHUD'
 import HowToPlayOverlay from '@/components/shared/HowToPlayOverlay'
 import { useSound } from '@/lib/sound/useSound'
 import { useLio } from '@/lib/ai/useLio'
+import { useLanguage } from '@/lib/i18n/LanguageContext'
 import type { LetterData } from '@/lib/learning/phonetics'
 
 const LETTERS_TUTORIAL = [
@@ -49,7 +50,8 @@ export default function LetterGame({ userId, initialCoins, series, childName, ch
   const targetLetters = getLettersBySeries(series)
   const seriesInfo = SERIES_INFO[series]
   const { playCorrect, playWrong, playLevelUp, playCoin } = useSound()
-  const { ask: askLio, teach, hint, socratic } = useLio({ childName, age: childAge, world: 'letters' })
+  const { lang } = useLanguage()
+  const { ask: askLio, teach, hint, socratic } = useLio({ childName, age: childAge, world: 'letters', lang })
   const [aiLioMessage, setAiLioMessage] = useState<string | null>(null)
   const streakRef = useRef(0)
 

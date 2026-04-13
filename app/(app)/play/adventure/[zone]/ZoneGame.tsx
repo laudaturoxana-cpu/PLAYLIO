@@ -7,6 +7,7 @@ import { getAgeContent, getMiniGamesForAge, getOptionsCount, isZoneUnlocked } fr
 import { createClient } from '@/lib/supabase/client'
 import { useSound } from '@/lib/sound/useSound'
 import { useLio } from '@/lib/ai/useLio'
+import { useLanguage } from '@/lib/i18n/LanguageContext'
 import LioTeacher from '@/components/learning/LioTeacher'
 
 // Stocăm în localStorage (cache offline) + Supabase (sync)
@@ -87,7 +88,8 @@ export default function ZoneGame({
   const [localCompleted, setLocalCompleted] = useState<string[]>(completedQuestIds)
 
   const { playCorrect, playWrong, playLevelUp } = useSound()
-  const { ask: askLio, teach, hint, socratic } = useLio({ childName, age: childAge, world: 'adventure' })
+  const { lang } = useLanguage()
+  const { ask: askLio, teach, hint, socratic } = useLio({ childName, age: childAge, world: 'adventure', lang })
 
   // Per-question wrong count for escalating pedagogy
   const wrongCountRef = useRef(0)
