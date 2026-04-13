@@ -10,33 +10,54 @@ import { CONTINENTS, type Continent, type Country } from '@/lib/adventure/zones'
 // ─── Lat/Lng for each continent center ───────────────────────────
 
 const CONTINENT_LATLON: Record<string, { lat: number; lng: number }> = {
-  europe:        { lat: 54,   lng: 15   },
-  africa:        { lat:  0,   lng: 20   },
+  europe:        { lat: 54,   lng:  15  },
+  africa:        { lat:  0,   lng:  20  },
   asia:          { lat: 34,   lng: 100  },
   north_america: { lat: 45,   lng: -100 },
   south_america: { lat: -15,  lng: -60  },
   oceania:       { lat: -25,  lng: 135  },
+  antarctica:    { lat: -80,  lng:   0  },
 }
 
 const COUNTRY_LATLON: Record<string, { lat: number; lng: number }> = {
-  romania:       { lat: 45.9,  lng:  24.9  },
-  france:        { lat: 46.2,  lng:   2.2  },
-  germany:       { lat: 51.2,  lng:  10.4  },
-  spain:         { lat: 40.5,  lng:  -3.7  },
-  italy:         { lat: 41.9,  lng:  12.6  },
-  uk:            { lat: 55.4,  lng:  -3.4  },
-  japan:         { lat: 36.2,  lng: 138.3  },
-  china:         { lat: 35.9,  lng: 104.2  },
-  india:         { lat: 20.6,  lng:  79.1  },
-  brazil:        { lat: -14.2, lng: -51.9  },
-  usa:           { lat: 37.1,  lng: -95.7  },
-  canada:        { lat: 56.1,  lng: -106.3 },
-  australia:     { lat: -25.3, lng: 133.8  },
-  egypt:         { lat: 26.8,  lng:  30.8  },
-  south_africa:  { lat: -30.6, lng:  22.9  },
-  russia:        { lat: 61.5,  lng: 105.3  },
-  mexico:        { lat: 23.6,  lng: -102.6 },
-  argentina:     { lat: -38.4, lng:  -63.6 },
+  // ── Europa ──
+  romania:          { lat:  45.9, lng:   24.9 },
+  france:           { lat:  46.2, lng:    2.2 },
+  germany:          { lat:  51.2, lng:   10.4 },
+  spain:            { lat:  40.5, lng:   -3.7 },
+  italy:            { lat:  41.9, lng:   12.6 },
+  // ── Africa ──
+  egypt:            { lat:  26.8, lng:   30.8 },
+  south_africa:     { lat: -30.6, lng:   22.9 },
+  morocco:          { lat:  31.8, lng:   -7.1 },
+  nigeria:          { lat:   9.1, lng:    8.7 },
+  ethiopia:         { lat:   9.1, lng:   40.5 },
+  // ── Asia ──
+  china:            { lat:  35.9, lng:  104.2 },
+  india:            { lat:  20.6, lng:   79.1 },
+  japan:            { lat:  36.2, lng:  138.3 },
+  south_korea:      { lat:  35.9, lng:  127.8 },
+  thailand:         { lat:  15.9, lng:  100.9 },
+  // ── America de Nord ──
+  usa:              { lat:  37.1, lng:  -95.7 },
+  canada:           { lat:  56.1, lng: -106.3 },
+  mexico:           { lat:  23.6, lng: -102.6 },
+  cuba:             { lat:  21.5, lng:  -79.5 },
+  costa_rica:       { lat:   9.7, lng:  -83.8 },
+  // ── America de Sud ──
+  brazil:           { lat: -14.2, lng:  -51.9 },
+  peru:             { lat:  -9.2, lng:  -75.0 },
+  argentina:        { lat: -38.4, lng:  -63.6 },
+  colombia:         { lat:   4.6, lng:  -74.1 },
+  chile:            { lat: -35.7, lng:  -71.5 },
+  // ── Oceania ──
+  australia:        { lat: -25.3, lng:  133.8 },
+  new_zealand:      { lat: -40.9, lng:  174.9 },
+  fiji:             { lat: -17.7, lng:  178.1 },
+  papua_new_guinea: { lat:  -6.3, lng:  143.9 },
+  samoa:            { lat: -13.8, lng: -172.1 },
+  // ── Antarctica ──
+  antarctica_zone:  { lat: -82.0, lng:    0.0 },
 }
 
 // ─── Lat/Lng → 3D sphere point ────────────────────────────────────
