@@ -40,10 +40,9 @@ export default async function ParentsDashboardPage({
     // After creating profile, redirect to dashboard with onboarding
     redirect('/parents/dashboard?onboarding=true')
   }
-  // Treat null role as parent (profiles created by Supabase trigger may have role=null)
-  if (parentProfile.role && parentProfile.role !== 'parent') redirect('/worlds')
-  // Auto-fix null role
-  if (!parentProfile.role) {
+  // Fix any wrong role — trigger or OAuth may set role=null or role='child' for the parent account
+  // Never redirect away: that causes an infinite loop with /worlds
+  if (parentProfile.role !== 'parent') {
     await supabase.from('profiles').update({ role: 'parent' }).eq('id', user.id)
   }
 

@@ -15,18 +15,18 @@ export default async function WorldsPage() {
 
   const { data: parentProfile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, parent_id')
     .eq('id', user.id)
     .single()
 
-  // role = 'parent', null, sau undefined = tot parinte
-  // role = 'child' = joacă ca un copil (cont separat — rar)
-  const isExplicitChild = parentProfile?.role === 'child'
+  // A user is only a "real child" if they have a parent_id set (created by a parent during onboarding)
+  // A profile with role='child' but no parent_id is a broken parent account (trigger bug) — treat as parent
+  const isExplicitChild = parentProfile?.role === 'child' && !!parentProfile?.parent_id
   const profile = await getActiveChildProfile(user.id)
   const isPlayingAsChild = profile.activeChildId !== null
 
-  // Orice user autentificat care nu e copil activ și nu are child selectat
-  // merge la dashboard (unde apare și onboarding-ul)
+  // Any authenticated user who is not an explicit child and has no active child selected
+  // goes to dashboard (where onboarding appears)
   if (!isExplicitChild && !isPlayingAsChild) {
     const { data: children } = await supabase
       .from('profiles')
