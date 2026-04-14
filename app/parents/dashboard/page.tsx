@@ -23,7 +23,23 @@ export default async function ParentsDashboardPage({
     .eq('id', user.id)
     .single()
 
-  if (!parentProfile) redirect('/login?error=no_profile')
+  // Profile missing — create it on the fly (Google OAuth trigger may have failed)
+  if (!parentProfile) {
+    const username =
+      user.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '') ??
+      `user_${user.id.slice(0, 8)}`
+    await supabase.from('profiles').upsert({
+      id: user.id,
+      username,
+      full_name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
+      role: 'parent',
+      coins: 0,
+      level: 1,
+      xp: 0,
+    }, { onConflict: 'id' })
+    // After creating profile, redirect to dashboard with onboarding
+    redirect('/parents/dashboard?onboarding=true')
+  }
   // Treat null role as parent (profiles created by Supabase trigger may have role=null)
   if (parentProfile.role && parentProfile.role !== 'parent') redirect('/worlds')
   // Auto-fix null role

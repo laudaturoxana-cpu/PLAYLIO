@@ -55,8 +55,7 @@ export async function updateSession(request: NextRequest) {
 
   // Dacă user-ul e autentificat și încearcă să acceseze auth pages
   if (user && (pathname === '/login' || pathname === '/register')) {
-    const redirectUrl = request.nextUrl.clone()
-    redirectUrl.pathname = '/worlds'
+    const redirectUrl = new URL('/worlds', request.url)
     return NextResponse.redirect(redirectUrl)
   }
 

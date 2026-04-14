@@ -27,8 +27,6 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/login?error=no_user`)
   }
 
-  // Asigură că profilul există cu role = parent
-  // Dacă triggerul l-a creat deja => upsert nu face nimic (ignoreDuplicates)
   const username =
     user.email?.split('@')[0]?.toLowerCase().replace(/[^a-z0-9]/g, '') ??
     `user_${user.id.slice(0, 8)}`
@@ -39,25 +37,31 @@ export async function GET(request: Request) {
     .eq('id', user.id)
     .single()
 
-  if (!existingProfile) {
-    // Triggerul nu a rulat încă — inserăm manual
+  const isNewUser = !existingProfile
+
+  if (isNewUser) {
+    // Profile missing — insert fresh (trigger didn't run or failed for OAuth)
     await supabase.from('profiles').upsert({
       id: user.id,
       username,
-      full_name: user.user_metadata?.full_name ?? null,
+      full_name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
       role: 'parent',
-    }, { onConflict: 'id', ignoreDuplicates: true })
-
-    return NextResponse.redirect(`${origin}/worlds?onboarding=true`)
-  }
-
-  // Profilul există dar poate are role greșit (creat de trigger cu 'child')
-  if (existingProfile.role !== 'parent') {
+      coins: 0,
+      level: 1,
+      xp: 0,
+    }, { onConflict: 'id' })
+  } else if (!existingProfile.role || existingProfile.role !== 'parent') {
+    // Profile exists but role is wrong or null (partial trigger)
     await supabase
       .from('profiles')
       .update({ role: 'parent' })
       .eq('id', user.id)
   }
 
-  return NextResponse.redirect(`${origin}/worlds`)
+  // New users go directly to dashboard with onboarding (skip /worlds redirect loop)
+  return NextResponse.redirect(
+    isNewUser
+      ? `${origin}/parents/dashboard?onboarding=true`
+      : `${origin}/worlds`
+  )
 }
