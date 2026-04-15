@@ -6,7 +6,7 @@ import { Menu, X } from 'lucide-react'
 
 const NAV_LINKS = [
   { href: '#lumi', label: 'Lumi' },
-  { href: '#avatar', label: 'Avatar' },
+  { href: '#lio', label: 'Lio AI' },
   { href: '#parinti', label: 'Părinți' },
   { href: '#despre', label: 'Despre' },
 ] as const
