@@ -39,7 +39,9 @@
   --color-playlio-light: #F5F5F5;
 
   /* === FONTURI === */
-  --font-fredoka: 'Fredoka One', 'Fredoka', cursive;
+  /* 'Fredoka One' eliminat — nu suportă diacritice românești (ă î â ș ț) */
+  /* Next.js încarcă 'Fredoka' cu latin-ext și setează variabila via className pe <html> */
+  --font-fredoka: 'Fredoka', cursive;
   --font-nunito: 'Nunito', sans-serif;
   --font-inter: 'Inter', sans-serif;
 

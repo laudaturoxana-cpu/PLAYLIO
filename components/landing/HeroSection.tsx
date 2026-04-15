@@ -101,6 +101,25 @@ export function HeroSection() {
           ))}
         </div>
 
+        {/* Language availability */}
+        <div
+          className="inline-flex items-center gap-2 rounded-full font-nunito px-4 py-2"
+          style={{
+            background: 'rgba(0,0,0,0.04)',
+            border: '1px solid rgba(0,0,0,0.07)',
+            fontSize: '13px',
+            color: '#9E9E9E',
+          }}
+        >
+          <span>🇷🇴</span>
+          <span>Română</span>
+          <span style={{ color: '#D0D0D0' }}>·</span>
+          <span>🇬🇧</span>
+          <span>English</span>
+          <span style={{ color: '#D0D0D0' }}>·</span>
+          <span style={{ color: '#BDBDBD', fontSize: '12px' }}>limba se alege la crearea contului</span>
+        </div>
+
         {/* Lio mascot + 4 world badges */}
         <div className="w-full" style={{ margin: '0 auto', maxWidth: '480px' }} aria-hidden="true">
           {/* Lio center */}

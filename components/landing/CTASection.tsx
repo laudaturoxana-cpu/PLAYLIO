@@ -99,6 +99,22 @@ export function CTASection() {
           >
             Creează cont acum — primești 50 monede bonus 🪙
           </Link>
+
+          {/* Language note */}
+          <div
+            className="inline-flex items-center gap-2 font-nunito"
+            style={{
+              marginTop: 'clamp(16px, 2.5vw, 24px)',
+              fontSize: '13px',
+              color: '#9E9E9E',
+            }}
+          >
+            <span>🌍</span>
+            <span>
+              Jocul este disponibil în <strong style={{ color: '#757575' }}>Română</strong> și{' '}
+              <strong style={{ color: '#757575' }}>Engleză</strong> — alegi limba după ce îți creezi contul de părinte.
+            </span>
+          </div>
         </div>
       </div>
     </section>
