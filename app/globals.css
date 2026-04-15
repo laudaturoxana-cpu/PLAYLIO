@@ -216,15 +216,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* FIX 13: Font assignments explicite */
+/* Fredoka cu latin-ext (ă î â ș ț) — var setată de Next.js cu woff2 */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-fredoka), 'Fredoka', 'Fredoka One', cursive !important;
+  font-family: var(--font-fredoka), cursive;
   line-height: 1.2;
   font-weight: 500;
 }
 
 .font-fredoka {
-  font-family: var(--font-fredoka), 'Fredoka', 'Fredoka One', cursive !important;
+  font-family: var(--font-fredoka), cursive !important;
 }
 
 button, input, label, li, select, textarea {
@@ -288,11 +288,7 @@ a {
   background-color: #FFC107;
 }
 
-/* FIX 6: Font fallback garantat */
-.font-fredoka,
-h1, h2, h3, h4 {
-  font-family: 'Fredoka', 'Fredoka One', cursive !important;
-}
+/* font-nunito pentru elemente de text */
 
 .font-nunito,
 body, p, span, a, button, input, li, label {
