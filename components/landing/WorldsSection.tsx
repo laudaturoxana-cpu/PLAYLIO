@@ -2,17 +2,45 @@ import { WorldCard } from './WorldCard'
 
 const WORLDS = [
   {
+    icon: '📚',
+    title: 'Lumea Literelor',
+    badge: 'Alfabet',
+    badgeBg: 'rgba(255,112,67,0.15)',
+    badgeTextColor: '#BF360C',
+    description: 'Joc fonetic adaptiv cu 20 de litere grupate în 3 serii de dificultate. Copilul asociază litera cu imaginea și sunetul, iar nivelul crește automat cu fiecare răspuns corect.',
+    features: ['• 20 litere în 3 serii progresive', '• 5 niveluri de dificultate per literă', '• Adaptat pe vârstă: 3–10 ani'],
+    bulletColor: '#E64A19',
+    ctaLabel: 'Explorează literele →',
+    ctaHref: '/play/learning',
+    gradientStyle: 'linear-gradient(135deg, rgba(255,112,67,0.08) 0%, rgba(255,249,196,0.12) 100%)',
+    accentColor: '#BF360C',
+  },
+  {
+    icon: '🔢',
+    title: 'Lumea Cifrelor',
+    badge: 'Matematică',
+    badgeBg: 'rgba(255,183,77,0.20)',
+    badgeTextColor: '#E65100',
+    description: 'Sesiuni de câte 10 întrebări cu 4 tipuri de exerciții: numărare, adunare, scădere și comparații. Dificultatea se adaptează automat în funcție de vârstă.',
+    features: ['• Numărare, adunare, scădere, comparații', '• Sesiuni de 10 întrebări cu streak bonus', '• Monede duble la serii de răspunsuri corecte'],
+    bulletColor: '#E65100',
+    ctaLabel: 'Explorează cifrele →',
+    ctaHref: '/play/learning/numbers',
+    gradientStyle: 'linear-gradient(135deg, rgba(255,213,79,0.10) 0%, rgba(255,224,178,0.15) 100%)',
+    accentColor: '#E65100',
+  },
+  {
     icon: '🗺️',
     title: 'Lumea Aventurii',
     badge: 'Geografie',
     badgeBg: 'rgba(102,187,106,0.18)',
     badgeTextColor: '#2E7D32',
-    description: 'Explorează 31 de țări din 7 continente — Europa, Africa, Asia, America, Oceania și Antarctica. Descoperă capitale, animale, monumente și curiozități fascinante.',
-    features: ['• 31 țări din 7 continente', '• Quiz-uri despre geografie, cultură și natură', '• Stele, monede și blocuri de construcție deblocate'],
+    description: 'Explorează 31 de țări din 7 continente — Europa, Africa, Asia, America de Nord, America de Sud, Oceania și Antarctica. Descoperă capitale, animale, monumente și curiozități.',
+    features: ['• 31 țări din 7 continente', '• Quiz-uri despre geografie, cultură și natură', '• Blocuri de construcție deblocate ca recompensă'],
     bulletColor: '#388E3C',
-    ctaLabel: 'Explorează →',
+    ctaLabel: 'Explorează lumea →',
     ctaHref: '/play/adventure',
-    gradientStyle: 'linear-gradient(135deg, rgba(102,187,106,0.08) 0%, rgba(255,249,196,0.15) 100%)',
+    gradientStyle: 'linear-gradient(135deg, rgba(102,187,106,0.08) 0%, rgba(178,223,219,0.12) 100%)',
     accentColor: '#2E7D32',
   },
   {
@@ -21,8 +49,8 @@ const WORLDS = [
     badge: 'Creativitate',
     badgeBg: 'rgba(79,195,247,0.18)',
     badgeTextColor: '#0277BD',
-    description: 'Constructor Minecraft-like în 2D și 3D. Plasează blocuri câștigate în joc și construiește ce îți imaginezi — cu 55+ tipuri de blocuri: natură, apă, materiale, structuri și decoruri.',
-    features: ['• 55+ tipuri de blocuri', '• Moduri 2D și 3D', '• Blocuri noi deblocate prin explorarea lumilor'],
+    description: 'Constructor Minecraft-like în moduri 2D și 3D. Plasează blocuri câștigate prin explorarea celorlalte lumi și construiește ce îți imaginezi — natură, structuri, decoruri.',
+    features: ['• 55+ tipuri de blocuri', '• Moduri 2D și 3D', '• Blocuri noi deblocate din Lumea Aventurii'],
     bulletColor: '#0288D1',
     ctaLabel: 'Construiește →',
     ctaHref: '/play/builder',
@@ -30,32 +58,18 @@ const WORLDS = [
     accentColor: '#0277BD',
   },
   {
-    icon: '📚',
-    title: 'Lumea Învățării',
-    badge: 'Educație',
-    badgeBg: 'rgba(255,112,67,0.15)',
-    badgeTextColor: '#BF360C',
-    description: 'Două mini-jocuri adaptive: Litere (20 litere ale alfabetului cu imagini și sunete) și Cifre (numărare, adunare, scădere, comparații). Nivelul de dificultate crește automat cu fiecare răspuns corect.',
-    features: ['• 20 litere cu 5 niveluri de dificultate', '• Matematică: numărare, adunare, scădere', '• Adaptat automat pe vârstă (3–10 ani)'],
-    bulletColor: '#E64A19',
-    ctaLabel: 'Învață →',
-    ctaHref: '/play/learning',
-    gradientStyle: 'linear-gradient(135deg, rgba(255,112,67,0.08) 0%, rgba(232,245,233,0.12) 100%)',
-    accentColor: '#BF360C',
-  },
-  {
     icon: '🎮',
     title: 'Lumea Saltului',
     badge: 'Acțiune',
-    badgeBg: 'rgba(255,213,79,0.22)',
-    badgeTextColor: '#F57F17',
-    description: 'Platformer colorat cu 3 lumi și 12 niveluri progresive, fiecare cu un nivel boss. Sari peste obstacole, colectează stele și cucerește recorduri.',
-    features: ['• 3 lumi cu 4 niveluri fiecare', '• Niveluri boss la finalul fiecărei lumi', '• Dificultate progresivă'],
-    bulletColor: '#F57F17',
+    badgeBg: 'rgba(206,147,216,0.20)',
+    badgeTextColor: '#6A1B9A',
+    description: 'Platformer colorat cu 3 lumi și 9 niveluri progresive — Lumea Vrăjitoarelor, Norii de Cristal și Galaxia Stelelor. Fiecare lume se termină cu un nivel boss epic.',
+    features: ['• 3 lumi: Vrăjitoare, Cristal, Galaxie', '• 9 niveluri + 3 niveluri boss', '• 4 personaje deblocabile: Lio, Luna, Roxy, Max'],
+    bulletColor: '#7B1FA2',
     ctaLabel: 'Joacă →',
     ctaHref: '/play/jump',
-    gradientStyle: 'linear-gradient(135deg, rgba(255,213,79,0.10) 0%, rgba(232,234,246,0.12) 100%)',
-    accentColor: '#F57F17',
+    gradientStyle: 'linear-gradient(135deg, rgba(206,147,216,0.10) 0%, rgba(232,234,246,0.12) 100%)',
+    accentColor: '#6A1B9A',
   },
 ]
 
@@ -74,7 +88,7 @@ export function WorldsSection() {
             className="font-fredoka font-semibold"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)', color: '#212121', marginBottom: '12px' }}
           >
-            Cele 4 Lumi Playlio
+            Cele 5 Lumi Playlio
           </h2>
           <p
             className="font-nunito"
@@ -84,11 +98,22 @@ export function WorldsSection() {
           </p>
         </div>
 
+        {/* Top row: 2 cards */}
         <div
           className="grid grid-cols-1 sm:grid-cols-2"
+          style={{ gap: 'clamp(16px, 3vw, 24px)', marginBottom: 'clamp(16px, 3vw, 24px)' }}
+        >
+          {WORLDS.slice(0, 2).map((world) => (
+            <WorldCard key={world.title} {...world} />
+          ))}
+        </div>
+
+        {/* Bottom row: 3 cards */}
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           style={{ gap: 'clamp(16px, 3vw, 24px)' }}
         >
-          {WORLDS.map((world) => (
+          {WORLDS.slice(2).map((world) => (
             <WorldCard key={world.title} {...world} />
           ))}
         </div>

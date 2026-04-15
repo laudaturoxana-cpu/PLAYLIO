@@ -151,13 +151,14 @@ export function HeroSection() {
             </svg>
           </div>
 
-          {/* 4 world badges — 2x2 grid, always visible on all screens */}
-          <div className="grid grid-cols-2" style={{ gap: '12px' }}>
+          {/* 5 world badges */}
+          <div className="grid grid-cols-2 sm:grid-cols-3" style={{ gap: '10px' }}>
             {[
-              { label: 'Aventură', emoji: '🗺️', bg: 'rgba(102,187,106,0.15)', color: '#2E7D32', delay: '0s' },
-              { label: 'Constructor', emoji: '🏗️', bg: 'rgba(79,195,247,0.15)', color: '#0277BD', delay: '0.5s' },
-              { label: 'Învățare', emoji: '📚', bg: 'rgba(255,112,67,0.15)', color: '#BF360C', delay: '1s' },
-              { label: 'Salt', emoji: '🎮', bg: 'rgba(255,213,79,0.20)', color: '#F57F17', delay: '1.5s' },
+              { label: 'Litere', emoji: '📚', bg: 'rgba(255,112,67,0.15)', color: '#BF360C', delay: '0s' },
+              { label: 'Cifre', emoji: '🔢', bg: 'rgba(255,213,79,0.20)', color: '#E65100', delay: '0.3s' },
+              { label: 'Aventură', emoji: '🗺️', bg: 'rgba(102,187,106,0.15)', color: '#2E7D32', delay: '0.6s' },
+              { label: 'Constructor', emoji: '🏗️', bg: 'rgba(79,195,247,0.15)', color: '#0277BD', delay: '0.9s' },
+              { label: 'Salt', emoji: '🎮', bg: 'rgba(206,147,216,0.20)', color: '#6A1B9A', delay: '1.2s' },
             ].map((c) => (
               <div
                 key={c.label}
